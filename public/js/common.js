@@ -40,14 +40,38 @@ function browserRedirect() {
     return "pc";
   }
 }
+
+/**
+ * 标签关注按钮操作
+ */
+function tagFollowAction () {
+  $('.tagfollow').click(function () {
+    var id = $(this).data('id');
+    var isFollowed = $(this).hasClass('active');
+
+    $.ajax({
+      url: '/api/tags/' + id + '/' + (isFollowed ? 'unFollow' : 'follow'),
+      type: 'GET',
+      success: function (data) {
+        if (data && data.success) {
+          console.log('follows  ' + data.data);
+        }
+      }
+    });
+  });
+}
+
 $(document).ready(function () {
   $('nav').scrollToFixed();
   $('.markdown-text a,.reply-list a').attr('target', '_blank');
   var $hm_header = $('.hm-t-header');
   $hm_header.css('padding', 0);
   $hm_header.css('border', 0);
+  tagFollowAction();
   // pretty code
   prettyPrint();
   gotoTop();
 });
+
+
 

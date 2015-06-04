@@ -104,3 +104,31 @@ exports.addTag = function (req, res, next) {
     }
   });
 };
+
+/**
+ * 关注标签
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.follow = function (req, res, next) {
+  var user = req.session.user;
+  var tag_id = validator.trim(req.params._id);
+  if (!user) {
+    return res.json({success: 0, msg: '未登录'});
+  } else if (!tag_id) {
+    return res.status(403).json({success: 0, msg: '未知的标签'})
+  }
+
+  res.json({success: 1, msg: '', data: 1});
+};
+
+/**
+ * 取消关注标签
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.unFollow = function (req, res, next) {
+
+};

@@ -9,8 +9,8 @@
                     <h2 class="h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
                     <p><%= tag.description ? tag.description : '暂时还没有描述' %></p>
                     <div class="tag-item-action">
-                        <a class="btn btn-xs btn-default font-13 mr-5" href="/tags/<%= tag._id %>/follow">关注</a>
-                        <span class="addtion font-13 mr-5"><strong><%= tag.follow_count %></strong> 关注</span>
+                        <button class="btn btn-xs btn-default font-13 mr-5 tagfollow" data-id="<%= tag._id %>">关注</button>
+                        <span class="addtion font-13 mr-5"><strong class="follows"><%= tag.follow_count %></strong> 关注</span>
                     </div>
                 </div>
             </div>

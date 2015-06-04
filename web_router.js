@@ -50,7 +50,6 @@ router.get('/u/:name', user.index);
 
 router.get('/tags/:name', tag.getTagByName);//某个标签
 router.get('/tags', tag.index);//所有标签
-router.get('/tags/:_id/follow', auth.userRequired, tag.follow);//关注标签
 
 router.get('/robots.txt', index.robots);
 router.get('/tools', index.tools);//常用工具

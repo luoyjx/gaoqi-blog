@@ -114,13 +114,3 @@ exports.getTagByName = function (req, res, next) {
     proxy.emit('pages', pages);
   }));
 };
-
-/**
- * 关注一个标签
- * @param req
- * @param res
- * @param next
- */
-exports.follow = function (req, res, next) {
-
-};
