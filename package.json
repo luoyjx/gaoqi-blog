@@ -3,8 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "description": "A Node.js blog using MongoDB",
-  "scripts": {
-    "start": "node app.js"
+  "repository": "https://github.com/luoyjx/gaoqi-blog",
+  "customHost": [
+    "blog.gaoqixhb.com"
+  ],
+  "engines": {
+    "node": "0.12.1"
   },
   "dependencies": {
     "async": "0.9.0",
