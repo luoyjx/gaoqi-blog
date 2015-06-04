@@ -1,0 +1,35 @@
+<div class="wrap">
+    <div class="container">
+        <div class="row">
+            <article class="col-sm-12 col-lg-9">
+                <%- partial('post/list', {
+                posts: posts,
+                pages: pages,
+                current_page: current_page,
+                base: '/'
+                }) %>
+            </article>
+            <aside class="col-sm-12 col-lg-3 sidebox">
+                <%- partial('post/hot', {
+                hots: hots
+                }) %>
+                <div class="page-header pt-10">
+                    <h4>热门标签<a class='tag-more' href='/tags'>»</a></h4>
+                </div>
+                <%
+                if(typeof(tags) !== 'undefined' && tags.length > 0){
+                tags.forEach(function(tag, index){
+                %>
+                <span class="tagPopup"><a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name
+                    %></a></span>
+                <%
+                });
+                }else{ %>
+                <ul class="list-unstyled line-distance list-overhidden">
+                    <li class="font-14 mb-10">暂无标签</li>
+                </ul>
+                <% } %>
+            </aside>
+        </div>
+    </div>
+</div>

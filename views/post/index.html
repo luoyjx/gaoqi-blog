@@ -1,0 +1,143 @@
+<div class="article-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-xs-12">
+                <div class="page-header" style="/*border-bottom: 1px dashed #ddd;margin:0 0 20px 0;*/">
+                    <h1 class="article-header h3"><%= post.title %></h1>
+                    <p class="info">
+                        <a class="link font-13 mr-10" href="/u/<%= post.author.login_name %>">
+                            <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/><strong class="user-name"><%=
+                            post.author.name %></strong>
+                        </a>
+                        <span class="addtion font-13 mr-10"><%= post.frendly_create_at %></span>
+                        <span class="addtion font-13 mr-10"><%= post.pv %>次阅读</span>
+                    </p>
+                    <% if ((typeof(user) !== 'undefined' && (user._id.equals(post.author_id))) || (typeof(user) !==
+                    'undefined' && user.is_admin)) { %>
+                    <p>
+                        <span>
+                            <a class="glyphicon glyphicon-edit" href="/post/<%= post._id %>/edit" title="编辑"></a>
+                        </span>
+                        <span id="delete_post" data-id="<%= post._id %>">
+                            <a class="glyphicon glyphicon-trash" href="javascript:;" title="删除"></a>
+                        </span>
+                    </p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <div class="col-xs-12 col-lg-8 col-lg-offset-2 overflow-hidden-x">
+                <article>
+                    <% if(typeof(error) !== 'undefined' && error){ %>
+                    <div class="alert alert-error">
+                        <strong><%= error %></strong>
+                    </div>
+                    <% }else{ %>
+                    <div class="content article-content"><%- markdown(post.content) %></div>
+                    <div class="article-tags">
+                        <% if(post.tags){
+                        post.tags.forEach(function (tag, index) { %>
+                        <% if (tag) { %>
+                        <a class="tag mr-5" href="/tags/<%= tag %>"><%= tag %></a>
+                        <% } %>
+                        <% }); }%>
+                    </div>
+                    <% } %>
+                </article>
+                <div class="bdsharebuttonbox">
+                    <a href="#" class="bds_more" data-cmd="more">分享到:</a>
+                    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a>
+                    <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博">腾讯微博</a>
+                    </a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间">QQ空间</a>
+                    </a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a>
+                </div>
+                <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
+                <strong class="mb-10 mt-20 section-title">相关文章</strong>
+                <script>document.write(unescape('%3Cdiv id="hm_t_43883"%3E%3C/div%3E%3Cscript charset="utf-8" src="http://crs.baidu.com/t.js?siteId=59acccd43801ac1b47f47fd07d7a479a&planId=43883&async=0&referer=') + encodeURIComponent(document.referrer) + '&title=' + encodeURIComponent(document.title) + '&rnd=' + (+new Date) + unescape('"%3E%3C/script%3E'));</script>
+                <div class="replies panel">
+                    <strong class="mb-20 section-title"> </strong>
+                    <%- partial('../reply/list', {
+                    replies: replies
+                    }) %>
+                    <a id="comment"></a>
+                    <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
+                    <strong class="section-title">发表评论</strong>
+                    <div class='reply'>
+                        <form id='reply_form' action='/post/<%= post._id %>/reply' method='post'>
+
+                            <div class='markdown_editor in_editor'>
+                                <div class='markdown_in_editor'>
+                                    <textarea class='editor' name='r_content' rows='4'></textarea>
+                                </div>
+                            </div>
+                            <div class='editor_buttons'>
+                                <input class='btn btn-primary' type="submit" data-loading-text="回复中.."
+                                       value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"'
+                                : ''%>>
+                            </div>
+                            <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
+                        </form>
+                    </div>
+                    <% } else { %>
+                    <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link"
+                                                                                                    href="/signup">注册</a>
+                    </p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
+<!-- markdown editor -->
+<%- Loader('/public/editor.min.js')
+.js('/public/lib/editor/editor.js')
+.js('/public/lib/webuploader/webuploader.withoutimage.js')
+.js('/public/lib/editor/ext.js')
+.done(assets, config.site_assets_host, config.mini_assets)
+%>
+<% } %>
+<script>
+    // 删除文章
+    $('#delete_post').click(function () {
+        var postId = $(this).data('id');
+        if (postId && confirm('确定要删除此文章吗？')) {
+            $.post('/post/' + postId + '/delete', { _csrf: $('#_csrf').val() }, function (result) {
+                if (!result.success) {
+                    alert(result.message);
+                } else {
+                    location.href = '/';
+                }
+            });
+        }
+        return false;
+    });
+
+    // 编辑器相关
+    $('textarea.editor').each(function(){
+      var editor = new Editor({
+        status: []
+      });
+      var $el = $(this);
+
+      editor.render(this);
+      //绑定editor
+      $(this).data('editor', editor);
+
+      var $input = $(editor.codemirror.display.input);
+      $input.keydown(function(event){
+        if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
+          event.preventDefault();
+          $el.closest('form').submit();
+        }
+      });
+
+    });
+    // END 编辑器相关
+</script>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","weixin"],"viewText":"分享到：","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>

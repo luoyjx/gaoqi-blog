@@ -1,0 +1,14 @@
+<div class="page-header">
+    <h4>近期文章</h4>
+</div>
+<% if(recent && recent.length > 0){ %>
+<ul class="list-unstyled list-overhidden">
+    <% recent.forEach(function(r, index){%>
+    <li class="font-14 mb-10"><a href="/p/<%=r._id%>" title="<%=r.title%>"><%=r.title%></a></li>
+    <% }); %>
+</ul>
+<% }else{ %>
+<ul class="list-unstyled list-overhidden">
+    <li class="font-14 mb-10">暂无文章</li>
+</ul>
+<% } %>

@@ -1,0 +1,28 @@
+<div class="wrap">
+    <div class="container">
+        <h1 class="h3 mt-20 ml-15">标签<br><small>标签是内容的提炼，通过标签可以快速的找到自己关注的一些主题。</small></h1>
+        <div class="row mt-20">
+            <% if(tags && tags.length > 0){ %>
+            <% tags.forEach(function (tag, index) { %>
+            <div class="tag-list col-md-3">
+                <div class="tag-container">
+                    <h2 class="h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
+                    <p><%= tag.description ? tag.description : '暂时还没有描述' %></p>
+                    <div class="tag-item-action">
+                        <a class="btn btn-xs btn-default font-13 mr-5" href="/tags/<%= tag._id %>/follow">关注</a>
+                        <span class="addtion font-13 mr-5"><strong><%= tag.follow_count %></strong> 关注</span>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+            <% } %>
+        </div>
+        <div class="text-center">
+            <%- partial('../paging', {
+            pages: pages,
+            current_page: current_page,
+            base: '/'
+            }) %>
+        </div>
+    </div>
+</div>

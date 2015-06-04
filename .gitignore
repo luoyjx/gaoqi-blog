@@ -1,0 +1,5 @@
+.idea
+.svn
+node_modules
+config.js
+assets.json

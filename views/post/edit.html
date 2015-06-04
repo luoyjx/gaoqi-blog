@@ -1,0 +1,117 @@
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <div class="col-xs-12 col-lg-9">
+                <div class="content-header left-content">
+                    <h1 class="h4"><%= typeof(title) !== 'undefined' && title || '发表文章' %></h1>
+                </div>
+                <div class="inner">
+                    <% if(typeof(edit_error) !== 'undefined' && edit_error){ %>
+                    <div class="alert alert-danger">
+                        <a class="close" data-dismiss="alert" href="#">&times;</a>
+                        <strong><%= edit_error %></strong>
+                    </div>
+                    <% } %>
+                    <% if(typeof(error) !== 'undefined' && error){ %>
+                    <div class="alert alert-danger">
+                        <strong><%= error %></strong>
+                    </div>
+                    <% }else{ %>
+                    <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
+                    <form id='create_topic_form' action='/post/<%= post_id %>/edit' method='post'>
+                        <% } else { %>
+                        <form id='create_topic_form' action='/post/create' method='post'>
+                            <% } %>
+                            <fieldset>
+                                <span id="topic_create_warn"></span>
+
+                                <div>
+                                    <select class="" name="category" id="tab-value">
+                                        <option value="unknown">未分类</option>
+                                        <%
+                                        var tabValue = '';
+                                        if (typeof(category) !== 'undefined') {
+                                        tabValue = category;
+                                        }
+                                        tabs.forEach(function (pair) {
+                                        var value = pair[0];
+                                        var text = pair[1];
+                                        %>
+                                        <option value="<%=value%>"
+                                        <%= tabValue === value ? 'selected': '' %>><%=text%></option>
+
+                                        <%});%>
+                                    </select>
+                                </div>
+                                <textarea autofocus class='span9 ' id='title' name='title' rows='1'
+                                          placeholder="标题   字数10 字以上"
+                                        ><%= typeof(post_title) !== 'undefined' && post_title || '' %></textarea>
+
+                                <textarea class='span9 ' id='description' name='description' rows='3'
+                                          placeholder="文章描述 即文章的主旨  300字符以内"
+                                        ><%= typeof(description) !== 'undefined' && description || '' %></textarea>
+
+                                <div>
+                                    <div class="input-tags">
+                                        <input id="tag_autocomplete" type="text"
+                                               class="tagText empty form-control input-sm" placeholder="标签，如：javascript"
+                                               style="text-transform: lowercase;"/>
+                                        <% if(typeof(tags) !== 'undefined') {
+                                        tags.forEach(function (tag){
+                                        if(tag) {
+                                        %>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control select-tag input-sm"
+                                                       id="exampleInputAmount" placeholder="" disabled="disabled"
+                                                       value="<%= tag %>">
+                                                <a class="input-group-addon tagClose"
+                                                   href="javascript:void(0);">&times;</a>
+                                            </div>
+                                        </div>
+                                        <%
+                                        }
+                                        });
+                                        } %>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="tags" name="tags" value=""/>
+
+                                <div class='markdown_editor in_editor'>
+                                    <div class='markdown_in_editor'>
+                                        <textarea class='editor' name='content' rows='20'
+                                                  placeholder='文章支持 Markdown 语法, 请注意标记代码'
+                                                ><%= typeof(content) !== 'undefined' && content || '' %></textarea>
+                                    </div>
+                                    <div class='editor_buttons'>
+                                        <input type="submit" class='btn btn-primary' data-loading-text="提交中"
+                                               value="提交">
+                                    </div>
+                                </div>
+
+                                <input type='hidden' name='_csrf' value='<%= csrf %>'>
+                            </fieldset>
+                        </form>
+                </div>
+                <% } %>
+            </div>
+            <div class="hidden-xs col-lg-3">
+                <%- partial('sidebar') %>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- markdown editor -->
+<%- Loader('/public/editor.min.js')
+.js('/public/lib/editor/editor.js')
+.js('/public/lib/webuploader/webuploader.withoutimage.js')
+.js('/public/lib/editor/ext.js')
+.done(assets, config.site_assets_host, config.mini_assets)
+%>
+<%- Loader('/public/js/edit.min.js')
+.js('/public/lib/jquery.autocomplete.js')
+.js('/public/js/post.js')
+.done(assets, config.site_assets_host, config.mini_assets)
+%>
+

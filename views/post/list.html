@@ -1,0 +1,55 @@
+<% if(!posts || posts.length === 0){ %>
+<section class="page-header">
+    <div class="content-body">
+        <h1 class="h4">这里还什么都还没有留下</h1>
+    </div>
+</section>
+<% }else{ %>
+    <% posts.forEach(function (post, index) { %>
+        <% if(index === posts.length - 1){ %>
+        <section class="content-header no-border">
+        <% } else { %>
+        <section class="content-header">
+            <% } %>
+            <div class="content-body">
+                <h2 class="h4"><a href="/p/<%= post._id %>"><%= post.title %></a></h2>
+                <p class="content"><%- post.description%></p>
+                <p>
+                    <a class="link font-13 mr-5" href="/u/<%= post.author.name %>">
+                        <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/><%= post.author.name %>
+                    </a>
+                    <span class="addtion font-13 mr-5"><%= post.friendly_create_at %></span>
+                    <span class="tags">
+                    <% if(post.tags){ %>
+                    <span class=" addtion">
+                    <% post.tags.forEach(function (tag, index) { %>
+                    <% if (tag) {%>
+                    <a class="link font-13" href="/tags/<%= tag %>" title="<%= tag %>相关的文章"><%= tag %></a>
+                    <% }}); %>
+                    </span>
+                    <% }%>
+                    </span>
+                </p>
+            </div>
+            <div class="content-info hidden-xs">
+                <a href="/p/<%= post._id %>#comment">
+                    <div class="content-info-reply <%= (post.reply_count > 0) ? 'reply-plus' : ' reply-0' %> mb-10">
+                        <div class="coontent-info-number"><strong><%= post.reply_count %></strong></div>
+                        <small>评论</small>
+                    </div>
+                </a>
+                <div class="content-info-view">
+                    <div class="coontent-info-number"><strong><%= post.friendly_pv %></strong></div>
+                    <small>浏览</small>
+                </div>
+            </div>
+        </section>
+        <% }); %>
+    <div class="text-center">
+        <%- partial('../paging', {
+        pages: pages,
+        current_page: current_page,
+        base: '/'
+        }) %>
+    </div>
+<% } %>
