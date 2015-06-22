@@ -8,15 +8,20 @@ var config = require('../config');
 var cache = require('../common/cache');
 var xmlbuilder = require('xmlbuilder');
 var multiline = require('multiline');
+var validator = require('validator');
 
 //站点首页
 exports.index = function (req, res, next) {
   var page = req.query.page ? parseInt(req.query.page, 10) : 1;
   page = page > 0 ? page : 1;
+  var tab = validator.trim(req.query.tab);
   var proxy = new eventproxy();
 
   proxy.fail(next);
   var query = {};
+  if (tab) {
+    query.category = tab;
+  }
 
   var limit = config.list_topic_count;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
@@ -35,16 +40,21 @@ exports.index = function (req, res, next) {
 
   Post.getPostsByQuery(query, options, proxy.done('posts'));
 
-  cache.get('pages', proxy.done(function (pages) {
-    if (pages) {
-      proxy.emit('pages', pages);
-    } else {
-      Post.getCountByQuery(query, proxy.done('pages', function (all_count) {
-        var pages = Math.ceil(all_count / limit);
-        cache.set('pages', pages, 1000 * 60 * 5);//5分钟
-        proxy.emit('pages', pages);
-      }));
-    }
+//  cache.get('pages', proxy.done(function (pages) {
+//      if (pages) {
+//        proxy.emit('pages', pages);
+//      } else {
+//      Post.getCountByQuery(query, proxy.done('pages', function (all_count) {
+//        var pages = Math.ceil(all_count / limit);
+//        cache.set('pages', pages, 60);//1分钟
+//        proxy.emit('pages', pages);
+//      }));
+//    }
+//  }));
+
+  Post.getCountByQuery(query, proxy.done('pages', function (all_count) {
+    var pages = Math.ceil(all_count / limit);
+    proxy.emit('pages', pages);
   }));
 
   var hot_options = {limit: config.list_hot_topic_count, sort: '-pv'};
@@ -79,6 +89,7 @@ exports.index = function (req, res, next) {
     function (posts, hots, tags, pages) {
       res.render('index', {
         posts: posts,
+        tab: tab,
         base: '/',
         current_page: page,
         pages: pages,

@@ -1,6 +1,6 @@
 <ul class="pagination">
     <% var base_url = base + (base.indexOf('?') < 0 ? '?' : '&')
-    + 'page='; %>
+    + 'tab=' + (typeof tab !== 'undefined' ? tab : '') + '&page='; %>
     <% if (current_page == 1) { %>
     <li class='disabled'><a>«</a></li>
     <% } else { %>

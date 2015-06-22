@@ -1,7 +1,7 @@
 <div class="article-title">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-xs-12">
+            <div class="col-lg-9  col-xs-12">
                 <div class="page-header" style="/*border-bottom: 1px dashed #ddd;margin:0 0 20px 0;*/">
                     <h1 class="article-header h3"><%= post.title %></h1>
                     <p class="info">
@@ -31,7 +31,7 @@
 <div class="wrap">
     <div class='container'>
         <div class='row'>
-            <div class="col-xs-12 col-lg-8 col-lg-offset-2 overflow-hidden-x">
+            <div class="col-xs-12 col-lg-9 overflow-hidden-x">
                 <article>
                     <% if(typeof(error) !== 'undefined' && error){ %>
                     <div class="alert alert-error">
@@ -50,11 +50,10 @@
                     <% } %>
                 </article>
                 <div class="bdsharebuttonbox">
-                    <a href="#" class="bds_more" data-cmd="more">分享到:</a>
                     <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a>
                     <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博">腾讯微博</a>
-                    </a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间">QQ空间</a>
-                    </a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a>
+                    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间">QQ空间</a>
+                    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a>
                 </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
                 <strong class="mb-10 mt-20 section-title">相关文章</strong>
@@ -77,8 +76,7 @@
                             </div>
                             <div class='editor_buttons'>
                                 <input class='btn btn-primary' type="submit" data-loading-text="回复中.."
-                                       value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"'
-                                : ''%>>
+                                       value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
                             </div>
                             <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
                         </form>
@@ -90,6 +88,15 @@
                     <% } %>
                 </div>
             </div>
+            <aside class="col-sm-12 col-lg-3">
+                <%- partial('./recent', {
+                    recent: recent
+                }) %>
+                <%- partial('./sidebar_ad') %>
+                <%- partial('./hot', {
+                    hots: hots
+                }) %>
+            </aside>
         </div>
     </div>
 </div>
@@ -140,4 +147,4 @@
     });
     // END 编辑器相关
 </script>
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","weixin"],"viewText":"分享到：","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>

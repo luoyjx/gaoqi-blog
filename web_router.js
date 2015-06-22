@@ -46,7 +46,8 @@ router.post('/upload', auth.userRequired, post.upload); //上传图片
 
 router.post('/post/:_id/reply', auth.userRequired, reply.add);//添加评论
 
-router.get('/u/:name', user.index);
+router.get('/u/:name', user.index);//个人主页
+router.get('/u/:name/setting', auth.userRequired, user.setting);//设置
 
 router.get('/tags/:name', tag.getTagByName);//某个标签
 router.get('/tags', tag.index);//所有标签

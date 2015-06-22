@@ -2,7 +2,7 @@
  gaoqi-blog app.js
  */
 
-var heapdump = require('heapdump');
+
 var oneapm = require('oneapm');
 var config = require('./config');
 

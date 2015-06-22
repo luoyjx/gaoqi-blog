@@ -29,15 +29,15 @@ exports.index = function (req, res, next) {
     });
   }
 
-  var events = ['post'/*, 'recent', 'hot'*/];
-  var proxy = EventProxy.create(events, function (post/*, recent_posts, hot_posts*/) {
+  var events = ['post', 'recent', 'hot'];
+  var proxy = EventProxy.create(events, function (post, recent_posts, hot_posts) {
     res.render('post/index', {
       title: post.title + ' - ' + post.author.name,//文章名 - 作者名
       description: post.description,
       tags: post.tags.join(','),
       post: post,
-//      recent: recent_posts,
-//      hots: hot_posts,
+      recent: recent_posts,
+      hots: hot_posts,
       replies: post.replies
     });
   });
@@ -62,23 +62,23 @@ exports.index = function (req, res, next) {
 
     proxy.emit('post', post);
 
-//    var hot_options = {limit: 6, sort: '-pv'};
-//
-//    Post.getHotPosts(hot_options, proxy.done( function(hot_posts){
-//      if(!hot_posts || hot_posts.length === 0){
-//        return proxy.emit('hot', []);
-//      }
-//      proxy.emit('hot', hot_posts);
-//    }));
-//
-//    var recent_options = {limit: 6, sort: '-create_at'};
-//
-//    Post.getPostsByQuery({}, recent_options, proxy.done(function(recent_posts){
-//      if(recent_posts.length === 0){
-//        return proxy.emit('recent', []);
-//      }
-//      proxy.emit('recent', recent_posts);
-//    }));
+    var hot_options = {limit: 6, sort: '-pv'};
+
+    Post.getHotPosts(hot_options, proxy.done( function(hot_posts){
+      if(!hot_posts || hot_posts.length === 0){
+        return proxy.emit('hot', []);
+      }
+      proxy.emit('hot', hot_posts);
+    }));
+
+    var recent_options = {limit: 6, sort: '-create_at'};
+
+    Post.getPostsByQuery({}, recent_options, proxy.done(function(recent_posts){
+      if(recent_posts.length === 0){
+        return proxy.emit('recent', []);
+      }
+      proxy.emit('recent', recent_posts);
+    }));
   }));
 };
 
@@ -89,33 +89,9 @@ exports.index = function (req, res, next) {
  * @param next
  */
 exports.showCreate = function (req, res, next) {
-  var proxy = new EventProxy();
-  var events = ['categories'];
-
-  proxy.assign(events, function (categories) {
-    var tabs = [];//文章分类
-    if (categories && categories.length > 0) {
-      categories.forEach(function (category, index) {
-        tabs.push([category.name, category.show_name]);
-      });
-      cache.set('categories', tabs, 1000 * 60 * 60 * 24 * 7);//7天
-    }
-    res.render('post/edit', {
-      tabs: tabs,
-      title: '发表文章'
-    });
+  res.render('post/edit', {
+    title: '发表文章'
   });
-
-  Category.getAllCategory(function (err, categories) {
-    if (err) {
-      next(err);
-    }
-    if (categories.length === 0) {
-      proxy.emit('categories', null);
-    }
-    proxy.emit('categories', categories);
-  });
-
 };
 
 /**
@@ -149,44 +125,15 @@ exports.create = function (req, res, next) {
     error = '文章内容不能为空';
   }
 
-  var tabs = [];//文章分类
-
-
   if (error) {
     res.status(422);
-    var proxy = new EventProxy();
-    proxy.assign(['categories'], function (categories) {
-      return res.render('post/edit', {
-        edit_error: error,
-        title: '发表文章',
-        content: content,
-        tabs: categories
-      });
-    });
-    //从缓存中读取所有文章分类
-    cache.get('categories', function (err, categories) {
-      if (categories) {
-        tabs = categories;
-        proxy.emit('categories', tabs);
-      } else {
-        //缓存中没有则查询
-        Category.getAllCategory(function (err, categories) {
-          if (err) {
-            next(err);
-          }
-          if (categories && categories.length > 0) {
-            categories.forEach(function (category, index) {
-              tabs.push([category.name, category.show_name]);
-            });
-            cache.set('categories', tabs, 1000 * 60 * 60 * 24 * 7);//7天
-          }
-          proxy.emit('categories', tabs);
-        });
-      }
+    return res.render('post/edit', {
+      edit_error: error,
+      title: '发表文章',
+      content: content
     });
   } else {
     var tagsArr = tags ? tags.split(',') : [];
-
     var tag_ep = new EventProxy();
     tag_ep.fail(next);
 
@@ -230,20 +177,11 @@ exports.create = function (req, res, next) {
  */
 exports.edit = function (req, res, next) {
   var post_id = req.params._id;
-
   var proxy = new EventProxy();
-  var events = ['categories', 'post'];
+  var events = ['post'];
 
-  proxy.assign(events, function (categories, post) {
-    var tabs = [];//文章分类
-    if (categories && categories.length > 0) {
-      categories.forEach(function (category, index) {
-        tabs.push([category.name, category.show_name]);
-      });
-      cache.set('categories', tabs, 1000 * 60 * 60 * 24 * 7);//7天
-    }
+  proxy.assign(events, function (post) {
     res.render('post/edit', {
-      tabs: tabs,
       title: '编辑文章',
       action: 'edit',
       post_id: post._id,
@@ -265,17 +203,6 @@ exports.edit = function (req, res, next) {
       return res.render('notify/notify', {error: '大胆！这篇文章岂是你能编辑的？'});
     }
   });
-
-  Category.getAllCategory(function (err, categories) {
-    if (err) {
-      next(err);
-    }
-    if (categories.length === 0) {
-      proxy.emit('categories', null);
-    }
-    proxy.emit('categories', categories);
-  });
-
 };
 
 /**
@@ -295,7 +222,7 @@ exports.update = function (req, res, next) {
   description = validator.escape(description);
   var content = validator.trim(req.body.content);
   var tags = validator.trim(req.body.tags) ?
-    validator.trim(req.body.tags) : [];
+    validator.trim(req.body.tags) : '';
 
   Post.getPostById(post_id, function (err, post, author) {
     if (!post) {
@@ -304,7 +231,6 @@ exports.update = function (req, res, next) {
     }
 
     if (post.author_id.equals(req.session.user._id) || req.session.user.is_admin) {
-
       // 验证
       var editError;
       if (title === '') {
@@ -317,39 +243,12 @@ exports.update = function (req, res, next) {
       // END 验证
 
       if (editError) {
-        var tabs = [];//文章分类
-
         res.status(422);
-        var proxy = new EventProxy();
-        proxy.assign(['categories'], function (categories) {
-          return res.render('post/edit', {
-            action: 'edit',
-            edit_error: editError,
-            topic_id: post._id,
-            content: content,
-            tabs: categories
-          });
-        });
-        //从缓存中读取所有文章分类
-        cache.get('categories', function (err, categories) {
-          if (categories) {
-            tabs = categories;
-            proxy.emit('categories', tabs);
-          } else {
-            //缓存中没有则查询
-            Category.getAllCategory(function (err, categories) {
-              if (err) {
-                next(err);
-              }
-              if (categories && categories.length > 0) {
-                categories.forEach(function (category, index) {
-                  tabs.push([category.name, category.show_name]);
-                });
-                cache.set('categories', tabs, 1000 * 60 * 60 * 24 * 7);//7天
-              }
-              proxy.emit('categories', tabs);
-            });
-          }
+        return res.render('post/edit', {
+          action: 'edit',
+          edit_error: editError,
+          topic_id: post._id,
+          content: content
         });
       }
 
@@ -368,7 +267,6 @@ exports.update = function (req, res, next) {
           return next(err);
         }
         res.redirect('/p/' + post._id);
-
       });
 
       tag_ep.all('update_done', function () {

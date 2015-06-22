@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <% if(typeof(title) !== 'undefined') {%>
-    <title> <%= title %> - 搞起博客 </title>
+    <title> <%= title %> - 搞起博客 - 国内最小技术博客 </title>
     <% } else { %>
-    <title> <%= config.name %> </title>
+    <title> <%= config.name %> - 国内最小技术博客</title>
     <% } %>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="renderer" content="webkit">
@@ -59,12 +59,16 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a  href="/tags/javascript" >JavaScript</a></li>
-                    <li><a  href="/tags/node.js" >Node.js</a></li>
-                    <li><a  href="/tags/android" >Android</a></li>
-                    <li><a  href="/tags" >标签</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a  href="/" >首页</a></li>
+                    <% config.tabs.forEach(function (pair) {
+                    var value = pair[0];
+                    var text = pair[1];
+                    %>
+                    <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>"><a href="/?tab=<%= value %>" ><%= text %></a></li>
+                    <% }) %>
+                    <li><a  href="/tags" >标签</a></li>
                     <% if (typeof(user) !== 'undefined') { %>
                     <li class="dropdown">
                         <a href="/u/<%= user.name %>" class="dropdown-toggle user-info" data-toggle="dropdown">
@@ -74,6 +78,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="/u/<%= user.name %>"></span>个人主页</a></li>
                             <li><a href="/post/create"></span>发表文章</a></li>
+                            <li><a href="/u/<%= user.name %>/setting"></span>设　置</a></li>
                             <li><a  href="/signout"></span>登　出</a></li>
                         </ul>
                     </li>
@@ -103,27 +108,28 @@
     <div id="page"><div id="gotoTop"><span class="glyphicon glyphicon-menu-up"></span></div></div>
     <footer class="footer">
         <div class="container">
-            <div class="row hidden-xs">
-                <ul class="list-info col-xs-12 col-md-2">
+            <div class="row">
+                <ul class="list-info col-xs-12 col-md-3 hidden-xs">
                     <li class="li-header">常用链接</li>
                     <li><a class="link" href="/tags" target="_blank">标签</a></li>
                     <li><a class="link" href="/tools" target="_blank">在线工具</a></li>
                     <li><a class="link" href="/api" target="_blank">API接口</a></li>
                 </ul>
-                <ul class="list-info col-xs-12 col-md-2">
+                <ul class="list-info col-xs-12 col-md-3 hidden-xs">
                     <li class="li-header">友情链接</li>
                     <li><a class="link" href="https://cnodejs.org/" title="CNode中文社区" target="_blank">Cnode中文社区</a></li>
                     <li><a class="link" href="http://lusongsong.com" title="卢松松博客" target="_blank">卢松松博客</a></li>
                     <li><a class="link" href="http://blog.forgxq.com/" title="ForGxq||程序员 滚雪球" target="_blank">forgxq</a></li>
+                    <li><a class="link" href="http://bbs.forgxq.com/" title="ForGxq社区" target="_blank">forgxq社区</a></li>
                 </ul>
-                <ul class="list-info col-xs-12 col-md-2">
+                <ul class="list-info col-xs-12 col-md-3">
                     <li class="li-header">关注我</li>
                     <li><a class="link" href="/rss" target="_blank">RSS订阅</a></li>
                     <li><a class="link" href="http://weibo.com/yanjixiong" target="_blank">新浪微博</a></li>
                     <li><a class="link" href="https://github.com/luoyjx" target="_blank">GitHub</a></li>
                     <li><a class="link" href="mailto:yjk99@qq.com">yjk99@qq.com</a></li>
                 </ul>
-                <ul class="list-unstyled col-xs-12 col-md-4">
+                <ul class="list-unstyled col-xs-12 col-md-3">
                     <li class="li-header">关于本站</li>
                     <li>
                       <p class="text-muted env-info">

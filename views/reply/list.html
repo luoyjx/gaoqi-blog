@@ -10,7 +10,7 @@
                   </a>
                   <a href="/u/<%= reply.author.login_name %>"><strong><%= reply.author.login_name %></strong></a>
                   <span class="reply-time ml-10"><%= reply.friendly_create_at%></span>
-                  <a class="floor" href="#<%= reply._id %>"><%= index + 1 %>楼</a>
+                  <a class="floor" href="#<%= reply._id %>"></a>
                 </div>
             </div>
             <div class='reply-content from-<%= reply.author.login_name %>'>

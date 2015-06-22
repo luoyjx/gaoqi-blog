@@ -11,6 +11,13 @@
 @light-gray-backgroud : #e9e9e9;
 @tag-normal-backgroud : #DDFFFF;
 
+.common-transition (@time) {
+  transition: all @time;
+  -moz-transition: all @time; /* Firefox 4 */
+  -webkit-transition: all @time; /* Safari 和 Chrome */
+  -o-transition: all @time; /* Opera */
+}
+
 // 通用
 html,
 body {
@@ -20,9 +27,11 @@ body {
 }
 a{
   color: @font-default-color;
+  .common-transition(.5s);
   &:hover{
     color: @blue;
     text-decoration: none;
+    .common-transition(.5s);
   }
 }
 h3, .h3{
@@ -61,11 +70,16 @@ h4, .h4 {
   margin: 0; 
 }
 
-.nav>li> {
-  a.user-info {
-    padding: 10px 15px;
-    @media (max-width: 768px) {
-      padding: 10px 0 10px 15px;
+.nav {
+  .dropdown  {
+    a.user-info {
+      padding: 10px 15px;
+      @media (max-width: 768px) {
+        padding: 10px 0 10px 15px;
+      }
+    }
+    .dropdown-menu {
+      min-width: 120px;
     }
   }
 }
@@ -113,65 +127,65 @@ h4, .h4 {
       .inner {
         padding-top: 40px;
         padding-bottom: 40px;
+      }
 
-        //文章发表
-        select {
+      //文章发表
+      select {
+        width: 150px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid @lighter-gray;
+        background-color: @white;
+        border-radius: 4px;
+      }
+
+      textarea#title {
+        width: 98%;
+        margin-bottom: 1em;
+        resize: none;
+        height: 30px;
+        line-height: 20px;
+        border: 1px solid @lighter-gray;
+        border-radius: 4px;
+        vertical-align: middle;
+        padding: 4px 6px;
+      }
+
+      textarea#description {
+        width: 98%;
+        margin-bottom: 1em;
+        resize: none;
+        line-height: 20px;
+        border: 1px solid @lighter-gray;
+        border-radius: 4px;
+        vertical-align: middle;
+        padding: 4px 6px;
+      }
+
+      select#tab-value {
+        margin: 0 0 10px 0;
+      }
+
+      .tag-title {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+      }
+      .input-tags {
+        display: inline-block;
+        .form-group {
+          margin-right: 10px;
+          max-width: 150px;
+          text-overflow: ellipsis;
+          display: inline-block;
+          .form-control {
+            z-index: 0;
+          }
+        }
+        .tagText {
+          border-radius: 4px;
           width: 150px;
-          height: 30px;
-          line-height: 30px;
-          border: 1px solid @lighter-gray;
-          background-color: @white;
-          border-radius: 4px;
-        }
-
-        textarea#title {
-          width: 98%;
-          margin-bottom: 1em;
-          resize: none;
-          height: 30px;
-          line-height: 20px;
-          border: 1px solid @lighter-gray;
-          border-radius: 4px;
-          vertical-align: middle;
-          padding: 4px 6px;
-        }
-
-        textarea#description {
-          width: 98%;
-          margin-bottom: 1em;
-          resize: none;
-          line-height: 20px;
-          border: 1px solid @lighter-gray;
-          border-radius: 4px;
-          vertical-align: middle;
-          padding: 4px 6px;
-        }
-
-        select#tab-value {
           margin: 0 0 10px 0;
-        }
-
-        .tag-title {
-          display: inline-block;
-          vertical-align: top;
-          margin-top: 10px;
-        }
-        .input-tags {
-          display: inline-block;
-          .form-group {
-            margin-right: 10px;
-            max-width: 150px;
-            text-overflow: ellipsis;
-            display: inline-block;
-            .form-control {
-              z-index: 0;
-            }
-          }
-          .tagText {
-            border-radius: 4px;
-            width: 150px;
-            margin: 0 0 10px 0;
-          }
         }
       }
 
@@ -215,7 +229,7 @@ h4, .h4 {
         }
         .content-body {
           display: inline-block;
-          width: 90%;
+          width: 92%;
           @media (max-width: 768px) {
             width: 100%;
           }
@@ -256,7 +270,7 @@ h4, .h4 {
         color: @font-default-color;
         &:hover {
           color: @blue;
-          text-decoration: underline;
+          //text-decoration: underline;
         }
       }
       .addtion{
@@ -264,7 +278,7 @@ h4, .h4 {
         > a{
           background-color: @tag-normal-backgroud;
           color: @blue;
-          padding: 2px 5px 2px 5px;
+          padding: 2px 5px;
           &:hover {
             background-color: @blue;
             color: @white;
@@ -281,6 +295,7 @@ h4, .h4 {
 
       .tag-list {
         margin-bottom: 14px;
+        padding-right: 0px;
         .tag-container {
           position: relative;
           height: 170px;
@@ -313,7 +328,7 @@ h4, .h4 {
           background-color: #f6f6f6;
         }
       }
-      a.tag{
+      .tag{
         padding:0 8px;
         display:inline-block;
         background-color: @tag-normal-backgroud;
@@ -325,6 +340,12 @@ h4, .h4 {
           color: @white;
           text-decoration: none;
         }
+      }
+      .tag-sm {
+        padding: 0 4px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 12px;
       }
       .tag-more {
         cursor: auto;
@@ -422,6 +443,15 @@ h4, .h4 {
           padding: 30px 0;
         }
       }
+
+      //用户主页及设置选项卡
+      .nav-tabs {
+        >li {
+          >a {
+            border-radius: 0;
+          }
+        }
+      }
     }
   }
 }
@@ -485,6 +515,8 @@ div pre.prettyprint {
     margin: 20px 0 10px;
     padding-bottom: 8px;
     font-size: 22px;
+    font-weight: 700;
+    border-bottom: 2px solid @divider-line;
   }
 
   .h2, h2 {
@@ -556,6 +588,59 @@ div pre.prettyprint {
   font-size: 15px;
   min-height: 200px;
   word-break: break-all;
+
+  .h1, h1 {
+    color: @font-default-color;
+    margin: 20px 0 10px;
+    padding-bottom: 8px;
+    font-size: 22px;
+    font-weight: 700;
+    border-bottom: 2px solid @divider-line;
+  }
+
+  .h2, h2 {
+    color: @font-default-color;
+    margin: 20px 0 10px;
+    font-size: 18px;
+    padding-bottom: 5px;
+    font-weight: 700;
+  }
+
+  .h3, h3 {
+    color: @font-default-color;
+    margin: 16px 0 10px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .h4, h4 {
+    color: @font-default-color;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  blockquote {
+    font-size: 14px;
+    p {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    white-space: pre-wrap; /* CSS3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+    margin: 1em 0;
+    line-height: 180%;
+  }
+  a {
+    color: @blue;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   p {
     white-space: pre-wrap; /* CSS3 */
