@@ -9,6 +9,7 @@ var UserSchema = new Schema({
   login_name: {type: String},
   pwd: {type: String},
   email: {type: String},
+  url: {type: String},//个人网站
   location: {type: String},
   signature: {type: String},//签名?
   weibo: {type: String},

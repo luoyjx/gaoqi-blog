@@ -13,18 +13,18 @@
             <% } %>
             <div class="content-body">
                 <h2 class="h4"><a href="/p/<%= post._id %>"><%= post.title %></a></h2>
-                <p class="content"><%- post.description%></p>
+                <p class="content hidden-xs"><%- post.description%></p>
                 <p>
-                    <a class="link font-13 mr-5" href="/u/<%= post.author.name %>">
+                    <a class="link font-12 mr-5" href="/u/<%= post.author.name %>">
                         <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/><%= post.author.name %>
                     </a>
-                    <span class="addtion font-13 mr-5"><%= post.friendly_create_at %></span>
+                    <span class="addtion font-12 mr-5"><%= post.friendly_create_at %></span>
                     <span class="tags">
                     <% if(post.tags){ %>
                     <span class=" addtion">
                     <% post.tags.forEach(function (tag, index) { %>
                     <% if (tag) {%>
-                    <a class="link font-13" href="/tags/<%= tag %>" title="<%= tag %>相关的文章"><%= tag %></a>
+                    <a class="link tag-sm" href="/tags/<%= tag %>" title="<%= tag %>相关的文章"><%= tag %></a>
                     <% }}); %>
                     </span>
                     <% }%>
@@ -49,7 +49,8 @@
         <%- partial('../paging', {
         pages: pages,
         current_page: current_page,
-        base: '/'
+        base: base,
+        tab: tab || ''
         }) %>
     </div>
 <% } %>

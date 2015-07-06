@@ -93,7 +93,6 @@ exports.signIn = function (req, res, next) {
           break;
         }
       }
-      console.log("login done to /");
       res.redirect(refer);
     }));
   });
@@ -190,7 +189,7 @@ exports.signup = function (req, res, next) {
 exports.signout = function (req, res, next) {
   req.session.destroy();
   res.clearCookie(config.auth_cookie_name, { path: '/' });
-  res.redirect('/');
+  res.redirect('back');
 };
 
 /**

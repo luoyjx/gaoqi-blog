@@ -124,7 +124,32 @@ exports.getRepliesByAuthorId = function (authorId, opt, callback) {
     callback = opt;
     opt = null;
   }
-  Reply.find({author_id: authorId}, {}, opt, callback);
+  Reply.find({author_id: authorId}, {}, opt, function(err, replies) {
+    if (err) {
+      return callback(err, null);
+    }
+    if (!replies || replies.length === 0) {
+      return callback(null, []);
+    }
+    var proxy = new EventProxy();
+    proxy.after('reply_author_find', replies.length, function () {
+      callback(null, replies);
+    });
+    for (var j = 0, len = replies.length; j < len; j++) {
+      (function (i) {
+        var author_id = replies[i].author_id;
+        User.getUserById(author_id, function (err, author) {
+          if (err) {
+            return callback(err);
+          }
+          replies[i].author = author || { _id: '' };
+          replies[i].friendly_create_at = tools.formatDate(replies[i].create_at, true);
+          proxy.emit('reply_author_find');
+        });
+      })(j);
+    }
+
+  });
 };
 
 /**

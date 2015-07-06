@@ -62,7 +62,11 @@ function tagFollowAction () {
 }
 
 $(document).ready(function () {
-  $('nav').scrollToFixed();
+  if(browserRedirect() != "phone"){
+    //$('.ad-right').scrollToFixed({ marginTop: 60});
+  } else {
+    $('nav').scrollToFixed();
+  }
   $('.markdown-text a,.reply-list a').attr('target', '_blank');
   var $hm_header = $('.hm-t-header');
   $hm_header.css('padding', 0);

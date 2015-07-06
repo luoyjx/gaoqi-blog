@@ -113,5 +113,5 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
  * @returns {string} avatar地址
  */
 exports.makeGravatar = function () {
-  return 'http://static.gaoqixhb.com/avatar/default.png';
+  return config.site_static_host + '/avatar/default.png';
 };
