@@ -32,15 +32,18 @@ exports.searchTagsByName = function (req, res, next) {
     var exists = false;
     var container = [];
     tags.forEach(function (tag) {
-      if (tag.name == name) {
+      if (tag.name.toLowerCase() == name) {
         exists = true;
       }
       container.push({name: tag.name});
     });
     if (!exists) {
+      if (container.length === 10) {
+        container.pop();
+      }
       container.unshift({name: name});
     }
-    return res.end(callback + "(" + JSON.stringify(container) + ")");
+    return res.end(callback + '(' +JSON.stringify(container) + ')');
   })
 };
 
