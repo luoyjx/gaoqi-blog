@@ -47,6 +47,11 @@ router.post('/upload', auth.userRequired, post.upload); //上传图片
 router.post('/post/:_id/reply', auth.userRequired, reply.add);//添加评论
 
 router.get('/u/:name', user.index);//个人主页
+<<<<<<< Updated upstream
+=======
+router.get('/u/:name/top', user.top);//热门文章
+router.get('/u/:name/replies', user.replies);//发表的回复
+>>>>>>> Stashed changes
 router.get('/u/:name/setting', auth.userRequired, user.setting);//设置
 
 router.get('/tags/:name', tag.getTagByName);//某个标签
