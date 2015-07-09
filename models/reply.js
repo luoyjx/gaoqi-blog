@@ -8,8 +8,8 @@ var config = require('../config');
 
 var ReplySchema = new Schema({
   content: { type: String },
-  post_id: { type: ObjectId},
-  author_id: { type: ObjectId },
+  post_id: { type: ObjectId, ref: 'Post'},
+  author_id: { type: ObjectId, ref: 'User'},
   reply_id: { type: ObjectId },
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now },
