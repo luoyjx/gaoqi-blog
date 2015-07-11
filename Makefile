@@ -20,4 +20,6 @@ start: install build
 restart: install build
 	@nohup ./node_modules/.bin/pm2 restart "gaoqiblog" >> gaoqi-blog.log 2>&1 &
 
-.PHONY: install build start restart
+reboot:
+	@nohup ./node_modules/.bin/pm2 restart "gaoqiblog" >> gaoqi-blog.log 2>&1 &
+.PHONY: install build start restart reboot

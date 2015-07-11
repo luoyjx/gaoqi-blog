@@ -18,6 +18,20 @@
   -o-transition: all @time; /* Opera */
 }
 
+//tag item
+.tag-item{
+  padding:0 8px;
+  display:inline-block;
+  font-size: 13px;
+  line-height: 22px;
+  background-color: @tag-normal-backgroud;
+  color: @blue;
+  &:hover {
+    background-color: @blue;
+    color: @white;
+  }
+}
+
 // 通用
 html,
 body {
@@ -52,6 +66,12 @@ h4, .h4 {
   }
 }
 
+.breadcrumb {
+  padding: 0 15px;
+  margin-bottom: 0;
+  background-color: transparent;
+}
+
 // 页头
 .logo{
   img {
@@ -82,6 +102,35 @@ h4, .h4 {
       min-width: 120px;
     }
   }
+  /*li {
+    a.menu:after {
+	position: absolute;
+	top: 44px;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: #26a9e1;
+	content: '';
+	opacity: 0;
+	-webkit-transition: height .5s,opacity .5s,-webkit-transform .5s;
+	transition: height .5s,opacity .5s,transform .5s;
+    }
+    a.menu:hover::after {
+	position: absolute;
+	top: 44px;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: #26a9e1;
+	content: '';
+	opacity: 1;
+	-webkit-transition: height .5s,opacity .5s,-webkit-transform .5s;
+	transition: height .5s,opacity .5s,transform .5s;
+	-webkit-transform: translateY(5px);
+	-ms-transform: translateY(5px);
+	transform: translateY(5px);
+    }
+  }*/
 }
 
 .user-avatar {
@@ -202,6 +251,9 @@ h4, .h4 {
 
       .article-tags {
         margin-bottom: 10px;
+        .tag {
+          .tag-item;
+        }
       }
 
       .font-overhidden {
@@ -212,7 +264,7 @@ h4, .h4 {
       }
       .article-header {
         margin-bottom: 20px;
-        margin-top: 30px;
+        margin-top: 10px;
       }
       .article-header-warpper {
         margin:30px 0 20px 20px;
@@ -228,15 +280,15 @@ h4, .h4 {
           color: #777;
         }
         .content-body {
-          display: inline-block;
-          width: 92%;
+          //display: inline-block;
+          margin-left: 55px;
           @media (max-width: 768px) {
-            width: 100%;
+            margin-left: 0;
           }
         }
         .content-info {
           float: left;
-          padding: 10px 15px 0 0;
+          padding: 0 15px 0 0;
           text-align: center;
           .reply-0 {
             color: @addtion-default-color;
@@ -328,19 +380,7 @@ h4, .h4 {
           background-color: #f6f6f6;
         }
       }
-      .tag{
-        padding:0 8px;
-        display:inline-block;
-        background-color: @tag-normal-backgroud;
-        color: @blue;
-        font-size: 13px;
-        line-height: 22px;
-        &:hover {
-          background-color: @blue;
-          color: @white;
-          text-decoration: none;
-        }
-      }
+
       .tag-sm {
         padding: 0 4px;
         height: 18px;
@@ -356,6 +396,9 @@ h4, .h4 {
       .tagPopup {
         margin: 0 2px 5px 0;
         display:inline-block;
+        .tag {
+          .tag-item;
+        }
       }
       // 右侧边栏
       .sidebox {
@@ -583,6 +626,57 @@ div pre.prettyprint {
 
 }
 
+.article-content table,
+.replies table {
+  padding: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 100%;
+  font: inherit;
+}
+
+.article-content table tr,
+.replies table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.article-content table tr:nth-child(2n),
+.replies table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.article-content table tr th,
+.replies table tr th {
+  font-weight: bold;
+}
+
+.article-content table tr th,
+.article-content table tr td,
+.replies table tr th,
+.replies table tr td {
+  border: 1px solid #ccc;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+
+.article-content table tr th > :first-child,
+.article-content table tr td > :first-child,
+.replies table tr th > :first-child,
+.replies table tr td > :first-child {
+  margin-top: 0;
+}
+
+.article-content table tr th > :last-child,
+.article-content table tr td > :last-child,
+.replies table tr th > :last-child,
+.replies table tr td > :last-child {
+  margin-bottom: 0;
+}
+
 .preview {
   padding: 0.5em;
   font-size: 15px;
@@ -808,12 +902,12 @@ textarea#title {
   .container {
     width: 1050px;
   }
-  .navbar .nav > li .dropdown-menu {
-    margin: 0;
-  }
-  .navbar .nav > li:hover .dropdown-menu {
-    display: block;
-  }
+//  .navbar .nav > li .dropdown-menu {
+//    margin: 0;
+//  }
+//  .navbar .nav > li:hover .dropdown-menu {
+//    display: block;
+//  }
   .article-content {
     margin-left: 20px;
   }

@@ -22,6 +22,9 @@
     <meta name="keywords" content="<%= config.keywords %>" />
     <% } %>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <link rel="dns-prefetch" href="http://bdimg.share.baidu.com" />
+    <link rel="dns-prefetch" href="http://hm.baidu.com" />
     <link title="RSS" type="application/rss+xml" rel="alternate" href="/rss"/>
     <% if (config.site_icon) { %>
     <link rel="icon" href="<%- staticFile(config.site_icon) %>" type="image/x-icon"/>
@@ -31,9 +34,6 @@
     .css('/public/lib/bootstrap/dist/css/bootstrap.css')
     .css('/public/css/common.less')
     .css('/public/css/gotop.css')
-    .css('/public/lib/editor/editor.css')
-    .css('/public/lib/webuploader/webuploader.css')
-    .css('/public/lib/code-prettify/prettify.css')
     .done(assets, config.site_assets_host, config.mini_assets)
     %>
 
@@ -61,19 +61,18 @@
                 <ul class="nav navbar-nav">
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a  href="/" >首页</a></li>
+                    <li><a class="menu" href="/" >首页</a></li>
                     <% config.tabs.forEach(function (pair) {
                     var value = pair[0];
                     var text = pair[1];
                     %>
-                    <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>"><a href="/?tab=<%= value %>" ><%= text %></a></li>
+                    <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>"><a class="menu" href="/?tab=<%= value %>" ><%= text %></a></li>
                     <% }) %>
-                    <li><a  href="/tags" >标签</a></li>
+                    <li><a class="menu" href="/tags" >标签</a></li>
                     <% if (typeof(user) !== 'undefined') { %>
                     <li class="dropdown">
-                        <a href="/u/<%= user.name %>" class="dropdown-toggle user-info" data-toggle="dropdown">
-                          <span class="mr-10"><%=user.name%></span>
-                          <img class="user-avatar" src="<%=user.avatar %>" alt="<%=user.name%>" />
+                        <a href="/u/<%= user.name %>" class="dropdown-toggle" data-toggle="dropdown">
+                          <span class="mr-10"><%=user.name%><b class="caret"></b></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="/u/<%= user.name %>"></span>个人主页</a></li>

@@ -111,7 +111,9 @@ exports.create = function (req, res, next) {
   var tags = validator.trim(req.body.tags);
 
   var error;
-  if (title === '') {
+  if (category === '') {
+    error = '请选择一个分类';
+  } else if (title === '') {
     error = '标题不能为空';
   } else if (title.length < 5 || title.length > 100) {
     error = '标题字数在5到100之间';

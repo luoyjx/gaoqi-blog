@@ -2,12 +2,16 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-9  col-xs-12">
-                <div class="page-header" style="/*border-bottom: 1px dashed #ddd;margin:0 0 20px 0;*/">
+                <div class="page-header" style="margin: 20px 0;">
+                    <ol class="breadcrumb" style="padding-left: 0;">
+                        <li><a href="/">首页</a></li>
+                        <li class="active">文章</li>
+                    </ol>
                     <h1 class="article-header h3"><%= post.title %></h1>
                     <p class="info">
                         <a class="link font-13 mr-10" href="/u/<%= post.author.login_name %>">
-                            <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/><strong class="user-name"><%=
-                            post.author.name %></strong>
+                            <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/>
+                            <strong class="user-name"><%= post.author.login_name %></strong>
                         </a>
                         <span class="addtion font-13 mr-10"><%= post.frendly_create_at %></span>
                         <span class="addtion font-13 mr-10"><%= post.pv %>次阅读</span>
@@ -28,6 +32,13 @@
         </div>
     </div>
 </div>
+<!-- style -->
+<%- Loader('/public/css/post.css')
+.css('/public/lib/editor/editor.css')
+.css('/public/lib/webuploader/webuploader.css')
+.css('/public/lib/code-prettify/prettify.css')
+.done(assets, config.site_assets_host, config.mini_assets)
+%>
 <div class="wrap">
     <div class='container'>
         <div class='row'>
@@ -56,8 +67,6 @@
                     <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a>
                 </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
-                <strong class="mb-10 mt-20 section-title">相关文章</strong>
-                <script>document.write(unescape('%3Cdiv id="hm_t_43883"%3E%3C/div%3E%3Cscript charset="utf-8" src="http://crs.baidu.com/t.js?siteId=59acccd43801ac1b47f47fd07d7a479a&planId=43883&async=0&referer=') + encodeURIComponent(document.referrer) + '&title=' + encodeURIComponent(document.title) + '&rnd=' + (+new Date) + unescape('"%3E%3C/script%3E'));</script>
                 <div class="replies panel">
                     <strong class="mb-20 section-title"> </strong>
                     <%- partial('../reply/list', {

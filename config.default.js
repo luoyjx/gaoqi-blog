@@ -51,6 +51,8 @@ var config = {
   list_hot_topic_count: 10,
   //热门标签显示的数量
   list_hot_tag_count: 10,
+  //显示最新评论条数
+  list_latest_replies_count: 10,
 
   // 限制发帖时间间隔，单位：毫秒
   post_interval: 2000,
@@ -109,7 +111,14 @@ var config = {
   upload: {
     path: path.join(__dirname, 'public/upload/'),
     url: '/public/upload/'
-  }
+  },
+
+  // 分类
+  tabs: [
+    ['program', '经验'],
+    ['share', '分享'],
+    ['chat', '闲聊']
+  ]
 
 };
 

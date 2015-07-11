@@ -1,0 +1,17 @@
+<% if(replies && replies.length > 0){ %>
+<div class="page-header">
+    <h4>最新评论</h4>
+</div>
+<ul class="list-unstyled list-overhidden">
+    <% replies.forEach(function(reply, index){%>
+    <% if (reply.post_id && reply.post_id.title) { %>
+    <li class="font-14 mb-10">
+        <%= reply.author_id.name %> on
+        <a href="/p/<%= reply.post_id._id %>#<%= reply._id %>" >
+            <%= reply.post_id.title %>
+        </a>
+    </li>
+    <% } %>
+    <% }); %>
+</ul>
+<% } %>

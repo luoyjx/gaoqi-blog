@@ -4,11 +4,13 @@
 var eventproxy = require('eventproxy');
 var Post = require('../dao').Post;
 var Tag = require('../dao').Tag;
+var Reply = require('../dao').Reply;
 var config = require('../config');
 var cache = require('../common/cache');
 var xmlbuilder = require('xmlbuilder');
 var multiline = require('multiline');
 var validator = require('validator');
+var _ = require('lodash');
 
 //站点首页
 exports.index = function (req, res, next) {
@@ -16,50 +18,31 @@ exports.index = function (req, res, next) {
   page = page > 0 ? page : 1;
   var tab = validator.trim(req.query.tab);
   var proxy = new eventproxy();
+  var tabName;//分类名
 
   proxy.fail(next);
   var query = {};
   if (tab) {
     query.category = tab;
+    var kv = _.find(config.tabs, function(kv) {
+      return kv[0] === tab;
+    });
+    tabName = kv ? kv[1] + '版块' : '首页';
   }
 
   var limit = config.list_topic_count;
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
 
-  //取文章
-//  cache.get('posts-' + page, proxy.done(function (posts) {
-//    if (posts) {
-//      proxy.emit('posts', posts);
-//    } else {
-//      Post.getPostsByQuery(query, options, proxy.done('posts', function (posts) {
-//        cache.set('posts-' + page, posts, 1000 * 60 * 5);//5分钟
-//        return posts;
-//      }));
-//    }
-//  }));
-
   Post.getPostsByQuery(query, options, proxy.done('posts'));
-
-//  cache.get('pages', proxy.done(function (pages) {
-//      if (pages) {
-//        proxy.emit('pages', pages);
-//      } else {
-//      Post.getCountByQuery(query, proxy.done('pages', function (all_count) {
-//        var pages = Math.ceil(all_count / limit);
-//        cache.set('pages', pages, 60);//1分钟
-//        proxy.emit('pages', pages);
-//      }));
-//    }
-//  }));
 
   Post.getCountByQuery(query, proxy.done('pages', function (all_count) {
     var pages = Math.ceil(all_count / limit);
     proxy.emit('pages', pages);
   }));
 
+  //取热门文章
   var hot_options = {limit: config.list_hot_topic_count, sort: '-pv'};
 
-  //取热门文章
   cache.get('hots', proxy.done(function (hots) {
     if (hots) {
       proxy.emit('hots', hots);
@@ -71,9 +54,9 @@ exports.index = function (req, res, next) {
     }
   }));
 
+  //取热门标签
   var tag_options = {limit: config.list_hot_tag_count, sort: '-post_count'};
 
-  //取热门标签
   cache.get('hot_tags', proxy.done(function (tags) {
     if (tags) {
       proxy.emit('tags', tags);
@@ -85,8 +68,14 @@ exports.index = function (req, res, next) {
     }
   }));
 
-  proxy.assign(['posts', 'hots', 'tags', 'pages'],
-    function (posts, hots, tags, pages) {
+  //取最新评论
+  var reply_query = {};
+  var reply_options = {limit: config.list_latest_replies_count, sort: '-create_at'};
+
+  Reply.getRepliesByQuery(reply_query, reply_options, proxy.done('latest_replies'));
+
+  proxy.assign(['posts', 'hots', 'tags', 'latest_replies', 'pages'],
+    function (posts, hots, tags, replies, pages) {
       res.render('index', {
         posts: posts,
         tab: tab,
@@ -95,7 +84,8 @@ exports.index = function (req, res, next) {
         pages: pages,
         hots: hots,
         tags: tags,
-        title: '首页'
+        replies: replies,
+        title: tabName
       });
     });
 };

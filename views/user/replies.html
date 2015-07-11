@@ -1,0 +1,36 @@
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <div class="col-xs-12 col-lg-9">
+                <ol class="breadcrumb" style="padding-left: 0;">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/u/<%= author %>">个人主页</a></li>
+                    <li class="active"><%= author %>最新发表的评论</li>
+                </ol>
+                <div role="tabpanel">
+                    <ul class="nav nav-tabs mt-20" >
+                        <li >
+                            <a href="/u/<%= author %>" >最新文章</a>
+                        </li>
+                        <li >
+                            <a href="/u/<%= author %>/top" >最热文章</a>
+                        </li>
+                        <li  class="active">
+                            <a href="/u/<%= author %>/replies" >参与话题</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane replies active" >
+                            <%- partial('../reply/list', {
+                            replies: from_author
+                            }) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="col-xs-12 col-lg-3">
+
+            </section>
+        </div>
+    </div>
+</div>

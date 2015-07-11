@@ -2,6 +2,11 @@
     <div class="container tag-index">
         <div class="row">
             <div class="col-lg-12">
+                <ol class="breadcrumb" style="padding-left: 0;">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/tags">标签</a></li>
+                    <li class="active"><%= tag.name %></li>
+                </ol>
                 <h1 class="article-header h3"><%= tag.name %></h1>
                 <p class="info">
                     <span class="addtion font-13"><%= tag.short_desc ? tag.short_desc : '还没有添加描述信息' %></span>
