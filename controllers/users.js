@@ -40,7 +40,7 @@ exports.index = function (req, res, next) {
         latest: latest,
         pages: pages,
         current_page: page,
-        title: user.name + '的个人主页'
+        title: user.login_name + '的个人主页'
       });
     });
     proxy.fail(next);
