@@ -100,7 +100,7 @@ exports.getPostsByQuery = function (query, opt, callback) {
 
     posts.forEach(function(post, i){
       User.getUserById(post.author_id, proxy.group('post_ready', function(author){
-        post = post.toObject();
+        //post = post.toObject();
         post.author = author;
         post.friendly_create_at = tools.formatDate(post.create_at, true);
         post.friendly_pv = tools.formatPV(post.pv);
