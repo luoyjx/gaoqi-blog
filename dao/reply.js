@@ -9,7 +9,6 @@ var Reply = models.Reply;
 var EventProxy = require('eventproxy');
 var tools = require('../common/tools');
 var User = require('./user');
-var Post = require('./post');
 
 /**
  * 获取一条回复信息
@@ -47,28 +46,6 @@ exports.getReplyById = function (id, callback) {
       return callback(null, reply);
     });
   });
-};
-
-/**
- * 根据条件查询回复
- * @param query
- * @param option
- * @param cb
- */
-exports.getRepliesByQuery = function(query, option, cb) {
-  Reply
-    .find(query, {}, option)
-    .populate('post_id')
-    .populate('author_id')
-    .exec(function(err, replies) {
-      if (err) {
-        cb(err, null);
-      }
-      if (replies.length === 0) {
-        cb(null, []);
-      }
-      return cb(null, replies);
-    });
 };
 
 /**
