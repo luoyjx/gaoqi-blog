@@ -8,7 +8,7 @@ var validator = require('validator');
 var config = require('../config');
 
 /**
- * 从github跳回的回调
+ * github登陆回调接口
  * @param req
  * @param res
  * @param next
@@ -44,7 +44,7 @@ exports.callback = function (req, res, next) {
 };
 
 /**
- * 新建页面
+ * 创建新用户页面
  * @param req
  * @param res
  * @param next
@@ -54,7 +54,7 @@ exports.new = function (req, res, next) {
 };
 
 /**
- * 通过github创建账号
+ * 通过github创建新用户
  * @param req
  * @param res
  * @param next
