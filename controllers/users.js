@@ -90,7 +90,7 @@ exports.top  = function(req, res, next) {
         top: top,
         pages: pages,
         current_page: page,
-        title: user.name + '的热门文章'
+        title: user.login_name + '的热门文章'
       });
     });
     proxy.fail(next);
@@ -138,7 +138,7 @@ exports.replies = function(req, res, next){
       res.render('user/replies', {
         author: user.login_name,
         from_author: from_author,
-        title: user.name + '最近的评论'
+        title: user.login_name + '最近的评论'
       });
     });
     proxy.fail(next);
