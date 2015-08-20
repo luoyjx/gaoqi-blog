@@ -16,3 +16,6 @@ windows下需要安装VS express
 * 使用`node app.js`运行，推荐`pm2`管理应用进程，`npm i -g pm2` 安装后使用`make start`
 * `make restart`重新编译重启，`make reboot`直接重启
 * 浏览`http://localhost:3001`
+
+## LICENSE
+MIT
