@@ -1,6 +1,13 @@
 <div class="wrap">
     <div class="container">
         <div class="row">
+            <div class="alert" role="alert" style="margin: 0 15px;">
+                如果你有感兴趣的话题或者经验，也可以在这里  <a href="/post/create" class="btn btn-info btn-sm">发表</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
             <article class="col-sm-12 col-lg-9">
                 <%- partial('post/list', {
                 posts: posts,
@@ -11,28 +18,39 @@
                 }) %>
             </article>
             <aside class="col-sm-12 col-lg-3 mt-5">
-                <%- partial('post/hot', {
-                hots: hots
-                }) %>
-                <div class="page-header pt-10">
-                    <h4>热门标签<a class='tag-more' href='/tags'>»</a></h4>
+                <div>
+                    <%- partial('post/hot', {
+                    hots: hots
+                    }) %>
                 </div>
-                <%
-                if(typeof(tags) !== 'undefined' && tags.length > 0){
-                tags.forEach(function(tag, index){
-                %>
-                <span class="tagPopup"><a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name
+                <div>
+                    <div class="page-header">
+                        <h4>热门标签<a class='tag-more' href='/tags'> »</a></h4>
+                    </div>
+                    <%
+                    if(typeof(tags) !== 'undefined' && tags.length > 0){
+                    tags.forEach(function(tag, index){
+                    %>
+                    <span class="tagPopup"><a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name
                     %></a></span>
-                <%
-                });
-                }else{ %>
-                <ul class="list-unstyled line-distance list-overhidden">
-                    <li class="font-14 mb-10">暂无标签</li>
-                </ul>
-                <% } %>
-                <%- partial('reply/side_list', {
-                replies: replies,
-                }) %>
+                    <%
+                    });
+                    }else{ %>
+                    <ul class="list-unstyled line-distance list-overhidden">
+                        <li class="font-12 mb-10">暂无标签</li>
+                    </ul>
+                    <% } %>
+                </div>
+                <div>
+                  <%- partial('user/user_sidebar_widget', {
+                  users: recent_reg,
+                  }) %>
+                </div>
+                <div>
+                    <%- partial('reply/side_list', {
+                    replies: replies,
+                    }) %>
+                </div>
             </aside>
         </div>
     </div>

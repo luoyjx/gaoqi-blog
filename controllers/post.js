@@ -7,9 +7,9 @@ var EventProxy = require('eventproxy');
 var Post = require('../dao').Post;
 var User = require('../dao').User;
 var Tag = require('../dao').Tag;
-var Category = require('../dao').Category;
 var Reply = require('../dao').Reply;
 var tools = require('../common/tools');
+var at = require('../common/at');
 var config = require('../config');
 var uploader = require('../common/upload');
 var cache = require('../common/cache');
@@ -32,7 +32,7 @@ exports.index = function (req, res, next) {
   var events = ['post', 'recent', 'hot'];
   var proxy = EventProxy.create(events, function (post, recent_posts, hot_posts) {
     res.render('post/index', {
-      title: post.title + ' - ' + post.author.name,//文章名 - 作者名
+      title: post.title + ' - ' + post.author.login_name,//文章名 - 作者名
       description: post.description,
       tags: post.tags.join(','),
       post: post,
@@ -64,21 +64,11 @@ exports.index = function (req, res, next) {
 
     var hot_options = {limit: 6, sort: '-pv'};
 
-    Post.getHotPosts(hot_options, proxy.done( function(hot_posts){
-      if(!hot_posts || hot_posts.length === 0){
-        return proxy.emit('hot', []);
-      }
-      proxy.emit('hot', hot_posts);
-    }));
+    Post.getSimplePosts(hot_options, proxy.done('hot'));
 
     var recent_options = {limit: 6, sort: '-create_at'};
 
-    Post.getPostsByQuery({}, recent_options, proxy.done(function(recent_posts){
-      if(recent_posts.length === 0){
-        return proxy.emit('recent', []);
-      }
-      proxy.emit('recent', recent_posts);
-    }));
+    Post.getSimplePosts(recent_options, proxy.done('recent'));
   }));
 };
 
@@ -143,7 +133,23 @@ exports.create = function (req, res, next) {
       if (err) {
         next(err);
       }
-      res.redirect('/p/' + post._id);
+
+      var proxy = new EventProxy();
+
+      proxy.all('score_saved', function () {
+        res.redirect('/p/' + post._id);
+      });
+      proxy.fail(next);
+      User.getUserById(req.session.user._id, proxy.done(function (user) {
+        user.score += 5;
+        user.topic_count += 1;
+        user.save();
+        req.session.user = user;
+        proxy.emit('score_saved');
+      }));
+
+      //发送at消息
+      at.sendMessageToMentionUsers(content, post._id, req.session.user._id);
       tag_ep.emit('save_done');
     });
 
@@ -254,9 +260,6 @@ exports.update = function (req, res, next) {
         });
       }
 
-      var tag_ep = new EventProxy();
-      tag_ep.fail(next);
-
       //保存文章
       post.title = title;
       post.description = description;
@@ -268,21 +271,11 @@ exports.update = function (req, res, next) {
         if (err) {
           return next(err);
         }
+        //发送at消息
+        at.sendMessageToMentionUsers(content, post._id, req.session.user._id);
         res.redirect('/p/' + post._id);
       });
 
-      tag_ep.all('update_done', function () {
-        tags.forEach(function (tagName) {
-          Tag.getTagByName(tagName, function (err, tag) {
-            if (!tag) {
-              Tag.newAndSave(tagName, '');
-            } else {
-              tag.post_count += 1;
-              tag.save();
-            }
-          });
-        });
-      });
     } else {
       res.render('notify/notify', {error: '这篇文章可不是谁都能编辑的'});
     }
@@ -357,7 +350,7 @@ exports.recommend = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.un_recommend = function (req, res, next) {
+exports.unRecommend = function unRecommend(req, res, next) {
   var post_id = validator.trim(req.params._id);
 };
 
@@ -387,7 +380,7 @@ exports.collect = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.un_collect = function (req, res, next) {
+exports.unCollect = function (req, res, next) {
 
 };
 

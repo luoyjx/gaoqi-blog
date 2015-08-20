@@ -11,14 +11,14 @@ mongoose.connect(config.db, function (err) {
 //models
 require('./user');
 require('./post');
-require('./category');
 require('./tag');
 require('./reply');
+require('./message');
 require('./tag_follow');
 
 exports.User = mongoose.model('User');
 exports.Post = mongoose.model('Post');
-exports.Category = mongoose.model('Category');
 exports.Tag = mongoose.model('Tag');
 exports.Reply = mongoose.model('Reply');
+exports.Message = mongoose.model('Message');
 exports.TagFollow = mongoose.model('TagFollow');

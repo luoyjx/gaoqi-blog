@@ -6,6 +6,16 @@
                     <li><a href="/">首页</a></li>
                     <li class="active">设置</li>
                 </ol>
+                <% if(typeof(error) !== 'undefined' && error){ %>
+                <div class="alert alert-danger">
+                  <strong><%= error %></strong>
+                </div>
+                <% } %>
+                <% if(typeof(success) !== 'undefined' && success){ %>
+                <div class="alert alert-success">
+                  <strong><%= success %></strong>
+                </div>
+                <% } %>
                 <div role="tabpanel">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs mt-20" role="tablist">
@@ -17,72 +27,78 @@
                     <div class="tab-content">
                         <!--基本信息-->
                         <div role="tabpanel" class="tab-pane active mt-20" id="base_info">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/info">
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="name">用户名</label>
                                     <div class="col-lg-5">
-                                        <input id="name" name="name" type="text" disabled placeholder="" class="form-control" />
+                                        <input id="name" name="name" type="text" disabled placeholder="eg.username"
+                                               class="form-control" value="<%= (typeof(user) !== 'undefined' && user.login_name) ? user.login_name : '' %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="email">电子邮件</label>
                                     <div class="col-lg-5">
-                                        <input id="email" name="email" type="text" disabled placeholder="" class="form-control" />
+                                        <input id="email" name="email" type="text" disabled placeholder="eg.example@xx.com"
+                                               class="form-control" value="<%= (typeof(user) !== 'undefined' && user.email) ? user.email : '' %>" />
                                         <p class="help-block">注册时绑定的邮箱</p>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="url">个人网站</label>
                                     <div class="col-lg-5">
-                                        <input id="url" name="url" type="text" placeholder="" class="form-control" />
+                                        <input id="url" name="url" type="text" placeholder="eg.http://example.com" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.url) ? user.url : '' %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="location">所在地</label>
                                     <div class="col-lg-5">
-                                        <input id="location" name="location" type="text" placeholder="" class="form-control" />
+                                        <input id="location" name="location" type="text" placeholder="eg.北京" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.location) ? user.location : '' %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-lg-3" for="weibo">微博</label>
+                                    <label class="control-label col-lg-3" for="weibo">新浪微博</label>
                                     <div class="col-lg-5">
-                                        <input id="weibo" name="weibo" type="text" placeholder="" class="form-control" />
+                                        <input id="weibo" name="weibo" type="text" placeholder="eg.http://weibo.com/yanjixiong" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.weibo) ? user.weibo : '' %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="github">GitHub</label>
                                     <div class="col-lg-5">
-                                        <input id="github" name="github" type="text" placeholder="" class="form-control" />
+                                        <input id="github" name="github" type="text" disabled placeholder="eg. luoyjx" class="form-control"
+                                                value="<%= (typeof(user) !== 'undefined' && user.github_username) ? user.github_username : '' %>" />
                                         <p class="help-block">可通过github登陆绑定当前账号</p>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3">个性签名</label>
                                     <div class="textarea col-lg-5">
-                                        <textarea id="signature" name="signature" class="form-control" rows="3"></textarea>
+                                        <textarea id="signature" name="signature" class="form-control" rows="3"><%= (typeof(user) !== 'undefined' && user.signature) ? user.signature : '' %></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3"></label>
                                     <div class="col-lg-5">
-                                        <button class="btn btn-primary">保存设置</button>
+                                        <button class="btn btn-primary" type="submit">保存设置</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <!--密码设置-->
                         <div role="tabpanel" class="tab-pane mt-20" id="reset_pwd">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/pwd">
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="old_pwd">当前密码</label>
                                     <div class="col-lg-5">
-                                        <input class="form-control" id="old_pwd" name="old_pass" type="text"  />
+                                        <input class="form-control" id="old_pwd" name="old_pass" type="password"  />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="new_pwd">新密码</label>
                                     <div class="col-lg-5">
-                                        <input class="form-control" id="new_pwd" name="new_pwd" type="text"  />
+                                        <input class="form-control" id="new_pwd" name="new_pass" type="password"  />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -99,7 +115,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-lg-3" for="accesstoken">Access Token</label>
                                     <div class="col-lg-6">
-                                        <input class="form-control" id="accesstoken" name="accesstoken" type="text" disabled />
+                                        <input class="form-control" id="accesstoken" name="accesstoken"
+                                               type="text" disabled value="<%= (typeof(user) !== 'undefined' && user.accessToken ) ? user.accessToken : '' %>" />
                                     </div>
                                 </div>
                             </form>

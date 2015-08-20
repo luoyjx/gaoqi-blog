@@ -111,14 +111,15 @@ exports.getPostsByQuery = function (query, opt, callback) {
 };
 
 /**
- * 根据选项查询热门文章
+ * 根据选项查询简单的文章实体
+ * 并不做连接查询
  * Callback:
  * - err, 数据库错误
  * - posts, 热门文章
  * @param {Object} options 查询选项
  * @param {Function} callback 回调函数
  */
-exports.getHotPosts = function (options, callback) {
+exports.getSimplePosts = function (options, callback) {
   Post.find({}, {_id: 1, title: 1}, options, function (err, posts) {
     if (err) {
       return callback(err);
@@ -128,6 +129,20 @@ exports.getHotPosts = function (options, callback) {
     }
     callback(null, posts);
   });
+};
+
+/**
+ * 查询最近热门的文章
+ * @param query 过滤条件
+ * @param callback 回调函数
+ */
+exports.getNewHot = function(query, callback) {
+  Post
+    .find(query)
+    .limit(50)
+    .sort({create_at : -1})
+    .select({_id: 1, title: 1, pv: 1})
+    .exec(callback);
 };
 
 /**
@@ -145,7 +160,7 @@ exports.getCompletePost = function (post_id, callback) {
   var proxy = new EventProxy();
   var events = ['post', 'author', 'replies'];
 
-  proxy.all(events,function (post, author, replies) {
+  proxy.assign(events,function (post, author, replies) {
     callback(null, '', post, author, replies);
   }).fail(callback);
 
@@ -169,6 +184,25 @@ exports.getCompletePost = function (post_id, callback) {
     Reply.getRepliesByPostId(post._id, proxy.done('replies'));
   }));
 
+};
+
+/**
+ * 将当前文章的回复计数减1，并且更新最后回复的用户，删除回复时用到
+ * @param {String} id 文章ID
+ * @param {Function} callback 回调函数
+ */
+exports.reduceCount = function (id, callback) {
+  Post.findOne({_id: id}, function (err, post) {
+    if (err) {
+      return callback(err);
+    }
+    if (!post) {
+      return callback(new Error('该文章不存在'));
+    }
+    post.reply_count -= 1;
+
+    post.save(callback);
+  });
 };
 
 /**

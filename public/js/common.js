@@ -62,6 +62,7 @@ function tagFollowAction () {
 }
 
 $(document).ready(function () {
+  $('[data-toggle="tooltip"]').tooltip();
   if(browserRedirect() != "phone"){
     //$('.ad-right').scrollToFixed({ marginTop: 60});
   } else {

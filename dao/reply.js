@@ -8,6 +8,7 @@ var Reply = models.Reply;
 
 var EventProxy = require('eventproxy');
 var tools = require('../common/tools');
+var at = require('../common/at');
 var User = require('./user');
 var Post = require('./post');
 
@@ -44,7 +45,13 @@ exports.getReplyById = function (id, callback) {
       }
       reply.author = author;
       reply.friendly_create_at = tools.formatDate(reply.create_at, true);
-      return callback(null, reply);
+      at.linkUsers(reply.content, function (err, str) {
+        if (err) {
+          return callback(err);
+        }
+        reply.content = str;
+        return callback(null, reply);
+      });
     });
   });
 };
@@ -101,7 +108,13 @@ exports.getRepliesByPostId = function (id, cb) {
           }
           replies[i].author = author || { _id: '' };
           replies[i].friendly_create_at = tools.formatDate(replies[i].create_at, true);
-          proxy.emit('reply_find');
+          at.linkUsers(replies[i].content, function (err, str) {
+            if (err) {
+              return cb(err);
+            }
+            replies[i].content = str;
+            proxy.emit('reply_find');
+          });
         });
       })(j);
     }

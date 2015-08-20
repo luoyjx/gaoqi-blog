@@ -2,21 +2,21 @@
     <div class='container'>
         <div class='row'>
             <div class="col-xs-12 col-lg-9">
-                <ol class="breadcrumb" style="padding-left: 0;">
+                <ol class="breadcrumb">
                     <li><a href="/">首页</a></li>
-                    <li><a href="/u/<%= author %>">个人主页</a></li>
-                    <li class="active"><%= author %>最新发表的评论</li>
+                    <li><a href="/u/<%= author.login_name %>">个人主页</a></li>
+                    <li class="active"><%= author.login_name %>最新发表的评论</li>
                 </ol>
                 <div role="tabpanel">
                     <ul class="nav nav-tabs mt-20" >
                         <li >
-                            <a href="/u/<%= author %>" >最新文章</a>
+                            <a href="/u/<%= author.login_name %>" >最新文章</a>
                         </li>
                         <li >
-                            <a href="/u/<%= author %>/top" >最热文章</a>
+                            <a href="/u/<%= author.login_name %>/top" >最热文章</a>
                         </li>
                         <li  class="active">
-                            <a href="/u/<%= author %>/replies" >参与话题</a>
+                            <a href="/u/<%= author.login_name %>/replies" >参与话题</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -29,7 +29,9 @@
                 </div>
             </div>
             <section class="col-xs-12 col-lg-3">
-
+                <%- partial('./card', {
+                user: author
+                }) %>
             </section>
         </div>
     </div>

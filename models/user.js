@@ -11,7 +11,7 @@ var UserSchema = new Schema({
   email: {type: String},
   url: {type: String},//个人网站
   location: {type: String},
-  signature: {type: String},//签名?
+  signature: {type: String},//签名
   weibo: {type: String},
   avatar: {type: String}, //头像
   github_id: {type: String},

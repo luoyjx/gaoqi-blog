@@ -9,6 +9,7 @@ var mail = require('../common/mail');
 var utility = require('utility');
 var config = require('../config');
 var authFilter = require('../filter/auth');
+var uuid = require('node-uuid');
 
 /**
  * 跳转到登录页面
@@ -154,7 +155,7 @@ exports.signup = function (req, res, next) {
   }
 
   User.getUsersByQuery({'$or': [
-    {'loginname': loginname},
+    {'login_name': loginname},
     {'email': email}
   ]}, {}, function (err, users) {
     if (err) {
@@ -198,7 +199,7 @@ exports.signout = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.active_user = function (req, res, next) {
+exports.activeUser = function activeUser(req, res, next) {
   //邮箱中的激活链接参数
   var key = req.query.key;
   var name = req.query.name;
@@ -238,4 +239,95 @@ exports.active_user = function (req, res, next) {
       });
     });
   });
+};
+
+exports.showSearchPass = function (req, res) {
+  res.render('sign/search_pass');
+};
+
+exports.updateSearchPass = function (req, res, next) {
+  var email = validator.trim(req.body.email).toLowerCase();
+  if (!validator.isEmail(email)) {
+    return res.render('sign/search_pass', {error: '邮箱不合法', email: email});
+  }
+
+  // 动态生成retrive_key和timestamp到users collection,之后重置密码进行验证
+  var retrieveKey  = uuid.v4();
+  var retrieveTime = new Date().getTime();
+
+  User.getUserByEmail(email, function (err, user) {
+    if (!user) {
+      res.render('sign/search_pass', {error: '没有这个电子邮箱。', email: email});
+      return;
+    }
+    user.retrieve_key = retrieveKey;
+    user.retrieve_time = retrieveTime;
+    user.save(function (err) {
+      if (err) {
+        return next(err);
+      }
+      // 发送重置密码邮件
+      mail.sendResetPassMail(email, retrieveKey, user.login_name);
+      res.render('notify/notify', {success: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'});
+    });
+  });
+};
+
+/**
+ * reset password
+ * 'get' to show the page, 'post' to reset password
+ * after reset password, retrieve_key&time will be destroy
+ * @param  {http.req}   req
+ * @param  {http.res}   res
+ * @param  {Function} next
+ */
+exports.resetPass = function (req, res, next) {
+  var key  = validator.trim(req.query.key);
+  var name = validator.trim(req.query.name);
+
+  User.getUserByNameAndKey(name, key, function (err, user) {
+    if (!user) {
+      res.status(403);
+      return res.render('notify/notify', {error: '信息有误，密码无法重置。'});
+    }
+    var now = new Date().getTime();
+    var oneDay = 1000 * 60 * 60 * 24;
+    if (!user.retrieve_time || now - user.retrieve_time > oneDay) {
+      res.status(403);
+      return res.render('notify/notify', {error: '该链接已过期，请重新申请。'});
+    }
+    return res.render('sign/reset', {name: name, key: key});
+  });
+};
+
+exports.updatePass = function (req, res, next) {
+  var psw   = validator.trim(req.body.psw) || '';
+  var repsw = validator.trim(req.body.repsw) || '';
+  var key   = validator.trim(req.body.key) || '';
+  var name  = validator.trim(req.body.name) || '';
+
+  var ep = new EventProxy();
+  ep.fail(next);
+
+  if (psw !== repsw) {
+    return res.render('sign/reset', {name: name, key: key, error: '两次密码输入不一致。'});
+  }
+  User.getUserByNameAndKey(name, key, ep.done(function (user) {
+    if (!user) {
+      return res.render('notify/notify', {error: '错误的激活链接'});
+    }
+    tools.bhash(psw, ep.done(function (passhash) {
+      user.pwd          = passhash;
+      user.retrieve_key  = null;
+      user.retrieve_time = null;
+      user.is_active        = true; // 用户激活
+
+      user.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+        return res.render('notify/notify', {success: '你的密码已重置。'});
+      });
+    }));
+  }));
 };

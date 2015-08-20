@@ -73,3 +73,12 @@ exports.staticFile = function (filePath) {
 };
 
 exports.multiline = multiline;
+
+/**
+ * escape用户签名
+ */
+exports.escapeSignature = function(signature) {
+  return signature.split('\n').map(function(item) {
+    return _.escape(item);
+  }).join('<b>');
+};

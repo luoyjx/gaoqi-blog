@@ -26,7 +26,7 @@ exports.shorter = function (content, length) {
   }
   var result = cache.substring(0, t);
   if (len > length) {
-    result = result + "......";
+    result = result + "...";
   }
   return result;
 };

@@ -3,8 +3,10 @@
  */
 
 
-var oneapm = require('oneapm');
 var config = require('./config');
+if (!config.debug && config.oneapm_key !== 'your oneapm key') {
+  require('oneapm');
+}
 
 var path = require('path');
 var Loader = require('loader');
@@ -24,6 +26,7 @@ var _ = require('lodash');
 var csurf = require('csurf');
 var cors = require('cors');
 var render = require('./common/render');
+var cutter = require('./common/cutter');
 
 var webRouter = require('./web_router');
 var webApi = require('./web_api');
@@ -101,6 +104,7 @@ _.extend(app.locals, {
   assets: assets
 });
 _.extend(app.locals, render);
+_.extend(app.locals, cutter);
 
 app.use(function (req, res, next) {
   res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
@@ -126,8 +130,8 @@ if (config.debug) {
   });
 }
 
-app.listen(config.port, function () {
-  console.log("GaoqiBlog listening on port %s in %s mode", config.port, app.settings.env);
+app.listen(process.env.PORT || config.port, function () {
+  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT || config.port, app.settings.env);
 });
 
 

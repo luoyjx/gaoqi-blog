@@ -17,13 +17,14 @@ var config = {
   description: '搞起博客是分享、讨论、交流技术或者个人体会、经验的博客平台。', // 社区的描述
   keywords: '',
 
-  site_logo: 'http://static.gaoqixhb.com/public/img/gaoqi_blog_logo.svg', // default is `name`
+  site_logo: 'http://localhost:3001/public/img/gaoqi_blog_logo.svg', // default is `name`
   site_icon: '/public/favicon.ico', // 默认没有 favicon, 这里填写网址
 
   // cdn host，如 http://static.gaoqixhb.com
-  site_static_host: 'http://static.gaoqixhb.com', // 静态文件存储域名
+  site_static_host: 'http://localhost:3001', // 静态文件存储域名
   // 资源文件域名,存储css,js 等,也可放置与上面一起,即只使用一个域名
-  site_assets_host: 'http://assets.gaoqixhb.com',
+  // 如 http://assets.gaoqixhb.com
+  site_assets_host: 'http://localhost:3001',
 
   // 社区的域名
   host: 'localhost',
@@ -37,7 +38,7 @@ var config = {
 
   redis_host: '127.0.0.1',
   redis_port: 6379,
-
+  redis_db: 0,
 
   session_secret: 'gaoqi_blog_secret', // 务必修改
   auth_cookie_name: 'gaoqi_blog',
@@ -54,12 +55,9 @@ var config = {
   //显示最新评论条数
   list_latest_replies_count: 10,
 
-  // 限制发帖时间间隔，单位：毫秒
-  post_interval: 2000,
-
   // RSS配置
   rss: {
-    title: '关注前后端技术 - 搞起博客 gaoqixhb.com',
+    title: '搞起博客 ',
     link: 'http://blog.gaoqixhb.com',
     language: 'zh-cn',
     description: '搞起博客是分享、讨论、交流前后端技术或者个人体会、经验的博客平台。',
@@ -74,7 +72,7 @@ var config = {
     //secureConnection: true,//端口25时不需要
     //port: 465,              //端口25时不需要
     auth: {
-      user: 'system@gaoqixhb.com',
+      user: 'system@xxx.com',
       pass: 'xxxx'
     }
   },
@@ -117,7 +115,8 @@ var config = {
   tabs: [
     ['program', '经验'],
     ['share', '分享'],
-    ['chat', '闲聊']
+    ['chat', '闲聊'],
+    ['push', '推送']
   ]
 
 };

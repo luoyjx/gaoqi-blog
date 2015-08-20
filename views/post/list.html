@@ -12,33 +12,25 @@
         <section class="content-header">
             <% } %>
             <div class="content-info hidden-xs">
-                <a href="/p/<%= post._id %>#comment">
-                    <div class="content-info-reply <%= (post.reply_count > 0) ? 'reply-plus' : ' reply-0' %> mb-10">
-                        <div class="coontent-info-number"><%= post.reply_count %></div>
-                        <small>评论</small>
-                    </div>
-                </a>
                 <div class="content-info-view">
                     <div class="coontent-info-number"><%= post.friendly_pv %></div>
                     <small>浏览</small>
                 </div>
             </div>
             <div class="content-body">
-                <p>
-                    <span class="addtion ">来自 </span>
-                    <span class="addtion mr-5"><%= post.categoryName %></span>
-                </p>
-                <h2 class="h4"><a href="/p/<%= post._id %>"><%= post.title %></a></h2>
+                <h2 class="h4 post-title">
+                    <span class="label <%= (post.category == 'push') ? 'label-success' : 'label-info' %>"><%= post.categoryName %></span>
+                    <a href="/p/<%= post._id %>"><%= post.title %></a>
+                </h2>
                 <p class="content hidden-xs"><%- post.description%></p>
                 <p>
                     <a class="link font-12 mr-5" href="/u/<%= post.author.login_name %>">
                         <%= post.author.login_name %>
                     </a>
-                    <span class="addtion">·</span>
                     <span class="addtion font-12 mr-5"><%= post.friendly_create_at %></span>
                     <span class="tags">
                     <% if(post.tags){ %>
-                    <span class=" addtion">
+                    <span>
                     <% post.tags.forEach(function (tag, index) { %>
                     <% if (tag) {%>
                     <a class="link tag-sm" href="/tags/<%= tag %>" title="<%= tag %>相关的文章"><%= tag %></a>

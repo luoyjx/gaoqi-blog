@@ -3,6 +3,7 @@ var UserModel = mongoose.model('User');
 var config = require('../config');
 var eventproxy = require('eventproxy');
 var UserProxy = require('../dao').User;
+var Message = require('../dao').Message;
 
 /**
  * 需要管理员权限
@@ -22,7 +23,7 @@ exports.adminRequired = function (req, res, next) {
  */
 exports.userRequired = function (req, res, next) {
   if (!req.session || !req.session.user) {
-    return res.status(403).send('forbidden!');
+    return res.redirect('/signin');
   }
   next();
 };
@@ -71,10 +72,10 @@ exports.authUser = function (req, res, next) {
     if (config.admins.hasOwnProperty(user.login_name)) {
       user.is_admin = true;
     }
-//        Message.getMessagesCount(user._id, ep.done(function (count) {
-//            user.messages_count = count;
-    next();
-//        }));
+    Message.getMessagesCount(user._id, ep.done(function (count) {
+      user.messages_count = count;
+      next();
+    }));
 
   });
 

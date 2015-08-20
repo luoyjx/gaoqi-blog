@@ -7,12 +7,6 @@ var uuid = require('node-uuid');
 var validator = require('validator');
 var config = require('../config');
 
-/**
- * github登陆回调接口
- * @param req
- * @param res
- * @param next
- */
 exports.callback = function (req, res, next) {
   var profile = req.user;
   User.findOne({githubId: profile.id}, function (err, user) {
@@ -43,23 +37,10 @@ exports.callback = function (req, res, next) {
   });
 };
 
-/**
- * 创建新用户页面
- * @param req
- * @param res
- * @param next
- */
 exports.new = function (req, res, next) {
   res.render('sign/new_oauth', {actionPath: '/login/github/create'});
 };
 
-/**
- * 通过github创建新用户
- * @param req
- * @param res
- * @param next
- * @returns {redirect|*|redirect|redirect}
- */
 exports.create = function (req, res, next) {
   var profile = req.session.profile;
   var isnew = req.body.isnew;
@@ -119,6 +100,7 @@ exports.create = function (req, res, next) {
           }
           user.github_username = profile.username;
           user.github_id = profile.id;
+          user.avatar = profile._json.avatar_url;
           user.github_accessToken = profile.accessToken;
 
           user.save(function (err) {

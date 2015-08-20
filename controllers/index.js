@@ -5,6 +5,7 @@ var eventproxy = require('eventproxy');
 var Post = require('../dao').Post;
 var Tag = require('../dao').Tag;
 var Reply = require('../dao').Reply;
+var User = require('../dao').User;
 var config = require('../config');
 var cache = require('../common/cache');
 var xmlbuilder = require('xmlbuilder');
@@ -27,7 +28,9 @@ exports.index = function (req, res, next) {
     var kv = _.find(config.tabs, function(kv) {
       return kv[0] === tab;
     });
-    tabName = kv ? kv[1] + '版块' : '首页';
+    tabName = kv ? kv[1] + '版块' : '';
+  } else {
+    tabName = '首页';
   }
 
   var limit = config.list_topic_count;
@@ -43,12 +46,18 @@ exports.index = function (req, res, next) {
   //取热门文章
   var hot_options = {limit: config.list_hot_topic_count, sort: '-pv'};
 
-  cache.get('hots', proxy.done(function (hots) {
+  cache.get('hots' + tab, proxy.done(function (hots) {
     if (hots) {
       proxy.emit('hots', hots);
     } else {
-      Post.getHotPosts(hot_options, proxy.done('hots', function (hots) {
-        cache.set('hots', hots, 1000 * 60 * 5);//5分钟
+      Post.getNewHot(query, proxy.done('hots', function (hots) {
+        //pv排序
+        hots = hots.sort(function sortFn(a, b) {
+          return b.pv - a.pv;
+        });
+        //取前10条
+        hots = Array.prototype.slice.call(hots, 0, 10);
+        cache.set('hots' + tab, hots, 1000 * 60 * 5);//5分钟
         return hots;
       }));
     }
@@ -74,8 +83,14 @@ exports.index = function (req, res, next) {
 
   Reply.getRepliesByQuery(reply_query, reply_options, proxy.done('latest_replies'));
 
-  proxy.assign(['posts', 'hots', 'tags', 'latest_replies', 'pages'],
-    function (posts, hots, tags, replies, pages) {
+  //最近注册用户
+  var users_query = {is_active: true};
+  var recent_reg_options = {limit: 10, sort: '-create_at'};
+
+  User.getUsersByQuery(users_query, recent_reg_options, proxy.done('recent_reg'));
+
+  proxy.assign(['posts', 'hots', 'tags', 'latest_replies', 'recent_reg', 'pages'],
+    function (posts, hots, tags, replies, recent_reg, pages) {
       res.render('index', {
         posts: posts,
         tab: tab,
@@ -84,6 +99,7 @@ exports.index = function (req, res, next) {
         pages: pages,
         hots: hots,
         tags: tags,
+        recent_reg: recent_reg,
         replies: replies,
         title: tabName
       });
@@ -132,8 +148,8 @@ exports.robots = function (req, res, next) {
      # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
      #
      # To ban all spiders from the entire site uncomment the next two lines:
-     # User-Agent: *
-     # Disallow: /
+      User-Agent: *
+      allow: /
      */
   }));
 };

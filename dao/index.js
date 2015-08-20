@@ -1,5 +1,5 @@
 exports.User = require('./user');
 exports.Post = require('./post');
-exports.Category = require('./category');
 exports.Tag = require('./tag');
+exports.Message = require('./message');
 exports.Reply = require('./reply');
