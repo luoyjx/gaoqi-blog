@@ -17,5 +17,5 @@ windows下需要安装VS express
 * `make restart`重新编译重启，`make reboot`直接重启
 * 浏览`http://localhost:3001`
 
-## LICENSE
+## License
 MIT
