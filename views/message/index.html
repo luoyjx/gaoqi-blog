@@ -1,0 +1,40 @@
+<div class="wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-lg-9">
+        <ol class="breadcrumb">
+          <li><a href="/">首页</a></li>
+          <li class="active">消息</li>
+        </ol>
+        <div class="content-header left-content">
+          <h1 class="h4">未读消息</h1>
+        </div>
+
+        <% if (typeof(hasnot_read_messages) !== 'undefined' && hasnot_read_messages.length > 0) { %>
+        <%- partial('./message', { collection: hasnot_read_messages, as: 'message' }) %>
+        <% } else { %>
+        <div class='inner'>
+          <p>无消息</p>
+        </div>
+        <% } %>
+        <div class="content-header left-content">
+          <h1 class="h4">已读消息</h1>
+        </div>
+        <% if (typeof(has_read_messages) !== 'undefined' && has_read_messages.length > 0) { %>
+        <%- partial('./message', { collection: has_read_messages, as: 'message' }) %>
+        <% } else { %>
+        <div class='inner'>
+          <p>无消息</p>
+        </div>
+        <% } %>
+      </div>
+      <section class="col-xs-12 col-lg-3">
+        <% if (typeof(user) !== 'undefined') { %>
+        <%- partial('../user/card', {
+        user: user
+        }) %>
+        <% } %>
+      </section>
+    </div>
+  </div>
+</div>

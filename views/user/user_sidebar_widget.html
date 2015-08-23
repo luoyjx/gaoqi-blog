@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h4>最近加入</h4>
+</div>
+<% if(users && users.length > 0){ %>
+<ul class="list-inline list-overhidden">
+  <%  users.forEach(function(user, index){%>
+  <li class="mb-10">
+      <a href="/u/<%= user.login_name %>" >
+        <img class="user-avatar" src="<%= user.avatar %>" data-toggle="tooltip"
+             data-placement="bottom" title="<%= user.login_name %>"/>
+      </a>
+  </li>
+  <% }); %>
+</ul>
+<% }else{ %>
+<ul class="list-unstyled list-overhidden">
+  <li class="font-14 mb-10"><div>还没有小伙伴加入</div></li>
+</ul>
+<% } %>
