@@ -31,7 +31,11 @@
                     <% } %>
                     <fieldset>
                         <span id="topic_create_warn"></span>
+
                         <div>
+                            <!--[if lte IE 9]>
+                            <span>分类</span>
+                            <![endif]-->
                             <select class="" name="category" id="tab-value" autofocus>
                                 <option >请选择</option>
                                 <%
@@ -45,12 +49,21 @@
                                 <%});%>
                             </select>
                         </div>
+                        <!--[if lte IE 9]>
+                        <span>标题</span>
+                        <![endif]-->
                         <textarea class='span9 ' id='title' name='title' rows='1'
                                   placeholder="标题   字数10 字以上"
                                 ><%= typeof(post_title) !== 'undefined' && post_title || '' %></textarea>
+                        <!--[if lte IE 9]>
+                        <span>摘要</span>
+                        <![endif]-->
                         <textarea class='span9 ' id='description' name='description' rows='3'
                                   placeholder="文章描述 即文章的主旨  300字符以内"
                                 ><%= typeof(description) !== 'undefined' && description || '' %></textarea>
+                        <!--[if lte IE 9]>
+                        <span>标签</span>
+                        <![endif]-->
                         <div>
                             <div class="input-tags">
                                 <input id="tag_autocomplete" type="text"
@@ -78,6 +91,9 @@
 
                         <input type="hidden" id="tags" name="tags" value=""/>
 
+                        <!--[if lte IE 9]>
+                        <span>正文</span>
+                        <![endif]-->
                         <div class='markdown_editor in_editor'>
                             <div class='markdown_in_editor'>
                                 <textarea class='editor' name='content' rows='20'
