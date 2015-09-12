@@ -15,8 +15,7 @@
           <%- shorter(reply.post_id.title, 13) %>
       </a>
       <br/>
-      <a href="/u/<%= reply.author_id.login_name %>" target="_blank"><%= reply.author_id.login_name %></a>
-      评论 • <%= reply.post_id.reply_count %>回复
+      <%= shorter(cleanMarkdown(reply.content), 100) %>
     </li>
     <% } %>
     <% }); %>

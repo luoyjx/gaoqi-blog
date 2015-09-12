@@ -4,14 +4,14 @@
 <% if(recent && recent.length > 0){ %>
 <ul class="list-unstyled list-overhidden">
     <% recent.forEach(function(r, index){%>
-    <li class="font-14 mb-10">
+    <li class="font-12 mb-10">
         <div><a href="/p/<%=r._id%>" title="<%=r.title%>"><%=r.title%></a></div>
     </li>
     <% }); %>
 </ul>
 <% }else{ %>
 <ul class="list-unstyled list-overhidden">
-    <li class="font-14 mb-10">
+    <li class="font-12 mb-10">
         <div>暂无文章</div>
     </li>
 </ul>

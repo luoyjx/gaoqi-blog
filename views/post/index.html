@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <div class='editor_buttons'>
-                                <input class='btn btn-primary' type="submit" data-loading-text="回复中.."
+                                <input id="submit_reply" class='btn btn-primary' type="submit" data-loading-text="回复中.."
                                        value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
                             </div>
                             <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
@@ -96,7 +96,7 @@
                     <% } %>
                 </div>
             </div>
-            <aside class="col-sm-12 col-lg-3">
+            <aside class="col-xs-12 col-lg-3">
                 <%- partial('./sidebar_ad') %>
                 <%- partial('./recent', {
                 recent: recent
@@ -161,5 +161,23 @@
 
     });
     // END 编辑器相关
+
+    //评论
+    $('.replies').on('click', '.reply-btn', function (event) {
+      var $btn = $(event.currentTarget);
+      var editorWrap = $('#reply_form');
+      var textarea = editorWrap.find('textarea.editor');
+      var user = $btn.closest('.user-info').find('.reply-author').text().trim();
+      var editor = textarea.data('editor');
+      var cm = editor.codemirror;
+      cm.focus();
+      if(cm.getValue().indexOf('@' + user) < 0){
+        editor.push('@' + user + ' ');
+      }
+    });
+
+    $('#submit_reply').click(function() {
+      var $btn = $(this).button('loading');
+    })
 </script>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":["mshare","qzone","tsina","fbook","twi","douban","weixin"],"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"6","bdPos":"right","bdTop":"148.5"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
