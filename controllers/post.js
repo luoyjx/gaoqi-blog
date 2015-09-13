@@ -272,7 +272,7 @@ exports.update = function (req, res, next) {
           return next(err);
         }
         //发送at消息
-        at.sendMessageToMentionUsers(content, post._id, req.session.user._id);
+        at.sendMessageToMentionUsers(content, post._id, req.session.user._id, null, req.session.user.login_name, post.title);
         res.redirect('/p/' + post._id);
       });
 
