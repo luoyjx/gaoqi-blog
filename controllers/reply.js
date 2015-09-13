@@ -51,8 +51,8 @@ exports.add = function (req, res, next) {
     Reply.newAndSave(content, post_id, req.session.user._id, reply_id, ep.done(function (reply) {
       ep.emit('reply_saved', reply);
       //发送at消息，并防止重复 at 作者
-      var newContent = content.replace('@' + postAuthor.loginname + ' ', '');
-      at.sendMessageToMentionUsers(newContent, post_id, req.session.user._id, reply._id);
+      var newContent = content.replace('@' + postAuthor.login_name + ' ', '');
+      at.sendMessageToMentionUsers(newContent, post_id, req.session.user._id, reply._id, postAuthor.login_name, post.title);
       post.reply_count += 1;
       post.save();
     }));

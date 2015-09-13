@@ -1,57 +1,68 @@
 <div class="wrap">
-    <div class="container">
-        <div class="row">
-            <div class="alert" role="alert" style="margin: 0 15px;">
-                如果你有感兴趣的话题或者经验，也可以在这里  <a href="/post/create" class="btn btn-info btn-sm">发表</a>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="alert" role="alert" style="margin: 0 15px;">
+        如果你有感兴趣的话题或者经验，也可以在这里 <a href="/post/create" class="btn btn-info btn-sm">发表</a>
+      </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <article class="col-sm-12 col-lg-9">
-                <%- partial('post/list', {
-                posts: posts,
-                pages: pages,
-                current_page: current_page,
-                base: '/',
-                tab: tab
-                }) %>
-            </article>
-            <aside class="col-sm-12 col-lg-3 mt-5">
-                <div>
-                    <%- partial('post/hot', {
-                    hots: hots
-                    }) %>
-                </div>
-                <div>
-                    <div class="page-header">
-                        <h4>热门标签<a class='tag-more' href='/tags'> »</a></h4>
-                    </div>
-                    <%
-                    if(typeof(tags) !== 'undefined' && tags.length > 0){
-                    tags.forEach(function(tag, index){
-                    %>
-                    <span class="tagPopup"><a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name
-                    %></a></span>
-                    <%
-                    });
-                    }else{ %>
-                    <ul class="list-unstyled line-distance list-overhidden">
-                        <li class="font-12 mb-10">暂无标签</li>
-                    </ul>
-                    <% } %>
-                </div>
-                <div>
-                  <%- partial('user/user_sidebar_widget', {
-                  users: recent_reg,
-                  }) %>
-                </div>
-                <div>
-                    <%- partial('reply/side_list', {
-                    replies: replies,
-                    }) %>
-                </div>
-            </aside>
+  </div>
+  <div class="container">
+    <div class="row">
+      <ul class="nav nav-tabs" style="margin: 0 15px;">
+        <% config.tabs.forEach(function (pair) {
+        var value = pair[0];
+        var text = pair[1];
+        %>
+        <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>">
+          <a href="/?tab=<%= value %>"><%= text %></a>
+        </li>
+        <% }) %>
+      </ul>
+      <article class="col-sm-12 col-lg-9">
+        <%- partial('post/list', {
+        posts: posts,
+        pages: pages,
+        current_page: current_page,
+        base: '/',
+        tab: tab
+        }) %>
+      </article>
+      <aside class="col-sm-12 col-lg-3 mt-5">
+        <div>
+          <%- partial('post/hot', {
+          hots: hots
+          }) %>
         </div>
+        <div>
+          <div class="page-header">
+            <h4>热门标签<a class='tag-more' href='/tags'> »</a></h4>
+          </div>
+          <%
+          if(typeof(tags) !== 'undefined' && tags.length > 0){
+          tags.forEach(function(tag, index){
+          %>
+                    <span class="tagPopup"><a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%=
+                      tag.name
+                      %></a></span>
+          <%
+          });
+          }else{ %>
+          <ul class="list-unstyled line-distance list-overhidden">
+            <li class="font-12 mb-10">暂无标签</li>
+          </ul>
+          <% } %>
+        </div>
+        <div>
+          <%- partial('user/user_sidebar_widget', {
+          users: recent_reg,
+          }) %>
+        </div>
+        <div>
+          <%- partial('reply/side_list', {
+          replies: replies,
+          }) %>
+        </div>
+      </aside>
     </div>
+  </div>
 </div>

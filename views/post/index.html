@@ -42,7 +42,7 @@
                         <strong><%= error %></strong>
                     </div>
                     <% }else{ %>
-                    <div class="content article-content"><%- markdown(post.content) %></div>
+                    <div class="content article-content"><%- markdown(post.linkedContent) %></div>
                     <div class="article-tags">
                         <% if(post.tags){
                         post.tags.forEach(function (tag, index) { %>

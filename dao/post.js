@@ -7,6 +7,7 @@ var Post = models.Post;
 var User = require('./user');
 var Reply = require('./reply');
 var tools = require('../common/tools');
+var at = require('../common/at');
 var _ = require('lodash');
 
 /**
@@ -169,7 +170,10 @@ exports.getCompletePost = function (post_id, callback) {
       proxy.unbind();
       return callback(null, '这篇文章从地球上消失了');
     }
-    proxy.emit('post', post);
+    at.linkUsers(post.content, proxy.done('post', function (str) {
+      post.linkedContent = str;
+      return post;
+    }));
 
     //at其他用户解析
 

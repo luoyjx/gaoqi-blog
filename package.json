@@ -1,6 +1,6 @@
 {
   "name": "gaoqi-blog",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "description": "A Node.js blog using MongoDB",
   "repository": "https://github.com/luoyjx/gaoqi-blog",

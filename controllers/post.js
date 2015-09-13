@@ -149,7 +149,7 @@ exports.create = function (req, res, next) {
       }));
 
       //发送at消息
-      at.sendMessageToMentionUsers(content, post._id, req.session.user._id);
+      at.sendMessageToMentionUsers(content, post._id, req.session.user._id, null, req.session.user.login_name, post.title);
       tag_ep.emit('save_done');
     });
 

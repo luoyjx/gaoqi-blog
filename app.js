@@ -17,6 +17,7 @@ var RedisStore = require('connect-redis')(session);
 var passport = require('passport');
 require('./models');
 var auth = require('./filter/auth');
+var online = require('./filter/online');
 var GitHubStrategy = require('passport-github').Strategy;
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -71,6 +72,8 @@ app.use(passport.initialize());
 
 // custom middleware 过滤未登陆
 app.use(auth.authUser);
+//缓存已登录用户标识在线
+app.use(online.cacheOnline);
 
 app.use(Loader.less(__dirname));
 app.use('/public', express.static(staticDir));
@@ -130,8 +133,8 @@ if (config.debug) {
   });
 }
 
-app.listen(process.env.PORT || config.port, function () {
-  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT || config.port, app.settings.env);
+app.listen(process.env.PORT ? process.env.PORT : config.port, function () {
+  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT ? process.env.PORT : config.port, app.settings.env);
 });
 
 
