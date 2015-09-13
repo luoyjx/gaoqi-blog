@@ -66,12 +66,6 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a class="menu" href="/" >首页</a></li>
-                    <% config.tabs.forEach(function (pair) {
-                    var value = pair[0];
-                    var text = pair[1];
-                    %>
-                    <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>"><a class="menu" href="/?tab=<%= value %>" ><%= text %></a></li>
-                    <% }) %>
                     <li><a class="menu" href="/tags" >标签</a></li>
                     <% if (typeof(user) !== 'undefined') { %>
                     <li>
