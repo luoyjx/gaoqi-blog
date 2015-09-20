@@ -6,6 +6,8 @@ windows下需要安装VS express
 
 * Node.js v0.12.1 (实际环境是iojs 2.3.3)
 * mongodb v2.6(已经迁移到3.0版本的 wiredTiger 引擎，可使用2.6，不影响)
+  迁移过程看这里
+  http://blog.gaoqixhb.com/p/55cb5fc17c68e69a01af69aa
 * redis v2.6.13
 
 ## 安装运行
