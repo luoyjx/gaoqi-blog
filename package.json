@@ -1,6 +1,6 @@
 {
   "name": "gaoqi-blog",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": true,
   "description": "A Node.js blog using MongoDB",
   "repository": "https://github.com/luoyjx/gaoqi-blog",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "async": "0.9.0",
-    "bcrypt": "0.8.3",
+    "bcrypt": "0.8.5",
     "body-parser": "1.9.2",
     "compression": "1.2.0",
     "connect-busboy": "0.0.1",
@@ -37,6 +37,7 @@
     "multiline": "1.0.1",
     "node-uuid": "1.4.1",
     "nodemailer": "0.3.43",
+    "oneapm": "1.2.8",
     "passport": "0.1.18",
     "passport-github": "0.1.5",
     "pm2": "0.12.5",
