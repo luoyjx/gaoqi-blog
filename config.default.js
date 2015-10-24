@@ -115,7 +115,7 @@ var config = {
 
   // 分类
   tabs: [
-    ['program', '经验'],
+    ['program', '开发'],
     ['share', '分享'],
     ['chat', '闲聊'],
     ['push', '推送']

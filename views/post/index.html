@@ -5,6 +5,7 @@
                 <div class="page-header" style="margin: 20px 0 0;">
                     <ol class="breadcrumb">
                         <li><a href="/">首页</a></li>
+                        <li><a href="/?tab=<%= post.category %> "><%= post.categoryName %></a></li>
                         <li class="active">文章</li>
                     </ol>
                     <h1 class="article-header h3"><%= post.title %></h1>
@@ -97,7 +98,11 @@
                 </div>
             </div>
             <aside class="col-xs-12 col-lg-3">
-                <%- partial('./sidebar_ad') %>
+              <div>
+                <a href="http://www.igoutuan.com/?utm_source=blog.gaoqixhb.com" target="_blank">
+                  <img src="http://static.gaoqixhb.com/ad/igoutuan_ad_sidebar.png" style="border-radius: 2px;" />
+                </a>
+              </div>
                 <%- partial('./recent', {
                 recent: recent
                 }) %>
