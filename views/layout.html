@@ -84,13 +84,13 @@
                     </li>
 
                     <li class="dropdown">
-                        <a href="/u/<%= user.name %>" class="dropdown-toggle" data-toggle="dropdown">
-                          <span class="mr-10"><%=user.name%><b class="caret"></b></span>
+                        <a href="/u/<%= user.login_name %>" class="dropdown-toggle" data-toggle="dropdown">
+                          <span class="mr-10"><%=user.login_name%><b class="caret"></b></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/u/<%= user.name %>"></span>个人主页</a></li>
+                            <li><a href="/u/<%= user.login_name %>"></span>个人主页</a></li>
                             <li><a href="/post/create"></span>发表文章</a></li>
-                            <li><a href="/u/<%= user.name %>/setting"></span>设　置</a></li>
+                            <li><a href="/u/<%= user.login_name %>/setting"></span>设　置</a></li>
                             <li><a href="/signout"></span>登　出</a></li>
                         </ul>
                     </li>
