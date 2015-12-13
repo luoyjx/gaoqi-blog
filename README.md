@@ -19,5 +19,8 @@ windows下需要安装VS express
 * `make restart`重新编译重启，`make reboot`直接重启
 * 浏览`http://localhost:3001`
 
+## 版本日志
+* [history](https://github.com/luoyjx/gaoqi-blog/blob/master/History.md)
+
 ## License
 MIT
