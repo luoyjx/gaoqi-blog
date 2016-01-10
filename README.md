@@ -1,5 +1,16 @@
 # gaoqi-blog
 基于Node.js的多人博客
+=
+
+[![build status][travis-image]][travis-url]
+[![Coverage Status][coverage-image]][coverage-url]
+[![David deps][david-image]][david-url]
+[![node version][node-image]][node-url]
+
+[travis-image]: https://img.shields.io/travis/cnodejs/nodeclub/master.svg?style=flat-square
+[coverage-image]: https://img.shields.io/coveralls/cnodejs/nodeclub.svg?style=flat-square
+[david-image]: https://img.shields.io/david/cnodejs/nodeclub.svg?style=flat-square
+[node-image]: https://img.shields.io/badge/node.js-%3E=_4.2-green.svg?style=flat-square
 
 暂时没有考虑windows部署,因为部分模块需要编译，linux下较方便
 windows下需要安装VS express
