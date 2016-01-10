@@ -7,10 +7,14 @@
 [![David deps][david-image]][david-url]
 [![node version][node-image]][node-url]
 
-[travis-image]: https://img.shields.io/travis/cnodejs/nodeclub/master.svg?style=flat-square
-[coverage-image]: https://img.shields.io/coveralls/cnodejs/nodeclub.svg?style=flat-square
-[david-image]: https://img.shields.io/david/cnodejs/nodeclub.svg?style=flat-square
-[node-image]: https://img.shields.io/badge/node.js-%3E=_4.2-green.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/luoyjx/gaoqi-blog/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/luoyjx/gaoqi-blog
+[coverage-image]: https://img.shields.io/coveralls/luoyjx/gaoqi-blog.svg?style=flat-square
+[coverage-url]: https://coveralls.io/r/luoyjx/gaoqi-blog?branch=master
+[david-image]: https://img.shields.io/david/luoyjx/gaoqi-blog.svg?style=flat-square
+[david-url]: https://david-dm.org/luoyjx/gaoqi-blog
+[node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
 
 暂时没有考虑windows部署,因为部分模块需要编译，linux下较方便
 windows下需要安装VS express
