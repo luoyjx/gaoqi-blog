@@ -1,3 +1,9 @@
+## 0.0.7 / 2016-1-10
+* 更新 oneapm@1.2.16
+* 添加travis
+* 更换bcrypt到bcryptjs
+* 删除一些不需要的package依赖
+
 ## 0.0.6 / 2015-9-29
 * 更新 oneapm npm 模块
 * 首页标签旁边连接加上title
