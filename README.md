@@ -1,4 +1,4 @@
-# gaoqi-blog
+gaoqi-blog
 =
 
 [![build status][travis-image]][travis-url]
