@@ -1,3 +1,6 @@
+TESTS = $(shell find test -type f -name "*.test.js")
+TEST_TIMEOUT = 10000
+MOCHA_REPORTER = spec
 NPM_REGISTRY = ""
 
 preinstall:
@@ -10,6 +13,25 @@ preinstall:
 
 install: preinstall
 	@npm install $(NPM_REGISTRY)
+
+test: install preinstall
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
+		--reporter $(MOCHA_REPORTER) \
+		-r should \
+		-r test/env \
+		--timeout $(TEST_TIMEOUT) \
+		$(TESTS)
+
+test-cov cov: install preinstall
+	@NODE_ENV=test node \
+		node_modules/.bin/istanbul cover --preserve-comments \
+		./node_modules/.bin/_mocha \
+		-- \
+		-r should \
+		-r test/env \
+		--reporter $(MOCHA_REPORTER) \
+		--timeout $(TEST_TIMEOUT) \
+		$(TESTS)
 
 build:
 	@./node_modules/loader/bin/build views .
