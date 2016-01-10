@@ -1,5 +1,4 @@
 # gaoqi-blog
-基于Node.js的多人博客
 =
 
 [![build status][travis-image]][travis-url]
@@ -15,6 +14,8 @@
 [david-url]: https://david-dm.org/luoyjx/gaoqi-blog
 [node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
+
+基于Node.js的多人博客
 
 暂时没有考虑windows部署,因为部分模块需要编译，linux下较方便
 windows下需要安装VS express
