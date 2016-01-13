@@ -14,7 +14,7 @@ preinstall:
 install: preinstall
 	@npm install $(NPM_REGISTRY)
 
-test: install preinstall
+test: install preinstall build
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--reporter $(MOCHA_REPORTER) \
 		-r should \
@@ -22,7 +22,7 @@ test: install preinstall
 		--timeout $(TEST_TIMEOUT) \
 		$(TESTS)
 
-test-cov cov: install preinstall
+test-cov cov: install preinstall build
 	@NODE_ENV=test node \
 		node_modules/.bin/istanbul cover --preserve-comments \
 		./node_modules/.bin/_mocha \
