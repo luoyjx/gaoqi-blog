@@ -30,7 +30,7 @@ describe('test/controller/index.test.js', function() {
   it('should /sitemap.xml 200', function(done) {
     request.get('/sitemap.xml')
       .expect(200, function(err, res) {
-        res.text.should.containEql('<url>');
+        res.text.should.containEql('<urlset');
         done(err);
       });
   })
