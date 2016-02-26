@@ -4,7 +4,11 @@
 <% if(hots && hots.length > 0){ %>
 <ul class="list-unstyled list-overhidden">
     <%  hots.forEach(function(hot, index){%>
-    <li class="font-12 mb-10">
+    <%  if ( index < 3 ) { %>
+    <li class="font-12 mb-10" style="color: #3498db;" >
+    <%  } else { %>
+    <li class="font-12 mb-10" >
+    <%  } %>
         <div><a href="/p/<%=hot._id%>" title="<%=hot.title%>"><%=hot.title%></a></div>
     </li>
     <% }); %>
