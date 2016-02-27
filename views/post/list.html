@@ -22,7 +22,7 @@
                     <span class="label <%= (post.category == 'push') ? 'label-success' : 'label-info' %>"><%= post.categoryName %></span>
                     <a href="/p/<%= post._id %>"><%= post.title %></a>
                 </h2>
-                <p class="content hidden-xs"><%- post.description%></p>
+                <!--<p class="content hidden-xs"><%- post.description%></p>-->
                 <p>
                     <a class="link font-12 mr-5" href="/u/<%= post.author.login_name %>">
                         <%= post.author.login_name %>
