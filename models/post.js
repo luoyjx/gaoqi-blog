@@ -47,4 +47,17 @@ PostSchema.virtual('categoryName').get(function () {
   }
 });
 
+PostSchema.virtual('categoryColor').get(function () {
+  var tab  = this.category;
+  var pair = _.find(config.tabs, function (_pair) {
+    return _pair[0] === tab;
+  });
+
+  if (pair) {
+    return pair[2];
+  } else {
+    return '';
+  }
+});
+
 mongoose.model('Post', PostSchema);

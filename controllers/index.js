@@ -12,6 +12,7 @@ var xmlbuilder = require('xmlbuilder');
 var multiline = require('multiline');
 var validator = require('validator');
 var _ = require('lodash');
+var gravatar = require('gravatar');
 
 //站点首页
 exports.index = function (req, res, next) {
@@ -91,6 +92,13 @@ exports.index = function (req, res, next) {
 
   proxy.assign(['posts', 'hots', 'tags', 'latest_replies', 'recent_reg', 'pages'],
     function (posts, hots, tags, replies, recent_reg, pages) {
+      //判断用户头像是否存在，若不存在尝试从gravatar 中获取
+      recent_reg.map(function(item){
+        if(item._doc.avatar ===  'http://static.gaoqixhb.com/avatar/default.png'){
+          item._doc.avatar = gravatar.url(item.email , {s: '100', r: 'x', d: 'retro'}, true);
+        }
+        return item;
+      });
       res.render('index', {
         posts: posts,
         tab: tab,

@@ -71,8 +71,6 @@ var config = {
   mail_opts: {
     host: 'smtp.gaoqixhb.com',
     port: 25,
-    //secureConnection: true,//端口25时不需要
-    //port: 465,              //端口25时不需要
     auth: {
       user: 'system@gaoqixhb.com',
       pass: 'xxxx'
@@ -115,10 +113,10 @@ var config = {
 
   // 分类
   tabs: [
-    ['program', '开发'],
-    ['share', '分享'],
-    ['chat', '闲聊'],
-    ['push', '推送']
+    ['program', '开发', '#5cb85c'],
+    ['share', '分享', '#5cb85c'],
+    ['chat', '闲聊', '#5cb85c'],
+    ['push', '推送', '#5cb85c']
   ]
 
 };

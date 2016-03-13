@@ -1,3 +1,9 @@
+## 0.0.8 / 2016-3-11
+* 分类tag颜色配置
+* npm scripts添加build指令来兼容windows
+* 升级nodemailer
+* 用户头像判断
+
 ## 0.0.7 / 2016-1-10
 * 更新 oneapm@1.2.16
 * 添加travis
