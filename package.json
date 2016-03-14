@@ -31,7 +31,6 @@
     "eventproxy": "0.3.1",
     "express": "4.9.5",
     "express-session": "1.9.1",
-    "gravatar": "^1.4.0",
     "html2markdown": "1.1.0",
     "loader": "0.1.4",
     "lodash": "2.4.1",
