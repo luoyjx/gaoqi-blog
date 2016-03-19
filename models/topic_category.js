@@ -8,8 +8,8 @@ var Schema = mongoose.Schema;
 
 var TopicCategorySchema = new Schema({
   name: {type: String},//分类名称
-  create_at: {type: Date.now},
-  update_at: {type: Date.now}
+  create_at: {type: Date, default: Date.now},
+  update_at: {type: Date, default: Date.now}
 });
 
 TopicCategorySchema.index({name: 1});
