@@ -6,7 +6,7 @@
   <%  users.forEach(function(user, index){%>
   <li class="mb-10">
       <a href="/u/<%= user.login_name %>" >
-        <img class="user-avatar" src="<%= user.avatar %>" data-toggle="tooltip"
+        <img class="user-avatar" alt="<%= user.login_name %>" src="<%= user.avatar %>" data-toggle="tooltip"
              data-placement="bottom" title="<%= user.login_name %>"/>
       </a>
   </li>
