@@ -32,7 +32,13 @@ exports.create = function(req, res, next) {
   var events = ['topic_account', 'topic_category'];
 
   ep.all(events, function(topic_account, topic_category) {
-
+    //存储文章
+    Topic.newAndSave(title, '', topic_category._id, link, topic_account._id, function(err, topic) {
+      res.send({
+        success: 1,
+        topic_id: topic._id
+      });
+    });
   });
 
   TopicAccount.findOneByName(accountName, function(err, topicAccount) {

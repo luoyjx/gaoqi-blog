@@ -15,7 +15,7 @@ var Topic = models.Topic;
  * @param {String} title 标题
  * @param {String} description 描述信息
  * @param {ObjectId} category 主题分类
- * @param {String} link 链接地址
+ * @param {String} link 文章链接地址
  * @param {ObjectId} account 微信号
  * @param {Function} callback 回调
  */
