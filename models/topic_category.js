@@ -13,5 +13,6 @@ var TopicCategorySchema = new Schema({
 });
 
 TopicCategorySchema.index({name: 1});
+TopicCategorySchema.index({create_at: -1});
 
 mongoose.model('TopicCategory', TopicCategorySchema);
