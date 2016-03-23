@@ -31,6 +31,6 @@ exports.newAndSave = function(name, link, callback) {
  * @param {String} name 名称
  * @param {Function} callback 回调函数
  */
-exports.findByName = function(name, callback) {
+exports.findOneByName = function(name, callback) {
   TopicAccount.findOne({name: name}, callback);
 };
