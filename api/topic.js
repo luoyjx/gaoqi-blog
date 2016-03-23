@@ -16,6 +16,7 @@ var validator = require('validator');
  * @param next
  */
 exports.create = function(req, res, next) {
+  console.log(req.body);
   var title = validator.trim(req.body.title);//文章标题
   title = validator.escape(title);
   var link = validator.trim(req.body.link);//文章链接
