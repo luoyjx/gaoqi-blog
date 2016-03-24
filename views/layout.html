@@ -67,7 +67,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li><a class="menu" href="/" >首页</a></li>
                     <li><a class="menu" href="/tags" >标签</a></li>
-                    <li><a class="menu" href="https://github.com/luoyjx/gaoqi-blog" target="_blank">本站源码</a></li>
+                    <li>
+                      <a class="menu github-button" href="https://github.com/luoyjx/gaoqi-blog" data-icon="octicon-star" data-count-href="/luoyjx/gaoqi-blog/stargazers" data-count-api="/repos/luoyjx/gaoqi-blog#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star luoyjx/gaoqi-blog on GitHub">Star</a>
+                    </li>
                     <% if (typeof(user) !== 'undefined') { %>
                     <li>
                       <a class="menu" href="/messages" >
@@ -154,5 +156,6 @@
             </div>
         </div>
     </footer>
+    <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
