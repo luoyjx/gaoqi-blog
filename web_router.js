@@ -68,6 +68,7 @@ router.get('/tags', tag.index);//所有标签
 router.get('/search', search.index);//搜索
 
 router.get('/robots.txt', index.robots);
+router.get('/frontEndNavigation', index.feNav);//前端导航
 router.get('/tools', index.tools);//常用工具
 router.get('/api', index.api);//api接口
 router.get('/rss', rss.index);

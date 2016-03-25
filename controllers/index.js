@@ -168,6 +168,18 @@ exports.tools = function (req, res, next) {
 };
 
 /**
+ * 前端导航
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.feNav = function(req, res, next) {
+  res.render('static/fe_nav', {
+    title: '前端导航'
+  });
+};
+
+/**
  * web api接口说明
  * @param req
  * @param res
