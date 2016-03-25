@@ -7,7 +7,7 @@
     <% if (reply.post_id && reply.post_id.title) { %>
     <li class="font-12 mb-10 clearfix">
       <a class="pull-left mr-5" href="/u/<%= reply.author_id.login_name %>" target="_blank">
-        <img class="user-avatar" src="<%= reply.author_id.avatar %>" />
+        <img class="user-avatar" alt="<%= reply.author_id.login_name %>" src="<%= reply.author_id.avatar %>" />
       </a>
       Re:
       <a class="font-bold" href="/p/<%= reply.post_id._id %>#<%= reply._id %>"
