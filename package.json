@@ -1,7 +1,8 @@
 {
   "name": "gaoqi-blog",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": true,
+  "main": "app.js",
   "description": "A Node.js blog using MongoDB",
   "repository": "https://github.com/luoyjx/gaoqi-blog",
   "customHost": [
@@ -16,7 +17,6 @@
     "node": "0.12.1"
   },
   "dependencies": {
-    "async": "0.9.0",
     "bcryptjs": "2.3.0",
     "body-parser": "1.9.2",
     "compression": "1.2.0",
@@ -35,7 +35,6 @@
     "loader": "0.1.4",
     "lodash": "2.4.1",
     "markdown-it": "3.0.3",
-    "memory-cache": "0.0.5",
     "method-override": "1.0.2",
     "mkdirp": "^0.5.1",
     "moment": "2.9.0",

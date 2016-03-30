@@ -1,8 +1,12 @@
+## 0.0.9 / 2016-3-28
+* dao,controller 修改为promise实现
+* 移除未使用包
+
 ## 0.0.8 / 2016-3-11
 * 分类tag颜色配置
 * npm scripts添加build指令来兼容windows
 * 升级nodemailer
-* 用户头像判断
+* <del>用户头像判断</del>
 
 ## 0.0.7 / 2016-1-10
 * 更新 oneapm@1.2.16
