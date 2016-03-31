@@ -38,6 +38,7 @@ router.post('/reset_pass', sign.updatePass);  // 更新密码
 router.get('/post/create', auth.userRequired, post.showCreate);//创建文章页面
 router.get('/post/:_id/edit', auth.userRequired, post.edit);
 router.get('/p/:_id', post.index);//文章内容页
+router.get(/\/post\/(\w+).html/, post.index);//文章内容页
 
 router.get('/messages', auth.userRequired, message.index);//消息
 

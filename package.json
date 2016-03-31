@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "bcryptjs": "2.3.0",
+    "bluebird": "^3.3.4",
     "body-parser": "1.9.2",
     "compression": "1.2.0",
     "connect-busboy": "0.0.1",
