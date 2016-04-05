@@ -186,6 +186,27 @@ textarea, textarea:focus, input, input:focus {
   }*/
 }
 
+.category {
+  box-shadow: 0px 1px 2px #eee;
+  .nav {
+    .active {
+      a {
+        color: @blue;
+      }
+      a:after {
+        position: absolute;
+        top: 48px;
+        left: 0;
+        width: 80%;
+        height: 2px;
+        background: #3498db;
+        margin: 0 10%;
+        content: '';
+      }
+    }
+  }
+}
+
 .user-avatar {
   width: 30px;
   border-radius: 4px;

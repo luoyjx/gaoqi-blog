@@ -1,25 +1,23 @@
+<nav class="category">
+  <div class="container">
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <% config.tabs.forEach(function (pair) {
+        var value = pair[0];
+        var text = pair[1];
+        %>
+        <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>">
+          <a class="menu" href="/?tab=<%= value %>"><%= text %></a>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+</nav>
 <div class="wrap">
-  <!--<div class="container">-->
-    <!--<div class="row">-->
-      <!--<div class="alert" role="alert" style="margin: 0 15px;">-->
-        <!--如果你有感兴趣的话题或者经验，也可以在这里 <a href="/post/create" class="btn btn-info btn-sm">发表</a>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
   <div class="container">
     <div class="row">
-
       <article class="col-sm-12 col-lg-9">
-        <ul class="nav nav-tabs" style="/*margin: 0 15px;*/">
-          <% config.tabs.forEach(function (pair) {
-          var value = pair[0];
-          var text = pair[1];
-          %>
-          <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>">
-            <a href="/?tab=<%= value %>"><%= text %></a>
-          </li>
-          <% }) %>
-        </ul>
         <%- partial('post/list', {
         posts: posts,
         pages: pages,

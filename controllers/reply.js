@@ -54,6 +54,7 @@ exports.add = function (req, res, next) {
       var newContent = content.replace('@' + postAuthor.login_name + ' ', '');
       at.sendMessageToMentionUsers(newContent, post_id, req.session.user._id, reply._id, postAuthor.login_name, post.title);
       post.reply_count += 1;
+      post.update_at = new Date();
       post.save();
     }));
 

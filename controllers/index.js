@@ -34,7 +34,7 @@ exports.index = function (req, res, next) {
   }
 
   var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-update_at'};
 
   Post.getPostsByQuery(query, options, proxy.done('posts'));
 
