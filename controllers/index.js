@@ -34,7 +34,7 @@ exports.index = function (req, res, next) {
   }
 
   var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-update_at'};
 
   Post.getPostsByQuery(query, options, proxy.done('posts'));
 
@@ -91,6 +91,7 @@ exports.index = function (req, res, next) {
 
   proxy.assign(['posts', 'hots', 'tags', 'latest_replies', 'recent_reg', 'pages'],
     function (posts, hots, tags, replies, recent_reg, pages) {
+
       res.render('index', {
         posts: posts,
         tab: tab,
@@ -163,6 +164,18 @@ exports.robots = function (req, res, next) {
 exports.tools = function (req, res, next) {
   res.render('static/tools', {
     title: '常用工具'
+  });
+};
+
+/**
+ * 前端导航
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.feNav = function(req, res, next) {
+  res.render('static/fe_nav', {
+    title: '前端导航'
   });
 };
 

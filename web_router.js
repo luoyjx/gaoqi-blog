@@ -38,6 +38,7 @@ router.post('/reset_pass', sign.updatePass);  // 更新密码
 router.get('/post/create', auth.userRequired, post.showCreate);//创建文章页面
 router.get('/post/:_id/edit', auth.userRequired, post.edit);
 router.get('/p/:_id', post.index);//文章内容页
+router.get(/\/post\/(\w+).html/, post.index);//文章内容页
 
 router.get('/messages', auth.userRequired, message.index);//消息
 
@@ -68,6 +69,7 @@ router.get('/tags', tag.index);//所有标签
 router.get('/search', search.index);//搜索
 
 router.get('/robots.txt', index.robots);
+router.get('/frontEndNavigation', index.feNav);//前端导航
 router.get('/tools', index.tools);//常用工具
 router.get('/api', index.api);//api接口
 router.get('/rss', rss.index);

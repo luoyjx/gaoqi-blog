@@ -12,5 +12,7 @@ var PostCollectionSchema = new Schema({
   create_at: { type: Date, default: Date.now }
 });
 
+PostCollectionSchema.index({user_id: 1});
+
 mongoose.model('PostCollection', PostCollectionSchema);
 

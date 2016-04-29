@@ -89,9 +89,9 @@ textarea, textarea:focus, input, input:focus {
 // 页头
 .logo{
   img {
-    height: 50px;
-    padding-left: 15px;
-    width: 140px;
+    height: 30px;
+    margin: 10px 15px;
+    width: 86px;
   }
 }
 .navbar{
@@ -184,6 +184,27 @@ textarea, textarea:focus, input, input:focus {
 	transform: translateY(5px);
     }
   }*/
+}
+
+.category {
+  box-shadow: 0px 1px 2px #eee;
+  .nav {
+    .active {
+      a {
+        color: @blue;
+      }
+      a:after {
+        position: absolute;
+        top: 48px;
+        left: 0;
+        width: 80%;
+        height: 2px;
+        background: #3498db;
+        margin: 0 10%;
+        content: '';
+      }
+    }
+  }
 }
 
 .user-avatar {
@@ -366,7 +387,9 @@ textarea, textarea:focus, input, input:focus {
       // 左侧正文
       .content-header {
         padding: 15px 0 5px 0;
-        border-bottom: 1px solid @divider-line;
+        &:hover {
+          background-color: #f8f9fa;
+        }
         .content {
           color: #777;
         }
@@ -702,6 +725,7 @@ div pre.prettyprint {
     word-wrap: break-word; /* Internet Explorer 5.5+ */
     margin: 1em 0;
     line-height: 180%;
+    font-size: 16px;
   }
   a {
     color: @blue;

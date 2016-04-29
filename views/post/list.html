@@ -19,13 +19,12 @@
             </div>
             <div class="content-body">
                 <h2 class="h4 post-title">
-                    <span class="label <%= (post.category == 'push') ? 'label-success' : 'label-info' %>"><%= post.categoryName %></span>
+                    <span class="label " style="background-color: <%= post.categoryColor %>;"><%= post.categoryName %></span>
                     <a href="/p/<%= post._id %>"><%= post.title %></a>
                 </h2>
-                <p class="content hidden-xs"><%- post.description%></p>
                 <p>
                     <a class="link font-12 mr-5" href="/u/<%= post.author.login_name %>">
-                        <%= post.author.login_name %>
+                      <%= post.author.login_name %>
                     </a>
                     <span class="addtion font-12 mr-5"><%= post.friendly_create_at %></span>
                     <span class="tags">
