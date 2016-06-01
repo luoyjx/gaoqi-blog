@@ -18,6 +18,10 @@
                         <strong><%= success %></strong>
                     </div>
                     <% } else { %>
+                    <div class="alert alert-success">
+                        <a class="close" data-dismiss="alert" href="#">&times;</a>
+                        <strong>请输入注册信息</strong>
+                    </div>
                     <form id='signup_form' class='form-horizontal' action='/signup' method='post'>
                         <div class='form-group'>
                             <div class='col-lg-offset-3 col-lg-4'>
@@ -88,4 +92,3 @@
             </div>
         </div>
     </div>
-</div>

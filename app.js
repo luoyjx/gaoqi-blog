@@ -5,7 +5,7 @@
 
 var config = require('./config');
 if (!config.debug && config.oneapm_key !== 'your oneapm key') {
-  require('oneapm');
+    require('oneapm');
 }
 
 var path = require('path');
@@ -38,12 +38,12 @@ var app = express();
 var staticDir = path.join(__dirname, 'public');
 var assets = {};
 if (config.mini_assets) {
-  try {
-    assets = require('./assets.json');
-  } catch (e) {
-    console.log('You must execute `make build` before start app when mini_assets is true.');
-    throw e;
-  }
+    try {
+        assets = require('./assets.json');
+    } catch (e) {
+        console.log('You must execute `make build` before start app when mini_assets is true.');
+        throw e;
+    }
 }
 
 app.disable('x-powered-by');
@@ -54,19 +54,19 @@ app.engine('html', require('ejs-mate'));
 app.locals._layoutFile = 'layout.html';
 
 app.use(require('response-time')());
-app.use(bodyParser.json({limit: '1mb'}));
+app.use(bodyParser.json({ limit: '1mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 app.use(require('method-override')());
 app.use(cookieParser(config.session_secret));
 app.use(compress());
 app.use(session({
-  secret: config.session_secret,
-  store: new RedisStore({
-    port: config.redis_port,
-    host: config.redis_host
-  }),
-  resave: true,
-  saveUninitialized: true
+    secret: config.session_secret,
+    store: new RedisStore({
+        port: config.redis_port,
+        host: config.redis_host
+    }),
+    resave: true,
+    saveUninitialized: true
 }));
 app.use(passport.initialize());
 
@@ -79,45 +79,45 @@ app.use(Loader.less(__dirname));
 app.use('/public', express.static(staticDir));
 
 if (!config.debug) {
-  app.use(function (req, res, next) {
-    if (req.path.indexOf('/api') === -1) {
-      csurf()(req, res, next);
-      return;
-    }
-    next();
-  });
-  app.set('view cache', true);
+    app.use(function(req, res, next) {
+        if (req.path.indexOf('/api') === -1) {
+            csurf()(req, res, next);
+            return;
+        }
+        next();
+    });
+    app.set('view cache', true);
 }
 
 //github oauth
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser(function(user, done) {
+    done(null, user);
 });
-passport.deserializeUser(function (user, done) {
-  done(null, user);
+passport.deserializeUser(function(user, done) {
+    done(null, user);
 });
-passport.use(new GitHubStrategy(config.GITHUB_OAUTH, function (accessToken, refreshToken, profile, done) {
-  done(null, profile);
+passport.use(new GitHubStrategy(config.GITHUB_OAUTH, function(accessToken, refreshToken, profile, done) {
+    done(null, profile);
 }));
 
 // set static, dynamic helpers
 _.extend(app.locals, {
-  config: config,
-  Loader: Loader,
-  assets: assets
+    config: config,
+    Loader: Loader,
+    assets: assets
 });
 _.extend(app.locals, render);
 _.extend(app.locals, cutter);
 
-app.use(function (req, res, next) {
-  res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
-  next();
+app.use(function(req, res, next) {
+    res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
+    next();
 });
 
 app.use(busboy({
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB
-  }
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB
+    }
 }));
 
 app.use('/', webRouter);
@@ -126,15 +126,15 @@ app.use('/api', cors(), webApi);
 
 // error handler
 if (config.debug) {
-  app.use(errorhandler());
+    app.use(errorhandler());
 } else {
-  app.use(function (err, req, res, next) {
-    return res.status(500).send('500 status');
-  });
+    app.use(function(err, req, res, next) {
+        return res.status(500).send('500 status');
+    });
 }
 
-app.listen(process.env.PORT ? process.env.PORT : config.port, function () {
-  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT ? process.env.PORT : config.port, app.settings.env);
+app.listen(process.env.PORT ? process.env.PORT : config.port, function() {
+    console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT ? process.env.PORT : config.port, app.settings.env);
 });
 
 
