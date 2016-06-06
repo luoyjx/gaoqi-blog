@@ -1,6 +1,35 @@
 var fs = require("fs"),
 	MAX_BUFFER = 1024,
 	util = require("util");
+
+exports = module.exports = function(src, dest) {
+
+	fs.access(src, fs.F_OK, function(err) {
+
+		if (err) {
+			console.log(err);
+			console.log(util.format('file \x1b[36m %s \x1b[0m not exists.', src));
+		} else {
+
+			fs.readFile(src, function(err, data) {
+
+				if (err) {
+					console.log(err);
+				} else {
+					fs.writeFile(dest, data, function(err) {
+						if (err) {
+							console.log(err);
+						} else{
+							console.log(util.format("creating file \x1b[36m %s \x1b[0m .", dest));
+						}
+
+					});
+				}
+			});
+		}
+	});
+};
+
 /**
     复制src到dest
 */

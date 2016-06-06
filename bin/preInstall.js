@@ -18,14 +18,7 @@ console.log(util.format("checking \x1b[36m %s \x1b[0m file.", configFileName));
 fs.access(configFileName, fs.F_OK, function(err) {
 
 	if (err) {
-
-		try {
-			cp.sync(configDefaultFileName, configFileName);
-			console.log(util.format("creating file \x1b[36m %s \x1b[0m .", configFileName));
-		} catch (e) {
-			console.log(e);
-		}
-
+			cp(configDefaultFileName, configFileName);
 	} else {
 		console.log(util.format("file \x1b[36m %s \x1b[0m exists.", configFileName));
 	}
