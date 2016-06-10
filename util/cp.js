@@ -2,32 +2,33 @@ var fs = require("fs"),
 	MAX_BUFFER = 1024,
 	util = require("util");
 
-exports = module.exports = function(src, dest) {
+exports = module.exports = function(src, dest,callBack) {
 
-	fs.access(src, fs.F_OK, function(err) {
+	var readStream = fs.createReadStream(src),
+		writeStream = fs.createWriteStream(dest);
 
-		if (err) {
-			console.log(err);
-			console.log(util.format('file \x1b[36m %s \x1b[0m not exists.', src));
-		} else {
+	readStream.on("error",done);
+	writeStream.on("error",done);
+	writeStream.on("close",done);
+	readStream.pipe(writeStream);
 
-			fs.readFile(src, function(err, data) {
-
-				if (err) {
-					console.log(err);
-				} else {
-					fs.writeFile(dest, data, function(err) {
-						if (err) {
-							console.log(err);
-						} else{
-							console.log(util.format("creating file \x1b[36m %s \x1b[0m .", dest));
-						}
-
-					});
-				}
-			});
+	function done(err){
+		if(err){
+			clear();
 		}
-	});
+		if(typeof callBack === "function")
+			callBack(err);
+	}
+
+	/*
+		当readStream或者writeStream有错误发生时，清理已经生成的目标文件
+	*/
+	function clear(){
+
+		fs.unlink(writeStream.path,function(){
+			console.log("delete the created "+ writeStream.path );
+		});
+	}
 };
 
 /**
