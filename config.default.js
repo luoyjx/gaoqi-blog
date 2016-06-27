@@ -22,8 +22,6 @@ var config = {
 
   // cdn host，如 http://static.gaoqixhb.com
   site_static_host: 'http://static.gaoqixhb.com', // 静态文件存储域名
-  // 资源文件域名,存储css,js 等,也可放置与上面一起,即只使用一个域名
-  site_assets_host: 'http://assets.gaoqixhb.com',
 
   // 社区的域名
   host: 'localhost',

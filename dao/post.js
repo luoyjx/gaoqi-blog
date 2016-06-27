@@ -1,14 +1,13 @@
 /*!
  * post dao
  */
-var EventProxy = require('eventproxy');
+var Promise = require('bluebird');
 var models = require('../models');
 var Post = models.Post;
 var User = require('./user');
 var Reply = require('./reply');
 var tools = require('../common/tools');
 var at = require('../common/at');
-var _ = require('lodash');
 
 /**
  * 根据id查询一篇文章
@@ -17,61 +16,48 @@ var _ = require('lodash');
  * - post, 文章信息
  * - author, 作者信息
  * @param {String} id 用户id
- * @param {Function} callback 回调函数
  */
-exports.getPostById = function (id, callback) {
-  var proxy = new EventProxy();
-  var events = ['post', 'author'];
+exports.getPostById = function (id) {
+  var _post;
 
-  proxy.assign(events,function (post, author) {
-    if (!author) {
-      return callback(null, null, null);
-    }
-    return callback(null, post, author);
-  }).fail(callback);
+  return Post
+    .findOne({_id: id})
+    .exec()
+    .then(function(postFind) {
+      _post = postFind;
+      return _post
+        ? User.getUserById(_post.author_id)
+        : Promise.resolve();
+    })
+    .then(function(userFind) {
+      return Promise.resolve([_post, userFind]);
+    })
 
-  Post.findOne({_id: id}, proxy.done(function (post) {
-    if (!post) {
-      proxy.emit('post', null);
-      proxy.emit('author', null);
-      return;
-    }
-    proxy.emit('post', post);
-
-    User.getUserById(post.author_id, proxy.done('author'));
-  }));
 };
 
 /**
  * 获取一篇文章
- * Callback:
- * - err, 数据库错误
- * - post, 文章信息
  * @param {String} id 文章id
- * @param {Function} callback 回调函数
  */
-exports.getPost = function (id, callback) {
-  Post.findOne({_id: id}, callback);
+exports.getPost = function (id) {
+  return Post.findOne({_id: id}).exec();
 };
 
 /**
  * 查询关键词能搜索到的文章数量
- * Callback:
- * - err, 数据库错
- * - count, 文章数量
  * @param {String} query 搜索关键词
- * @param {Function} callback 回调函数
  */
-exports.getCountByQuery = function (query, callback) {
-  Post.count(query, callback);
+exports.getCountByQuery = function (query) {
+  return Post.count(query).exec();
 };
 
 /**
  * 取最新的5万条记录，sitemap使用
- * @param {Function} callback 回调函数
  */
-exports.getLimit5w = function (callback) {
-  Post.find({}, '_id', {limit: 50000, sort: '-create_at'}, callback);
+exports.getLimit5w = function () {
+  return Post
+    .find({}, '_id', {limit: 50000, sort: '-create_at'})
+    .exec();
 };
 
 /**
@@ -79,71 +65,47 @@ exports.getLimit5w = function (callback) {
  * Callback:
  * - err, 数据库错误
  * - posts, 文章列表
- * @param {String} query 关键词
+ * @param {string|object} query 关键词
  * @param {Object} opt 搜索选项
- * @param {Function} callback 回调函数
  */
-exports.getPostsByQuery = function (query, opt, callback) {
-  Post.find(query, {}, opt, function (err, posts) {
-    if (err) {
-      return callback(err);
-    }
-    if (posts.length === 0) {
-      return callback(null, []);
-    }
-
-    var proxy = new EventProxy();
-    proxy.after('post_ready', posts.length, function (posts) {
-      return callback(null, posts);
-    });
-    proxy.fail(callback);
-
-
-    posts.forEach(function(post, i){
-      User.getUserById(post.author_id, proxy.group('post_ready', function(author){
-        //post = post.toObject();
-        post.author = author;
-        post.friendly_create_at = tools.formatDate(post.create_at, true);
-        post.friendly_pv = tools.formatPV(post.pv);
-        return post;
-      }));
+exports.getPostsByQuery = function (query, opt) {
+  return Post
+    .find(query, {}, opt)
+    .exec()
+    .then(function (postsFind) {
+      return Promise.map(postsFind, function(post) {
+        return User
+          .getUserById(post.author_id)
+          .then(function(author) {
+            post.author = author;
+            post.friendly_create_at = tools.formatDate(post.create_at, true);
+            post.friendly_pv = tools.formatPV(post.pv);
+            return post;
+          })
+      })
     })
-  });
 };
 
 /**
  * 根据选项查询简单的文章实体
  * 并不做连接查询
- * Callback:
- * - err, 数据库错误
- * - posts, 热门文章
  * @param {Object} options 查询选项
- * @param {Function} callback 回调函数
  */
-exports.getSimplePosts = function (options, callback) {
-  Post.find({}, {_id: 1, title: 1}, options, function (err, posts) {
-    if (err) {
-      return callback(err);
-    }
-    if (posts.length === 0) {
-      return callback(null, []);
-    }
-    callback(null, posts);
-  });
+exports.getSimplePosts = function (options) {
+  return Post.find({}, {_id: 1, title: 1}, options).exec();
 };
 
 /**
  * 查询最近热门的文章
  * @param query 过滤条件
- * @param callback 回调函数
  */
-exports.getNewHot = function(query, callback) {
-  Post
+exports.getNewHot = function(query) {
+  return Post
     .find(query)
     .limit(50)
     .sort({create_at : -1})
     .select({_id: 1, title: 1, pv: 1})
-    .exec(callback);
+    .exec();
 };
 
 /**
@@ -155,58 +117,36 @@ exports.getNewHot = function(query, callback) {
  * - author, 作者
  * - replies, 文章回复
  * @param post_id
- * @param callback
  */
-exports.getCompletePost = function (post_id, callback) {
-  var proxy = new EventProxy();
-  var events = ['post', 'author', 'replies'];
-
-  proxy.assign(events,function (post, author, replies) {
-    callback(null, '', post, author, replies);
-  }).fail(callback);
-
-  Post.findOne({_id: post_id}, proxy.done(function (post) {
-    if (!post) {
-      proxy.unbind();
-      return callback(null, '这篇文章从地球上消失了');
-    }
-    at.linkUsers(post.content, proxy.done('post', function (str) {
-      post.linkedContent = str;
-      return post;
-    }));
-
-    //at其他用户解析
-
-    User.getUserById(post.author_id, proxy.done(function (author) {
-      if (!author) {
-        proxy.unbind();
-        return callback(null, '这篇文章的作者已经从地球上消失了');
-      }
-      proxy.emit('author', author);
-    }));
-
-    Reply.getRepliesByPostId(post._id, proxy.done('replies'));
-  }));
-
+exports.getCompletePost = function (post_id) {
+  return Post
+    .findOne({_id: post_id})
+    .exec()
+    .then(function(postFind) {
+      postFind.linkedContent = at.linkUsers(postFind.content);
+      return Promise
+        .all([
+          User.getUserById(postFind.author_id),
+          Reply.getRepliesByPostId(postFind._id)
+        ])
+        .spread(function(userFind, repliesFind) {
+          return Promise.resolve([postFind, userFind, repliesFind]);
+        })
+    });
 };
 
 /**
  * 将当前文章的回复计数减1，并且更新最后回复的用户，删除回复时用到
  * @param {String} id 文章ID
- * @param {Function} callback 回调函数
  */
-exports.reduceCount = function (id, callback) {
-  Post.findOne({_id: id}, function (err, post) {
-    if (err) {
-      return callback(err);
-    }
-    if (!post) {
-      return callback(new Error('该文章不存在'));
-    }
-    post.reply_count -= 1;
-
-    post.save(callback);
-  });
+exports.reduceCount = function (id) {
+  return Post
+    .findOne({_id: id})
+    .exec()
+    .then(function (postFind) {
+      postFind.reply_count -= 1;
+      return postFind.save();
+    })
 };
 
 /**
@@ -217,9 +157,8 @@ exports.reduceCount = function (id, callback) {
  * @param {String} author_id 作者id
  * @param {Array} tags 标签
  * @param {String} category 文章分类
- * @param {Function} callback 回调函数
  */
-exports.newAndSave = function (title, description, content, author_id, tags, category, callback) {
+exports.newAndSave = function (title, description, content, author_id, tags, category) {
   var post = new Post();
   post.title = title;
   post.description = description;
@@ -227,7 +166,8 @@ exports.newAndSave = function (title, description, content, author_id, tags, cat
   post.author_id = author_id;
   post.tags = tags;
   post.category = category;
-  post.save(callback);
+  post.save();
+  return Promise.resolve(post);
 };
 
 /**
@@ -241,9 +181,8 @@ exports.newAndSave = function (title, description, content, author_id, tags, cat
  * @param {String} id 文章id，在导入时用到
  * @param {Date} create_at 创建时间
  * @param {Number} pv 浏览数
- * @param {Function} callback 回调函数
  */
-exports.importNew = function (title, description, content, author_id, tags, category, id, create_at, pv, callback) {
+exports.importNew = function (title, description, content, author_id, tags, category, id, create_at, pv) {
   var post = new Post();
   post._id = id;
   post.title = title;
@@ -255,5 +194,15 @@ exports.importNew = function (title, description, content, author_id, tags, cate
   post.create_at = create_at;
   post.update_at = create_at;
   post.pv = pv;
-  post.save(callback);
+  post.save();
+  return Promise.resolve(post);
+};
+
+/**
+ * 删除
+ * @param {Object} query 过滤条件
+ * @returns {*}
+ */
+exports.remove = function(query) {
+  return Post.remove(query).exec();
 };

@@ -26,7 +26,9 @@ gaoqi-blog
 ## 安装运行
 
 * 安装上面所需的3个环境
-* 安装前置 `make preinstall`(linux) 或者 `npm run pre-install`(windows)
+* 安装前置 
+    * linux `make preinstall` 和 `npm run pre-install`
+    * windows `npm run pre-install`
 * `make install` 把依赖安装上
 * 如果`config.js`中debug 未设置为true，则需要`make build`(Windows 可使用`npm run build`来构建)，压缩合并一下js、css文件
 * 使用`node app.js`运行，推荐`pm2`管理应用进程，安装后使用`make start`
@@ -42,7 +44,7 @@ gaoqi-blog
 `make test-cov`
 
 ## 版本日志
-* [history](https://github.com/luoyjx/gaoqi-blog/blob/master/History.md)
+* [History.md](https://github.com/luoyjx/gaoqi-blog/blob/master/History.md)
 
 ## License
 MIT

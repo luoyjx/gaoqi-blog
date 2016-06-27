@@ -1,22 +1,19 @@
+/*!
+ * cache
+ */
+var Promise = require('bluebird');
 var redis = require('./redis');
-var _ = require('lodash');
 
 /**
  * 从cache中取出缓存
  * @param key 键
- * @param callback 回调函数
  */
-var get = function (key, callback) {
-  redis.get(key, function (err, data) {
-    if (err) {
-      return callback(err);
-    }
-    if (!data) {
-      return callback();
-    }
-    data = JSON.parse(data);
-    callback(null, data);
-  });
+var get = function (key) {
+  return redis
+      .get(key)
+      .then(function (data) {
+        return Promise.resolve(JSON.parse(data));
+      });
 };
 
 exports.get = get;
@@ -27,21 +24,15 @@ exports.get = get;
  *
  * @param key  键
  * @param value 值
- * @param time 参数可选，毫秒为单位,切换为redis以秒为单位，除以1000
- * @param callback 回调函数
+ * @param time 参数可选，秒为单位
  */
-var set = function (key, value, time, callback) {
-  if (typeof time === 'function') {
-    callback = time;
-    time = null;
-  }
-  callback = callback || _.noop;
+var set = function (key, value, time) {
   value = JSON.stringify(value);
   if (!time) {
-    redis.set(key, value, callback);
+    return redis.set(key, value);
   } else {
     //将毫秒单位转为秒
-    redis.setex(key, parseInt(time / 1000), value, callback);
+    return redis.setex(key, parseInt(time), value);
   }
 };
 

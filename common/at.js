@@ -1,11 +1,11 @@
 /*！
  * at common
  */
+var Promise = require('bluebird');
 var User       = require('../dao').User;
 var Message    = require('./message');
-var EventProxy = require('eventproxy');
 var _          = require('lodash');
-var online = require('../filter/online');
+var online = require('../middleware/online');
 var mail = require('./mail');
 
 /**
@@ -52,39 +52,26 @@ exports.fetchUsers = fetchUsers;
  * @param {String} reply_id 回复ID
  * @param {String} author 作者用户
  * @param {String} post_title 文章标题
- * @param {Function} callback 回调函数
  */
-exports.sendMessageToMentionUsers = function (text, postId, authorId, reply_id, author, post_title, callback) {
-  if (typeof reply_id === 'function') {
-    callback = reply_id;
-    reply_id = null;
-  }
-  callback = callback || _.noop;
-
-  User.getUsersByNames(fetchUsers(text), function (err, users) {
-    if (err || !users) {
-      return callback(err);
-    }
-    var ep = new EventProxy();
-    ep.fail(callback);
-
-    users = users.filter(function (user) {
-      return !user._id.equals(authorId);
-    });
-
-    ep.after('sent', users.length, function () {
-      callback();
-    });
-
-    users.forEach(function (user) {
-      Message.sendAtMessage(user._id, authorId, postId, reply_id, ep.done('sent'));
-      online.isOnline(user._id, function(err, flag) {
-        if (!flag) {
-          mail.sendNotificationMail(user.email, user.login_name, author, post_title, postId, reply_id);
-        }
+exports.sendMessageToMentionUsers = function (text, postId, authorId, reply_id, author, post_title) {
+  return User
+    .getUsersByNames(fetchUsers(text))
+    .then(function(users) {
+      users = users.filter(function (user) {
+        return !user._id.equals(authorId);
       });
-    });
-  });
+      return Promise
+        .map(users, function(user) {
+          Message.sendAtMessage(user._id, authorId, postId, reply_id);
+          online
+            .isOnline(user._id)
+            .then(function(flag) {
+              if (!flag) {
+                mail.sendNotificationMail(user.email, user.login_name, author, post_title, postId, reply_id);
+              }
+            });
+        })
+    })
 };
 
 /**
@@ -93,16 +80,12 @@ exports.sendMessageToMentionUsers = function (text, postId, authorId, reply_id, 
  * - err, 数据库异常
  * - text, 替换后的文本内容
  * @param {String} text 文本内容
- * @param {Function} callback 回调函数
  */
-exports.linkUsers = function (text, callback) {
-  var users = fetchUsers(text);
-  for (var i = 0, l = users.length; i < l; i++) {
-    var name = users[i];
-    text = text.replace(new RegExp('@' + name + '\\b(?!\\])', 'g'), '[@' + name + '](/u/' + name + ')');
-  }
-  if (!callback) {
+exports.linkUsers = function (text) {
+    var users = fetchUsers(text);
+    for (var i = 0, l = users.length; i < l; i++) {
+      var name = users[i];
+      text = text.replace(new RegExp('@' + name + '\\b(?!\\])', 'g'), '[@' + name + '](/u/' + name + ')');
+    }
     return text;
-  }
-  return callback(null, text);
 };

@@ -2,7 +2,7 @@
  * tag controller
  */
 
-var EventProxy = require('eventproxy');
+var Promise = require('bluebird');
 var Tag = require('../dao').Tag;
 var Post = require('../dao').Post;
 var validator = require('validator');
@@ -20,36 +20,35 @@ exports.index = function (req, res, next) {
   var page = req.query.page ? parseInt(req.query.page, 10) : 1;
   page = page > 0 ? page : 1;
 
-  var proxy = new EventProxy();
-  var events = ['tags', 'pages'];
-
-  proxy.assign(events, function (tags, pages) {
-
-    res.render('tag/list', {
-      base: path,
-      current_page: page,
-      pages: pages,
-      tags: tags,
-      title: '全部标签'
-    });
-  });
-  proxy.fail(next);
-
   var limit = 20;
   var options = {skip: (page - 1) * limit, limit: limit, sort: '-post_count'};
 
-  Tag.getAllTagsByQuery({}, options, proxy.done('tags', function (tags) {
-    tags = tags && tags.length > 0 ? tags : [];
-    tags.forEach(function (tag) {
-      tag.description = cutter.shorter(tag.description, 200);
+  Promise
+    .all([
+      Tag.getAllTagsByQuery({}, options)
+        .then(function(tags) {
+          return Promise.map(tags, function(tag) {
+            tag.description = cutter.shorter(tag.description, 200);
+            return tag;
+          })
+        }),
+      Tag.getCountByQuery({})
+        .then(function(all_count) {
+          return Promise.resolve(Math.ceil(all_count / limit));
+        })
+    ])
+    .spread(function(tags, pages) {
+      res.render('tag/list', {
+        base: path,
+        current_page: page,
+        pages: pages,
+        tags: tags,
+        title: '标签 - 第' + page + '页'
+      });
+    })
+    .catch(function(err) {
+      next(err);
     });
-    return tags;
-  }));
-
-  Tag.getCountByQuery({}, proxy.done('pages', function (all_count) {
-    return Math.ceil(all_count / limit);
-  }));
-
 };
 
 /**
@@ -65,52 +64,44 @@ exports.getTagByName = function (req, res, next) {
   name = validator.escape(name);
   var limit = config.list_topic_count;
 
-  var proxy = new EventProxy();
-  var events = ['tag', 'posts', 'pages'];
-
-  proxy.assign(events, function (tag, posts, pages) {
-    res.render('tag/index', {
-      title: name,
-      tag: tag,
-      posts: posts.length === 0 ? [] : posts,
-      base: path,
-      current_page: page,
-      pages: pages
-    });
-  });
-  proxy.fail(next);
-
   var errorInfo = '';
   if (name.length === '') {
     errorInfo = 'tag名称不能为空';
   }
 
   if (errorInfo) {
-    res.status(422);
-    return res.render('notify/notify', {error: errorInfo});
+    return res.status(422).render('notify/notify', {error: errorInfo});
   }
 
-  Tag.getTagByName(name, proxy.done(function (tag) {
-    if (!tag) {
-      proxy.unbind();
-      return res.render('notify/notify', {error: '该标签可能已经去了火星'});
-    } else {
-      tag.short_desc = cutter.shorter(tag.description, 200);
-    }
-    proxy.emit('tag', tag);
-  }));
-
+  // post options
   var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
 
-  Post.getPostsByQuery({tags: name}, options, proxy.done(function (posts) {
-    if (posts.length === 0) {
-      return proxy.emit('posts', []);
-    }
-    proxy.emit('posts', posts);
-  }));
+  Promise
+    .all([
+      Tag.getTagByName(name),
+      Post.getPostsByQuery({tags: name}, options),
+      Post.getCountByQuery({tags: name})
+        .then(function(all_count) {
+          return Promise.resolve(Math.ceil(all_count / limit));
+        })
+    ])
+    .spread(function(tag, posts, pages) {
+      if (!tag) {
+        return res.wrapRender('notify/notify', {error: '该标签可能已经去了火星'});
+      }
 
-  Post.getCountByQuery({tags: name}, proxy.done(function (allCount) {
-    var pages = Math.ceil(allCount / limit);
-    proxy.emit('pages', pages);
-  }));
+      tag.short_desc = cutter.shorter(tag.description, 200);
+
+      res.wrapRender('tag/index', {
+        title: name  + ' 第' + page + '页',
+        tag: tag,
+        posts: posts.length === 0 ? [] : posts,
+        base: path,
+        current_page: page,
+        pages: pages
+      });
+    })
+    .catch(function(err) {
+      next(err);
+    });
 };

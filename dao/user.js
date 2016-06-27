@@ -1,6 +1,7 @@
 /*!
  * user dao
  */
+var Promise = require('bluebird');
 var models = require('../models');
 var User = models.User;
 var utility = require('utility');
@@ -14,13 +15,10 @@ var config = require('../config');
  * - err, 数据库错误
  * - users, 多个用户信息
  * @param {Array} names 多个用户名
- * @param {Function} callback 回调函数
  */
-exports.getUsersByNames = function (names, callback) {
-  if (names.length === 0) {
-    return callback(null, []);
-  }
-  User.find({'login_name': {$in: names}}, callback);
+exports.getUsersByNames = function (names) {
+    if (names.length === 0) return Promise.resolve([]);
+    return User.find({'login_name': {$in: names}}).exec();
 };
 
 /**
@@ -29,10 +27,9 @@ exports.getUsersByNames = function (names, callback) {
  * - err, 数据库错误
  * - user, 用户信息
  * @param {String} id 用户id
- * @param {Function} callback 回调函数
  */
-exports.getUserById = function (id, callback) {
-  User.findOne({_id: id}, callback);
+exports.getUserById = function (id) {
+  return User.findOne({_id: id}).exec();
 };
 
 /**
@@ -41,10 +38,10 @@ exports.getUserById = function (id, callback) {
  * - err, 数据库错误
  * - user, 用户信息
  * @param {String} loginName 登录名
- * @param {Function} callback 回调函数
  */
-exports.getUserByLoginName = function (loginName, callback) {
-  User.findOne({'login_name': loginName}, callback);
+exports.getUserByLoginName = function (loginName) {
+  return User.findOne({'login_name': loginName}).exec();
+
 };
 
 /**
@@ -53,10 +50,9 @@ exports.getUserByLoginName = function (loginName, callback) {
  * - err, 数据库错误
  * - user, 用户信息
  * @param {String} email 邮箱
- * @param {Function} callback 回调函数
  */
-exports.getUserByEmail = function (email, callback) {
-  User.findOne({'email': email}, callback);
+exports.getUserByEmail = function (email) {
+  return User.findOne({'email': email});
 };
 
 /**
@@ -66,10 +62,9 @@ exports.getUserByEmail = function (email, callback) {
  * - user, 用户
  * @param {String} login_name 用户名
  * @param {String} key 激活码
- * @param {Function} callback 回调函数
  */
-exports.getUserByNameAndKey = function (login_name, key, callback) {
-  User.findOne({login_name: login_name, retrieve_key: key}, callback);
+exports.getUserByNameAndKey = function (login_name, key) {
+  return User.findOne({login_name: login_name, retrieve_key: key}).exec();
 };
 
 /**
@@ -77,12 +72,21 @@ exports.getUserByNameAndKey = function (login_name, key, callback) {
  * Callback:
  * - err, 数据库异常
  * - users, 用户列表
- * @param {String} query 关键字
+ * @param {String|object} query 关键字
  * @param {Object} opt 选项
- * @param {Function} callback 回调函数
  */
-exports.getUsersByQuery = function (query, opt, callback) {
-  User.find(query, '', opt, callback);
+exports.getUsersByQuery = function (query, opt) {
+  return User.find(query, '', opt).exec();
+};
+
+/**
+ * 查询一个并更新
+ * @param {Object} query 查询条件
+ * @param {Object} update 更新属性
+ * @returns {Promise}
+ */
+exports.findOneAndUpdate = function(query, update) {
+  return User.findOneAndUpdate(query, update).exec();
 };
 
 /**
@@ -93,9 +97,8 @@ exports.getUsersByQuery = function (query, opt, callback) {
  * @param {String} email 邮箱
  * @param {String} avatar_url 头像地址
  * @param {Boolean} active 是否激活
- * @param {Function} callback 回调函数
  */
-exports.newAndSave = function (name, login_name, pass, email, avatar_url, active, callback) {
+exports.newAndSave = function (name, login_name, pass, email, avatar_url, active) {
   var user = new User();
   user.name = login_name;
   user.login_name = login_name;
@@ -104,7 +107,8 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
   user.is_active = active || false;
   user.avatar = avatar_url;
   user.accessToken = uuid.v4();
-  user.save(callback);
+  user.save();
+  return Promise.resolve(user);
 };
 
 /**

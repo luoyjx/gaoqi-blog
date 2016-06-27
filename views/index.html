@@ -2,6 +2,9 @@
   <div class="container">
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        <li class="<%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>">
+          <a class="menu" href="/">全部</a>
+        </li>
         <% config.tabs.forEach(function (pair) {
         var value = pair[0];
         var text = pair[1];
@@ -27,20 +30,20 @@
         }) %>
       </article>
       <aside class="col-sm-12 col-lg-3 mt-5">
-        <div>
-          <!--<a href="http://www.igoutuan.com/?utm_source=blog.gaoqixhb.com" target="_blank">-->
-            <!--<img src="http://static.gaoqixhb.com/igoutuan_ad_20160115_1.png" style="border-radius: 2px;border: 1px solid #efefef;" />-->
-          <!--</a>-->
-          <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-          <!-- 边栏2_230x200 -->
-          <ins class="adsbygoogle"
-               style="display:inline-block;width:230px;height:200px"
-               data-ad-client="ca-pub-6653599194334150"
-               data-ad-slot="8390618822"></ins>
-          <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
+        <!--<div>-->
+          <!--&lt;!&ndash;<a href="http://www.igoutuan.com/?utm_source=blog.gaoqixhb.com" target="_blank">&ndash;&gt;-->
+            <!--&lt;!&ndash;<img src="http://static.gaoqixhb.com/igoutuan_ad_20160115_1.png" style="border-radius: 2px;border: 1px solid #efefef;" />&ndash;&gt;-->
+          <!--&lt;!&ndash;</a>&ndash;&gt;-->
+          <!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
+          <!--&lt;!&ndash; 边栏2_230x200 &ndash;&gt;-->
+          <!--<ins class="adsbygoogle"-->
+               <!--style="display:inline-block;width:230px;height:200px"-->
+               <!--data-ad-client="ca-pub-6653599194334150"-->
+               <!--data-ad-slot="8390618822"></ins>-->
+          <!--<script>-->
+            <!--(adsbygoogle = window.adsbygoogle || []).push({});-->
+          <!--</script>-->
+        <!--</div>-->
         <div>
           <%- partial('post/hot', {
           hots: hots

@@ -3,7 +3,7 @@
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_assets_host, config.mini_assets)
+.done(assets, config.site_static_host, config.mini_assets)
 %>
 <div class="wrap">
     <div class='container'>
@@ -56,11 +56,8 @@
                                   placeholder="标题   字数10 字以上"
                                 ><%= typeof(post_title) !== 'undefined' && post_title || '' %></textarea>
                         <!--[if lte IE 9]>
-                        <span>摘要</span>
+                        <!--<span>摘要</span>-->
                         <![endif]-->
-                        <textarea class='span9 ' id='description' name='description' rows='3'
-                                  placeholder="文章描述 即文章的主旨  300字符以内"
-                                ><%= typeof(description) !== 'undefined' && description || '' %></textarea>
                         <!--[if lte IE 9]>
                         <span>标签</span>
                         <![endif]-->
@@ -123,11 +120,11 @@
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
-.done(assets, config.site_assets_host, config.mini_assets)
+.done(assets, config.site_static_host, config.mini_assets)
 %>
 <%- Loader('/public/js/edit.min.js')
 .js('/public/lib/jquery.autocomplete.js')
 .js('/public/js/post.js')
-.done(assets, config.site_assets_host, config.mini_assets)
+.done(assets, config.site_static_host, config.mini_assets)
 %>
 
