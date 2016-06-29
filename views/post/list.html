@@ -13,20 +13,23 @@
             <% } %>
             <div class="content-info hidden-xs">
                 <div class="content-info-view">
-                    <div class="coontent-info-number"><%= post.friendly_pv %></div>
-                    <small>浏览</small>
+                  <a href="/u/<%= post.author.login_name %>" >
+                    <img class="user-avatar-lg" alt="<%= post.author.login_name %>" src="<%= post.author.avatar %>" />
+                  </a>
                 </div>
             </div>
             <div class="content-body">
                 <h2 class="h4 post-title">
-                    <span class="label " style="background-color: <%= post.categoryColor %>;"><%= post.categoryName %></span>
                     <a href="/p/<%= post._id %>"><%= post.title %></a>
                 </h2>
                 <p>
-                    <a class="link font-12 mr-5" href="/u/<%= post.author.login_name %>">
-                      <%= post.author.login_name %>
-                    </a>
+                    <% if (typeof tab === 'undefined' || tab === '') { %>
+                      <span class="label "
+                            style="color: <%= post.categoryColor %>;border: 1px solid <%= post.categoryColor %>;"
+                      ><%= post.categoryName %></span>
+                    <% } %>
                     <span class="addtion font-12 mr-5"><%= post.friendly_create_at %></span>
+                    <span class="addtion font-12 mr-5"><%= post.friendly_pv %>浏览</span>
                     <span class="tags">
                     <% if(post.tags){ %>
                     <span>

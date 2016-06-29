@@ -30,3 +30,11 @@ exports.shorter = function (content, length) {
   }
   return result;
 };
+
+/**
+ * 清除html标签
+ * @param {String} content 需要被清除的内容
+ */
+exports.clearHtml = function (content) {
+
+};

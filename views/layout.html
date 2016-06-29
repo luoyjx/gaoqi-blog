@@ -35,13 +35,13 @@
     .css('/public/lib/bootstrap/dist/css/bootstrap.css')
     .css('/public/css/common.less')
     .css('/public/css/gotop.css')
-    .done(assets, config.site_assets_host, config.mini_assets)
+    .done(assets, config.site_static_host, config.mini_assets)
     %>
 
 
     <!--[if lt IE 9]>
-    <script src="http://static.gaoqixhb.com/html5shiv/3.7.0/html5shiv.min.js"></script>
-    <script src="http://static.gaoqixhb.com/respond.js/1.3.0/respond.min.js"></script>
+    <script src="//o7xo702bw.qnssl.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+    <script src="//o7xo702bw.qnssl.com/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
     <meta content="_csrf" name="csrf-param">
     <meta content="<%= csrf %>" name="csrf-token">
@@ -62,7 +62,7 @@
                 <ul class="nav navbar-nav">
                   <li><a class="menu" href="/" >首页</a></li>
                   <li><a class="menu" href="/tags" >标签</a></li>
-                  <li><a class="menu" href="/frontEndNavigation" >前端导航</a></li>
+                  <li><a class="menu" href="/frontEndNavigation" >导航</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -110,9 +110,8 @@
     .js('/public/lib/jquery.scrolltofixed.js')
     .js('/public/lib/markdownit.js')
     .js('/public/lib/code-prettify/prettify.js')
-    .js('/public/lib/validator/validator.js')
     .js('/public/js/common.js')
-    .done(assets, config.site_assets_host, config.mini_assets)
+    .done(assets, config.site_static_host, config.mini_assets)
     %>
     <%- body %>
     <div id="page"><div id="gotoTop"><span class="glyphicon glyphicon-menu-up"></span></div></div>
@@ -137,7 +136,7 @@
                             <span >&copy; 2014-2015 <a href="http://blog.gaoqixhb.com">gaoqixhb</a>.</span>
                             <a href="http://www.miibeian.gov.cn/" rel="nofollow" target="_blank">鄂ICP备14001576号-1</a>
                             <% if (config.cnzz_tracker_id && !config.debug) { %>
-                        <div style="display: none;"><script src="http://s13.cnzz.com/z_stat.php?id=1253178185&web_id=1253178185" language="JavaScript"></script></div>
+                        <div style="display: none;"><script src="//s13.cnzz.com/z_stat.php?id=1253178185&web_id=1253178185" language="JavaScript"></script></div>
                         <script type="text/javascript">
                             var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
                             document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F59acccd43801ac1b47f47fd07d7a479a' type='text/javascript'%3E%3C/script%3E"));

@@ -1,7 +1,7 @@
+var Promise = require('bluebird');
 var mongoose = require('mongoose');
 var UserModel = mongoose.model('User');
 var config = require('../config');
-var eventproxy = require('eventproxy');
 var UserProxy = require('../dao').User;
 var Message = require('../dao').Message;
 
@@ -51,9 +51,6 @@ exports.gen_session = gen_session;
 
 // 验证用户是否登录
 exports.authUser = function (req, res, next) {
-  var ep = new eventproxy();
-  ep.fail(next);
-
   if (config.debug && req.cookies['mock_user']) {
     var mockUser = JSON.parse(req.cookies['mock_user']);
     req.session.user = new UserModel(mockUser);
@@ -63,24 +60,9 @@ exports.authUser = function (req, res, next) {
     return next();
   }
 
-  ep.all('get_user', function (user) {
-    if (!user) {
-      return next();
-    }
-    user = res.locals.user = req.session.user = new UserModel(user);
-
-    if (config.admins.hasOwnProperty(user.login_name)) {
-      user.is_admin = true;
-    }
-    Message.getMessagesCount(user._id, ep.done(function (count) {
-      user.messages_count = count;
-      next();
-    }));
-
-  });
-
+  var userPromise;
   if (req.session.user) {
-    ep.emit('get_user', req.session.user);
+    userPromise = Promise.resolve(req.session.user);
   } else {
     var auth_token = req.signedCookies[config.auth_cookie_name];
     if (!auth_token) {
@@ -89,6 +71,24 @@ exports.authUser = function (req, res, next) {
 
     var auth = auth_token.split('$$$$');
     var user_id = auth[0];
-    UserProxy.getUserById(user_id, ep.done('get_user'));
+    userPromise = UserProxy.getUserById(user_id);
   }
+
+  userPromise
+    .then(function(user) {
+      if (!user) {
+        return next();
+      }
+
+      user = res.locals.user = req.session.user = new UserModel(user);
+
+      if (config.admins.hasOwnProperty(user.login_name)) {
+        user.is_admin = true;
+      }
+      Message.getMessagesCount(user._id)
+        .then(function(count) {
+          user.messages_count = count;
+          next();
+        });
+    });
 };

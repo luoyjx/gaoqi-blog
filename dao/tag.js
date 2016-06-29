@@ -1,7 +1,7 @@
 /*!
  * tag dao
  */
-var EventProxy = require('eventproxy');
+var Promise = require('bluebird');
 var models = require('../models');
 var Tag = models.Tag;
 
@@ -11,18 +11,9 @@ var Tag = models.Tag;
  * - err, 数据库错误
  * - tags, 热门标签
  * @param {Object} options 查询选项
- * @param {Function} callback 回调函数
  */
-exports.getHotTagsByQuery = function (options, callback) {
-  Tag.find({}, {name: 1, _id: 0}, options, function (err, tags) {
-    if (err) {
-      callback(err);
-    }
-    if (tags.length === 0) {
-      callback(null, []);
-    }
-    callback(null, tags);
-  });
+exports.getHotTagsByQuery = function (options) {
+  return Tag.find({}, {name: 1, _id: 0}, options).exec();
 };
 
 /**
@@ -31,10 +22,10 @@ exports.getHotTagsByQuery = function (options, callback) {
  * - err, 数据库错误
  * - tag, Tag信息
  * @param {String} name 标签名称
- * @param {Function} callback 回调函数
  */
-exports.getTagByName = function (name, callback) {
-  Tag.findOne({name: name}, callback);
+exports.getTagByName = function (name) {
+  return Tag.findOne({name: name}).exec();
+
 };
 
 /**
@@ -44,10 +35,9 @@ exports.getTagByName = function (name, callback) {
  * - tags, 多个标签
  * @param {String} query 查询条件
  * @param {Object} opt 查询选项
- * @param {Function} callback 回调函数
  */
-exports.getAllTagsByQuery = function (query, opt, callback) {
-  Tag.find(query, {}, opt, callback);
+exports.getAllTagsByQuery = function (query, opt) {
+  return Tag.find(query, {}, opt).exec();
 };
 
 /**
@@ -56,23 +46,22 @@ exports.getAllTagsByQuery = function (query, opt, callback) {
  * - err, 数据库错误
  * - count, 总数
  * @param {String} query 查询参数
- * @param {Function} callback 回调函数
  */
-exports.getCountByQuery = function (query, callback) {
-  Tag.count(query, callback);
+exports.getCountByQuery = function (query) {
+  return Tag.count(query).exec();
 };
 
 /**
  * 新增一条tag信息
  * @param {String} name tag名称
  * @param {String} description tag描述信息
- * @param {Function} callback 回调函数
  */
-exports.newAndSave = function (name, description, callback) {
+exports.newAndSave = function (name, description) {
   var tag = new Tag();
   tag.name = name;
   tag.description = description;
-  tag.save(callback);
+  tag.save();
+  return Promise.resolve(tag);
 };
 
 /**
@@ -80,9 +69,8 @@ exports.newAndSave = function (name, description, callback) {
  * @param {String} query 需要更新的过滤
  * @param {Object} update 更新的字段
  * @param {Object} opts 选项，如 {upsert: true}
- * @param {Function} callback 回调函数
  */
-exports.upsert = function (query, update, opts, callback) {
-  Tag.update(query, update, opts, callback);
+exports.upsert = function (query, update, opts) {
+  return Tag.update(query, update, opts).exec();
 };
 

@@ -3,7 +3,6 @@
  */
 
 var UserModel = require('../models').User;
-var eventproxy = require('eventproxy');
 var validator = require('validator');
 
 /**
@@ -13,20 +12,20 @@ var validator = require('validator');
  * @param next
  */
 var auth = function (req, res, next) {
-  var ep = new eventproxy();
-  ep.fail(next);
-
   var accessToken = req.body.accesstoken || req.query.accesstoken;
   accessToken = validator.trim(accessToken);
   console.log(accessToken);
-  UserModel.findOne({accessToken: accessToken}, ep.done(function (user) {
-    if (!user) {
-      res.status(403);
-      return res.send({error_msg: 'wrong accessToken'});
-    }
-    req.user = user;
-    next();
-  }));
+  UserModel
+    .findOne({accessToken: accessToken})
+    .exec()
+    .then(function(user) {
+      if (!user) {
+        res.status(403);
+        return res.send({error_msg: 'wrong accessToken'});
+      }
+      req.user = user;
+      next();
+    });
 };
 
 exports.auth = auth;

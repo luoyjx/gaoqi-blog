@@ -44,6 +44,10 @@
                     </div>
                     <% }else{ %>
                     <div class="content article-content"><%- markdown(post.linkedContent) %></div>
+                    <div class="alert alert-success" role="alert">
+                      <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong><em style="color: #f2354f;">pigtx1</em></strong> 购买阿里云服务（限新用户）
+                      </p>
+                    </div>
                     <div class="article-tags">
                         <% if(post.tags){
                         post.tags.forEach(function (tag, index) { %>
@@ -52,18 +56,18 @@
                         <% } %>
                         <% }); }%>
                     </div>
-                    <div class="ad-content-bottom">
-                      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                      <!-- 自适应 -->
-                      <ins class="adsbygoogle"
-                           style="display:block"
-                           data-ad-client="ca-pub-6653599194334150"
-                           data-ad-slot="6781889224"
-                           data-ad-format="auto"></ins>
-                      <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                      </script>
-                    </div>
+                    <!--<div class="ad-content-bottom">-->
+                      <!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
+                      <!--&lt;!&ndash; 自适应 &ndash;&gt;-->
+                      <!--<ins class="adsbygoogle"-->
+                           <!--style="display:block"-->
+                           <!--data-ad-client="ca-pub-6653599194334150"-->
+                           <!--data-ad-slot="6781889224"-->
+                           <!--data-ad-format="auto"></ins>-->
+                      <!--<script>-->
+                        <!--(adsbygoogle = window.adsbygoogle || []).push({});-->
+                      <!--</script>-->
+                    <!--</div>-->
                     <% } %>
                   <strong class="mb-20 section-title">相关阅读</strong>
                   <script>document.write(unescape('%3Cdiv id="hm_t_43883"%3E%3C/div%3E%3Cscript charset="utf-8" src="http://crs.baidu.com/t.js?siteId=59acccd43801ac1b47f47fd07d7a479a&planId=43883&async=0&referer=') + encodeURIComponent(document.referrer) + '&title=' + encodeURIComponent(document.title) + '&rnd=' + (+new Date) + unescape('"%3E%3C/script%3E'));</script>
@@ -102,21 +106,16 @@
             </div>
             <aside class="col-xs-12 col-lg-3">
               <!--<div>-->
-                <!--<a href="http://www.igoutuan.com/?utm_source=blog.gaoqixhb.com" target="_blank">-->
-                  <!--<img src="http://static.gaoqixhb.com/igoutuan_ad_20160115_1.png" style="border-radius: 2px;" />-->
-                <!--</a>-->
+                <!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
+                <!--&lt;!&ndash; 边栏2_200x250 &ndash;&gt;-->
+                <!--<ins class="adsbygoogle"-->
+                     <!--style="display:inline-block;width:230px;height:200px"-->
+                     <!--data-ad-client="ca-pub-6653599194334150"-->
+                     <!--data-ad-slot="8390618822"></ins>-->
+                <!--<script>-->
+                  <!--(adsbygoogle = window.adsbygoogle || []).push({});-->
+                <!--</script>-->
               <!--</div>-->
-              <div>
-                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- 边栏2_200x250 -->
-                <ins class="adsbygoogle"
-                     style="display:inline-block;width:230px;height:200px"
-                     data-ad-client="ca-pub-6653599194334150"
-                     data-ad-slot="8390618822"></ins>
-                <script>
-                  (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-              </div>
                 <%- partial('./recent', {
                 recent: recent
                 }) %>
@@ -132,7 +131,7 @@
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_assets_host, config.mini_assets)
+.done(assets, config.site_static_host, config.mini_assets)
 %>
 <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
 <!-- markdown editor -->
@@ -140,7 +139,7 @@
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
-.done(assets, config.site_assets_host, config.mini_assets)
+.done(assets, config.site_static_host, config.mini_assets)
 %>
 <% } %>
 <script>

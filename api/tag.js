@@ -20,31 +20,33 @@ exports.searchTagsByName = function (req, res, next) {
   var pattern = new RegExp("^.*" + name + ".*$", "igm");
   var options = {limit: 10, sort: '-post_count'};
 
-  Tag.getAllTagsByQuery({name: pattern}, options, function (err, tags) {
-    if (err) {
+  Tag
+    .getAllTagsByQuery({name: pattern}, options)
+    .then(function(tags) {
+      //数据库中不存在此tag则返回只当前tag名称
+      if (tags.length === 0) {
+        return res.end(callback + '([{name: "' + name + '"}])');
+      }
+      //如果tags中不存在当前名称tag则加到第一个元素
+      var exists = false;
+      var container = [];
+      tags.forEach(function (tag) {
+        if (tag.name.toLowerCase() == name) {
+          exists = true;
+        }
+        container.push({name: tag.name});
+      });
+      if (!exists) {
+        if (container.length === 10) {
+          container.pop();
+        }
+        container.unshift({name: name});
+      }
+      return res.end(callback + '(' +JSON.stringify(container) + ')');
+    })
+    .catch(function(err) {
       next(err);
-    }
-    //数据库中不存在此tag则返回只当前tag名称
-    if (tags.length === 0) {
-      return res.end(callback + '([{name: "' + name + '"}])');
-    }
-    //如果tags中不存在当前名称tag则加到第一个元素
-    var exists = false;
-    var container = [];
-    tags.forEach(function (tag) {
-      if (tag.name.toLowerCase() == name) {
-        exists = true;
-      }
-      container.push({name: tag.name});
     });
-    if (!exists) {
-      if (container.length === 10) {
-        container.pop();
-      }
-      container.unshift({name: name});
-    }
-    return res.end(callback + '(' +JSON.stringify(container) + ')');
-  })
 };
 
 /**
@@ -68,44 +70,41 @@ exports.addTag = function (req, res, next) {
 
   if (editError) {
     res.status(422);
-    return res.send({
+    return res.wrapSend({
       error_msg: editError
     });
   }
 
   //查询是否存在这个tag，不存在则添加
-  Tag.getTagByName(name, function (err, tag) {
-    if (err) {
-      return next(err);
-    }
-    if (tag) {
-      if (description) {
-        tag.description = description;
-        tag.update_at = new Date();
-        tag.save(function (err) {
-          if (err) {
-            return next(err);
-          }
-          return res.send({
+  Tag
+    .getTagByName(name)
+    .then(function(tag) {
+      if (tag) {
+        if (description) {
+          tag.description = description;
+          tag.update_at = new Date();
+          tag.save();
+          return res.wrapSend({
             success: 1,
             tag_id: tag._id,
             msg: '更新成功'
           });
-        });
-      } else {
-        return res.send({
-          error_msg: 'tag已存在'
-        });
-      }
-    } else {
-      Tag.newAndSave(name, description, function (err, tag) {
-        if (err) {
-          next(err);
+        } else {
+          return res.wrapSend({
+            error_msg: 'tag已存在'
+          });
         }
-        res.send({success: 1, tag_id: tag._id});
-      });
-    }
-  });
+      } else {
+        return Tag
+          .newAndSave(name, description)
+          .then(function(tag) {
+            res.wrapSend({success: 1, tag_id: tag._id});
+          });
+      }
+    })
+    .catch(function(err) {
+      next(err);
+    });
 };
 
 /**
