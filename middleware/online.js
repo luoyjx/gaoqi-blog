@@ -13,7 +13,7 @@ var cacheTool = require('../common/cache');
  */
 exports.cacheOnline = function(req, res, next) {
   if (req.session.user) {
-    cacheTool.set(encode(req.session.user._id), {online: 1}, 1000 * 60 * 30);//30分钟
+    cacheTool.set(encode(req.session.user._id), {online: 1}, 60);//1分钟
   }
   next();
 };
@@ -21,18 +21,9 @@ exports.cacheOnline = function(req, res, next) {
 /**
  * 是否在线
  * @param userId
- * @param callback
  */
-exports.isOnline = function(userId, callback) {
-  cacheTool.get(encode(userId), function(err, data) {
-    if (err) {
-      return callback(err);
-    }
-    if (!data) {
-      return callback(null, false);
-    }
-    callback(null, true);
-  })
+exports.isOnline = function(userId) {
+  return cacheTool.get(encode(userId));
 };
 
 /**

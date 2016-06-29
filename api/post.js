@@ -6,7 +6,6 @@ var validator = require('validator');
 var Post = require('../dao').Post;
 var User = require('../dao').User;
 var Tag = require('../dao').Tag;
-var EventProxy = require('eventproxy');
 var html2md = require('html2markdown');
 
 /**
@@ -44,7 +43,7 @@ exports.create = function (req, res, next) {
 
   if (editError) {
     res.status(422);
-    return res.send({
+    return res.wrapSend({
       error_msg: editError
     });
   }
@@ -52,34 +51,31 @@ exports.create = function (req, res, next) {
   var tagArr = tags ? tags.split(',') : [];
   content = isHtml === 1 ? html2md(content) : content;//转换html成markdown格式
 
-  Post.newAndSave(title, description, content, req.user._id, tagArr, category, function (err, post) {
-    if (err) {
-      return next(err);
-    }
-
-    var proxy = new EventProxy();
-    proxy.fail(next);
-
-    proxy.once('tag_save', function () {
+  Post
+    .newAndSave(title, description, content, req.user._id, tagArr, category)
+    .then(function(post) {
+      return User
+        .getUserById(req.user.id)
+        .then(function(user) {
+          user.score += 5;
+          user.post_count += 1;
+          user.save();
+          req.user = user;
+        })
+        .then(function() {
+          res.wrapSend({
+            success: 1,
+            post_id: post._id
+          });
+        })
+    })
+    .then(function() {
       tagArr = tagArr.length > 0 ? tagArr : [];
       tagArr.forEach(function (tag) {
         Tag.newAndSave(tag, '');
       });
+    })
+    .catch(function(err) {
+      next(err);
     });
-
-    proxy.all('score_saved', function () {
-      proxy.emit('tag_save');
-      res.send({
-        success: 1,
-        post_id: post._id
-      });
-    });
-    User.getUserById(req.user.id, proxy.done(function (user) {
-      user.score += 5;
-      user.post_count += 1;
-      user.save();
-      req.user = user;
-      proxy.emit('score_saved');
-    }));
-  });
 };

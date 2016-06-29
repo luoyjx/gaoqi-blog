@@ -4,13 +4,17 @@
   "private": true,
   "main": "app.js",
   "description": "A Node.js blog using MongoDB",
-  "repository": "https://github.com/luoyjx/gaoqi-blog",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luoyjx/gaoqi-blog.git"
+  },
   "customHost": [
     "blog.gaoqixhb.com"
   ],
   "scripts": {
-    "start": "node app.js",
-    "pre-install": "node bin/preInstall.js",
+    "dev": "node app.js",
+    "start": "./node_modules/.bin/pm2 start app.js --name 'gaoqiblog' -i max --node-args='--max-old-space-size=300' >> gaoqi-blog.log 2>&1",
+    "prebuild": "node bin/preInstall.js",
     "build": "./node_modules/.bin/loader views ."
   },
   "engines": {
@@ -33,13 +37,14 @@
     "express": "4.9.5",
     "express-session": "1.9.1",
     "html2markdown": "1.1.0",
+    "ioredis": "^2.0.1",
     "loader": "0.1.4",
     "lodash": "2.4.1",
     "markdown-it": "3.0.3",
     "method-override": "1.0.2",
     "mkdirp": "^0.5.1",
     "moment": "2.9.0",
-    "mongoose": "3.8.23",
+    "mongoose": "4.4.9",
     "multiline": "1.0.1",
     "node-uuid": "1.4.1",
     "nodemailer": "2.3.0",
@@ -50,7 +55,6 @@
     "pm2": "0.12.13",
     "qn": "1.0.1",
     "ready": "0.1.1",
-    "redis": "0.12.1",
     "response-time": "2.2.0",
     "utility": "1.0.0",
     "validator": "3.22.1",

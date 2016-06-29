@@ -17,13 +17,11 @@ var config = {
   description: '搞起博客是分享、讨论、交流技术或者个人体会、经验的博客平台。', // 社区的描述
   keywords: '',
 
-  site_logo: 'http://static.gaoqixhb.com/public/img/gaoqi_blog_logo.svg', // default is `name`
+  site_logo: '/public/img/gaoqi_blog_logo.svg', // default is `name`
   site_icon: '/public/favicon.ico', // 默认没有 favicon, 这里填写网址
 
   // cdn host，如 http://static.gaoqixhb.com
   site_static_host: 'http://static.gaoqixhb.com', // 静态文件存储域名
-  // 资源文件域名,存储css,js 等,也可放置与上面一起,即只使用一个域名
-  site_assets_host: 'http://assets.gaoqixhb.com',
 
   // 社区的域名
   host: 'localhost',

@@ -4,7 +4,19 @@
 'use strict';
 
 var config = require('../config');
-var redis = require('redis');
-var client = redis.createClient(config.redis_port, config.redis_host);
+var Redis = require('ioredis');
 
-module.exports = client;
+var client = new Redis({
+    port: config.redis_port,
+    host: config.redis_host,
+    db: config.redis_db,
+});
+
+client.on('error', function (err) {
+    if (err) {
+        console.error('connect to redis error, check your redis config', err);
+        process.exit(1);
+    }
+})
+
+exports = module.exports = client;

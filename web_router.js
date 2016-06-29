@@ -3,7 +3,7 @@
  */
 var express = require('express');
 
-var auth = require('./filter/auth');
+var auth = require('./middleware/auth');
 var index = require('./controllers/index');
 var user = require('./controllers/users');
 var sign = require('./controllers/sign');
@@ -14,7 +14,7 @@ var reply = require('./controllers/reply');
 var github = require('./controllers/github');
 var search = require('./controllers/search');
 var message = require('./controllers/message');
-var configMiddleware = require('./filter/conf');
+var configMiddleware = require('./middleware/conf');
 var passport = require('passport');
 
 var config = require('./config');
