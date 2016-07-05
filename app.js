@@ -14,6 +14,7 @@ var express = require('express');
 var session = require('express-session');
 var errorhandler = require('errorhandler');
 var RedisStore = require('connect-redis')(session);
+var redisClient = require('./common/redis.js');
 var passport = require('passport');
 require('./models');
 var auth = require('./middleware/auth');
@@ -64,6 +65,7 @@ app.use(compress());
 app.use(session({
     secret: config.session_secret,
     store: new RedisStore({
+        client:redisClient,
         port: config.redis_port,
         host: config.redis_host
     }),
