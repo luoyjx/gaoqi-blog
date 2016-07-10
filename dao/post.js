@@ -204,5 +204,5 @@ exports.importNew = function (title, description, content, author_id, tags, cate
  * @returns {*}
  */
 exports.remove = function(query) {
-  return Post.remove(query).exec();
+  return Post.remove(query);
 };

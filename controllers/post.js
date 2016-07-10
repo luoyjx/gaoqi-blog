@@ -178,7 +178,7 @@ exports.edit = function (req, res, next) {
     .spread(function(post, author) {
       if (!post) return res.wrapRender('notify/notify', {error: '这篇文章从地球上消失了'});
 
-      if (!(String(post.author_id) === String(req.session.user._id) || (!req.session.user.is_admin))) {
+      if (!((post.author_id + '') === (req.session.user._id + '') || (req.session.user.is_admin))) {
         return res.wrapRender('notify/notify', {error: '大胆！这篇文章岂是你能编辑的？'});
       }
 
@@ -236,7 +236,7 @@ exports.update = function (req, res, next) {
     .getPostById(post_id)
     .spread(function(post, author) {
       if (!post) return res.wrapRender('notify/notify', {error: '这篇文章从地球上消失了'});
-      if (!post.author_id.equals(req.session.user._id) || !req.session.user.is_admin)
+      if (!(( post.author_id + '') === (req.session.user._id + '')) || !req.session.user.is_admin)
         return res.wrapRender('notify/notify', {error: '这篇文章可不是谁都能编辑的'});
 
       //保存文章
@@ -271,8 +271,10 @@ exports.delete = function (req, res, next) {
 
   Post
     .getPostById(post_id)
-    .then(function(postFind) {
-      if (!req.session.user.is_admin && !(postFind.author_id.equals(req.session.user._id))) {
+    .spread(function(postFind) {
+      console.log(postFind);
+      console.log(req.session.user._id);
+      if (!req.session.user.is_admin && (postFind.author_id + '') !== (req.session.user._id + '')) {
         return res.status(403).wrapSend({success: false, message: '这篇文章可不是谁都能删除的'});
       }
       if (!postFind) {
@@ -287,10 +289,12 @@ exports.delete = function (req, res, next) {
 //      }
 //      res.send({ success: true, message: '文章已被删除' });
 //    });
+      console.log('delete');
       //数据库删除
       Post
         .remove({_id: postFind._id})
         .then(function() {
+          console.log('delete done');
           res.wrapSend({ success: true, message: '这篇文章已被送到火星上了' });
         });
     })
