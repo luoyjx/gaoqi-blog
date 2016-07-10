@@ -178,7 +178,7 @@ exports.edit = function (req, res, next) {
     .spread(function(post, author) {
       if (!post) return res.wrapRender('notify/notify', {error: '这篇文章从地球上消失了'});
 
-      if (String(post.author_id) !== String(req.session.user._id) || !req.session.user.is_admin) {
+      if (!(String(post.author_id) === String(req.session.user._id) || (!req.session.user.is_admin))) {
         return res.wrapRender('notify/notify', {error: '大胆！这篇文章岂是你能编辑的？'});
       }
 
