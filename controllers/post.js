@@ -22,7 +22,7 @@ var render = require('../common/render');
  * @param  res
  * @param  next
  */
-exports.index = function (req, res, next) {
+exports.index = function(req, res, next) {
   var post_id = req.params._id;
 
   if (post_id.length !== 24) {
@@ -43,8 +43,14 @@ exports.index = function (req, res, next) {
       //回复
       post.replies = replies;
 
-      var hot_options = {limit: 6, sort: '-pv'};
-      var recent_options = {limit: 6, sort: '-create_at'};
+      var hot_options = {
+        limit: 6,
+        sort: '-pv'
+      };
+      var recent_options = {
+        limit: 6,
+        sort: '-create_at'
+      };
 
       return Promise
         .all([
@@ -55,7 +61,7 @@ exports.index = function (req, res, next) {
     })
     .spread(function(post, hotPosts, recentPosts) {
       res.wrapRender('post/index', {
-        title: post.title + ' - ' + post.author.login_name,//文章名 - 作者名
+        title: post.title + ' - ' + post.author.login_name, //文章名 - 作者名
         description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
         tags: post.tags.join(','),
         post: post,
@@ -65,7 +71,9 @@ exports.index = function (req, res, next) {
       });
     })
     .catch(function(err) {
-      res.wrapRender('notify/notify', {error: err});
+      res.wrapRender('notify/notify', {
+        error: err
+      });
     })
 };
 
@@ -75,7 +83,7 @@ exports.index = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.showCreate = function (req, res, next) {
+exports.showCreate = function(req, res, next) {
   res.render('post/edit', {
     title: '发表文章'
   });
@@ -87,11 +95,11 @@ exports.showCreate = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.create = function (req, res, next) {
+exports.create = function(req, res, next) {
   var category = validator.trim(req.body.category);
   category = validator.escape(category);
   var title = validator.trim(req.body.title);
-  title = validator.escape(title);//escape 将html 等特殊符号 标签转义
+  title = validator.escape(title); //escape 将html 等特殊符号 标签转义
   var content = validator.trim(req.body.content);
   var tags = validator.trim(req.body.tags);
 
@@ -142,7 +150,7 @@ exports.create = function (req, res, next) {
           });
 
           Promise.map(tagsArr, function(tagName) {
-            Tag.getTagByName(tagName, function (err, tag) {
+            Tag.getTagByName(tagName, function(err, tag) {
               if (!tag) {
                 Tag
                   .newAndSave(tagName, '')
@@ -170,16 +178,20 @@ exports.create = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.edit = function (req, res, next) {
+exports.edit = function(req, res, next) {
   var post_id = req.params._id;
 
   Post
     .getPostById(post_id)
     .spread(function(post, author) {
-      if (!post) return res.wrapRender('notify/notify', {error: '这篇文章从地球上消失了'});
+      if (!post) return res.wrapRender('notify/notify', {
+        error: '这篇文章从地球上消失了'
+      });
 
       if (!((post.author_id + '') === (req.session.user._id + '') || (req.session.user.is_admin))) {
-        return res.wrapRender('notify/notify', {error: '大胆！这篇文章岂是你能编辑的？'});
+        return res.wrapRender('notify/notify', {
+          error: '大胆！这篇文章岂是你能编辑的？'
+        });
       }
 
       res.wrapRender('post/edit', {
@@ -200,7 +212,7 @@ exports.edit = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.update = function (req, res, next) {
+exports.update = function(req, res, next) {
   var post_id = req.params._id;
   //escape 将html 等特殊符号 标签转义
   var category = validator.trim(req.body.category);
@@ -235,17 +247,26 @@ exports.update = function (req, res, next) {
   Post
     .getPostById(post_id)
     .spread(function(post, author) {
-      if (!post) return res.wrapRender('notify/notify', {error: '这篇文章从地球上消失了'});
-      if (!(( post.author_id + '') === (req.session.user._id + '')) || !req.session.user.is_admin)
-        return res.wrapRender('notify/notify', {error: '这篇文章可不是谁都能编辑的'});
+      if (!post) return res.wrapRender('notify/notify', {
+        error: '这篇文章从地球上消失了'
+      });
 
-      //保存文章
-      post.title = title;
-      post.content = content;
-      post.category = category;
-      post.tags = tags.split(',');
-      post.update_at = new Date();
-      post.save();
+      // 只有管理员、非管理员但是是本帖发帖用户 二者可用修改本帖
+      if (req.session.user.is_admin || ((post.author_id + '') === (req.session.user._id + ''))) {
+
+        //保存文章
+        post.title = title;
+        post.content = content;
+        post.category = category;
+        post.tags = tags.split(',');
+        post.update_at = new Date();
+        post.save();
+      } else {
+        return res.wrapRender('notify/notify', {
+          error: '这篇文章可不是谁都能编辑的'
+        });
+      }
+
       return Promise.resolve(post);
     })
     .then(function(postSaved) {
@@ -266,7 +287,7 @@ exports.update = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.delete = function (req, res, next) {
+exports.delete = function(req, res, next) {
   var post_id = req.params._id;
 
   Post
@@ -275,31 +296,45 @@ exports.delete = function (req, res, next) {
       console.log(postFind);
       console.log(req.session.user._id);
       if (!req.session.user.is_admin && (postFind.author_id + '') !== (req.session.user._id + '')) {
-        return res.status(403).wrapSend({success: false, message: '这篇文章可不是谁都能删除的'});
+        return res.status(403).wrapSend({
+          success: false,
+          message: '这篇文章可不是谁都能删除的'
+        });
       }
       if (!postFind) {
-        return res.status(422).wrapSend({ success: false, message: '这篇文章从地球上消失了' });
+        return res.status(422).wrapSend({
+          success: false,
+          message: '这篇文章从地球上消失了'
+        });
       }
 
       //    //使用软删除方式
-//    post.enable = false;
-//    post.save(function(err){
-//      if(err){
-//        return res.send({ success: false, message: err.message });
-//      }
-//      res.send({ success: true, message: '文章已被删除' });
-//    });
+      //    post.enable = false;
+      //    post.save(function(err){
+      //      if(err){
+      //        return res.send({ success: false, message: err.message });
+      //      }
+      //      res.send({ success: true, message: '文章已被删除' });
+      //    });
       console.log('delete');
       //数据库删除
       Post
-        .remove({_id: postFind._id})
+        .remove({
+          _id: postFind._id
+        })
         .then(function() {
           console.log('delete done');
-          res.wrapSend({ success: true, message: '这篇文章已被送到火星上了' });
+          res.wrapSend({
+            success: true,
+            message: '这篇文章已被送到火星上了'
+          });
         });
     })
     .catch(function(err) {
-      res.wrapSend({ success: false, message: err.message });
+      res.wrapSend({
+        success: false,
+        message: err.message
+      });
     })
 
 };
@@ -310,7 +345,7 @@ exports.delete = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.top = function (req, res, next) {
+exports.top = function(req, res, next) {
 
 };
 
@@ -320,7 +355,7 @@ exports.top = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.recommend = function (req, res, next) {
+exports.recommend = function(req, res, next) {
   var post_id = validator.trim(req.params._id);
 
 
@@ -342,7 +377,7 @@ exports.unRecommend = function unRecommend(req, res, next) {
  * @param res
  * @param next
  */
-exports.good = function (req, res, next) {
+exports.good = function(req, res, next) {
 
 };
 
@@ -352,7 +387,7 @@ exports.good = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.collect = function (req, res, next) {
+exports.collect = function(req, res, next) {
 
 };
 
@@ -362,7 +397,7 @@ exports.collect = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.unCollect = function (req, res, next) {
+exports.unCollect = function(req, res, next) {
 
 };
 
@@ -372,7 +407,7 @@ exports.unCollect = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.lock = function (req, res, next) {
+exports.lock = function(req, res, next) {
 
 };
 
@@ -382,17 +417,19 @@ exports.lock = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.upload = function (req, res, next) {
-  req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+exports.upload = function(req, res, next) {
+  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
     uploader
-      .upload(file, {filename: filename})
-      .then(function (result){
+      .upload(file, {
+        filename: filename
+      })
+      .then(function(result) {
         res.json({
           success: true,
           url: result.url
         });
       })
-      .catch(function( err ) {
+      .catch(function(err) {
         return next(err);
       });
   });
