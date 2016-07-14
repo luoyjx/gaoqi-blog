@@ -1,4 +1,4 @@
-var Promise = require('bluebird');
+//var Promise = require('bluebird');
 var uuid = require('node-uuid');
 var validator = require('validator');
 var Models = require('../models');
@@ -10,7 +10,7 @@ var config = require('../config');
 exports.callback = function (req, res, next) {
   var profile = req.user;
   User
-    .findOne({githubId: profile.id})
+    .findOne({github_id: profile.id})
     .then(function(user) {
       // 当用户已经是用户时，通过 github 登陆将会更新他的资料
       if (user) {
