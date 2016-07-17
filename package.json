@@ -15,11 +15,11 @@
     "preinstall": "node bin/pre_install.js",
     "dev": "node app.js",
     "start": "./node_modules/.bin/pm2 start app.js --name 'gaoqiblog' -i max --node-args='--max-old-space-size=300' >> gaoqi-blog.log 2>&1",
-    "prebuild": "npm run preinstall",
+    "prebuild": "npm install",
     "build": "./node_modules/.bin/loader views .",
-    "pretest": "npm run preinstall",
+    "pretest": "npm run build",
     "test": "mocha --reporter spec -r should -r test/env --timeout 10000 ./test/**/*.test.js",
-    "pretest-cov": "npm run preinstall",
+    "pretest-cov": "npm run build",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- -r should -r test/env --timeout 10000 ./test/**/*.test.js -R spec"
   },
   "engines": {
