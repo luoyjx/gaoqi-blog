@@ -24,6 +24,6 @@ services:
 before_install:
   - $CXX --version
 
-script: make test-cov
+script: npm run test-cov
 
 after_success: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

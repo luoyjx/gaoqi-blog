@@ -34,7 +34,7 @@ test-cov cov: install preinstall build
 		$(TESTS)
 
 build:
-	@./node_modules/loader/bin/build views .
+	@./node_modules/.bin/loader views .
 
 start: install build
 	@nohup ./node_modules/.bin/pm2 start app.js --name "gaoqiblog" -i max --node-args="--max-old-space-size=300" >> gaoqi-blog.log 2>&1 &
