@@ -10,6 +10,7 @@ if (!config.debug && config.oneapm_key !== 'your oneapm key') {
 
 var path = require('path');
 var Loader = require('loader');
+var LoaderConnect = require('loader-connect')
 var express = require('express');
 var session = require('express-session');
 var errorhandler = require('errorhandler');
@@ -65,7 +66,7 @@ app.use(compress());
 app.use(session({
     secret: config.session_secret,
     store: new RedisStore({
-        client:redisClient,
+        client: redisClient,
         port: config.redis_port,
         host: config.redis_host
     }),
@@ -79,7 +80,10 @@ app.use(auth.authUser);
 //缓存已登录用户标识在线
 app.use(online.cacheOnline);
 
-app.use(Loader.less(__dirname));
+// 静态资源
+if (config.debug) {
+  app.use(LoaderConnect.less(__dirname)); // 测试环境用，编译 .less on the fly
+}
 app.use('/public', express.static(staticDir));
 
 if (!config.debug) {
