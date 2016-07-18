@@ -3,7 +3,7 @@
  */
 
 var Promise = require('bluebird');
-var _ = require('lodash');
+
 
 var Message = require('../models').Message;
 
@@ -48,7 +48,7 @@ var getMessageRelations = exports.getMessageRelations = function (message) {
         Reply.getReplyById(message.reply_id)
       ])
       .spread(function(author, post, reply) {
-        message = _.extend(message.toObject(), {
+        message = Object.assign(message.toObject(), {
           author: author,
           post: post[0],
           reply: reply

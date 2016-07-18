@@ -105,13 +105,14 @@ passport.use(new GitHubStrategy(config.GITHUB_OAUTH, function (accessToken, refr
 }));
 
 // set static, dynamic helpers
-_.extend(app.locals, {
+
+Object.assign(app.locals, {
   config: config,
   Loader: Loader,
   assets: assets
 });
-_.extend(app.locals, render);
-_.extend(app.locals, cutter);
+Object.assign(app.locals, render);
+Object.assign(app.locals, cutter);
 
 app.use(function (req, res, next) {
   res.locals.csrf = req.csrfToken ? req.csrfToken() : '';

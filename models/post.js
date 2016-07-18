@@ -5,7 +5,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var config = require('../config');
-var _ = require('lodash');
 
 var PostSchema = new Schema({
   title: {type: String},
@@ -36,7 +35,7 @@ PostSchema.index({category: 1});
 
 PostSchema.virtual('categoryName').get(function () {
   var tab  = this.category;
-  var pair = _.find(config.tabs, function (_pair) {
+  var pair = config.tabs.find(function (_pair) {
     return _pair[0] === tab;
   });
 
@@ -49,7 +48,7 @@ PostSchema.virtual('categoryName').get(function () {
 
 PostSchema.virtual('categoryColor').get(function () {
   var tab  = this.category;
-  var pair = _.find(config.tabs, function (_pair) {
+  var pair = config.tabs.find(function (_pair) {
     return _pair[0] === tab;
   });
 

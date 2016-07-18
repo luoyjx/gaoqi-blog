@@ -6,7 +6,7 @@ var Promise = require('bluebird');
 var xmlbuilder = require('xmlbuilder');
 var multiline = require('multiline');
 var validator = require('validator');
-var _ = require('lodash');
+
 var Post = require('../dao').Post;
 var Tag = require('../dao').Tag;
 var Reply = require('../dao').Reply;
@@ -24,7 +24,7 @@ exports.index = function (req, res, next) {
   var query = {};
   if (tab) {
     query.category = tab;
-    var kv = _.find(config.tabs, function(kv) {
+    var kv = config.tabs.find(function(kv) {
       return kv[0] === tab;
     });
     tabName = kv ? kv[1] + '版块' : '';
