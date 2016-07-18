@@ -3,13 +3,13 @@
  * Copyright(c) 2016 yanjixiong <yjk99@qq.com>
  */
 
-var fs = require("fs"),
-	util = require("util"),
-	cp = require("../util/cp");
+var fs = require("fs");
+var util = require("util");
+var cp = require("../util/cp");
 
-var configFileName = "config.js",
-	configDefaultFileName = "config.default.js",
-	uploadDirPath = "public/upload";
+var configFileName = "config.js";
+var configDefaultFileName = "config.default.js";
+var uploadDirPath = "public/upload";
 
 console.log(util.format("checking \x1b[36m %s \x1b[0m file.", configFileName));
 

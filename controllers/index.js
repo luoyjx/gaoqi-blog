@@ -18,7 +18,7 @@ var cache = require('../common/cache');
 exports.index = function (req, res, next) {
   var page = req.query.page ? parseInt(req.query.page, 10) : 1;
   page = page > 0 ? page : 1;
-  var tab = validator.trim(req.query.tab);
+  var tab = validator.trim(req.query.tab || '');
   var tabName;//分类名
 
   var query = {};
@@ -115,12 +115,19 @@ exports.sitemap = function (req, res, next) {
     .get('sitemap')
     .then(function(sitemapData) {
       if (sitemapData) return res.type('xml').send(sitemapData);
-      return Post.getLimit5w();
+      return Promise
+      .all([
+        Post.getLimit5w(),
+        Tag.getAllTagsByQuery({}, {sort: '-post_count'})
+      ]);
     })
-    .then(function(posts) {
+    .spread(function(posts, tags) {
       if (!res.headersSent) {
         posts.forEach(function (post) {
-          urlset.ele('url').ele('loc', 'https://blog.gaoqixhb.com/p/' + post._id);
+          urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
+        });
+        tags.forEach(function(tag) {
+          urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
         });
         var sitemapData = urlset.end();
         // 缓存
@@ -135,15 +142,13 @@ exports.sitemap = function (req, res, next) {
 
 exports.robots = function (req, res, next) {
   res.type('text/plain');
-  res.send(multiline(function () {;
-    /*
-     # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
-     #
-     # To ban all spiders from the entire site uncomment the next two lines:
-      User-Agent: *
-      allow: /
-     */
-  }));
+  res.send(multiline(function () {/*
+ # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+ #
+ # To ban all spiders from the entire site uncomment the next two lines:
+ # User-Agent: *
+ # allow: /
+ */}));
 };
 
 /**

@@ -99,7 +99,7 @@ var config = {
     accessKey: 'your access key',
     secretKey: 'your secret key',
     bucket: '', //空间名  如  gaoqixhb
-    domain: '' //静态域名 如 gaoqixhb.qiniudn.com
+    origin: '' //静态域名 如 gaoqixhb.qiniudn.com
   },
 
   //文件上传配置

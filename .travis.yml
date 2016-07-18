@@ -6,8 +6,9 @@ env:
   - CXX=g++-4.8
 
 node_js:
-  - '4'
-  - '5'
+  - 4
+  - 5
+  - stable
 
 addons:
   apt:
@@ -23,6 +24,6 @@ services:
 before_install:
   - $CXX --version
 
-script: make test-cov
+script: npm run test-cov
 
 after_success: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
