@@ -127,77 +127,20 @@
     </div>
 </div>
 <!-- style -->
-<%- block('styles', Loader('/public/css/post.css')
+<% block('styles', Loader('/public/css/post.css')
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_static_host, config.mini_assets));
+.done(assets, config.site_static_host, config.mini_assets))
 %>
 <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
 <!-- markdown editor -->
-<%- block('script', Loader('/public/editor.min.js')
+<% block('script', Loader('/public/editor.min.js')
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
-.done(assets, config.site_static_host, config.mini_assets));
+.js('/public/js/post.index.js')
+.done(assets, config.site_static_host, config.mini_assets))
 %>
 <% } %>
-<script>
-  $(function() {
-    // 删除文章
-    $('#delete_post').click(function () {
-      var postId = $(this).data('id');
-      if (postId && confirm('确定要删除此文章吗？')) {
-        $.post('/post/' + postId + '/delete', { _csrf: $('#_csrf').val() }, function (result) {
-          if (!result.success) {
-            alert(result.message);
-          } else {
-            location.href = '/';
-          }
-        });
-      }
-      return false;
-    });
-
-    // 编辑器相关
-    $('textarea.editor').each(function(){
-      var editor = new Editor({
-        status: []
-      });
-      var $el = $(this);
-
-      editor.render(this);
-      //绑定editor
-      $(this).data('editor', editor);
-
-      var $input = $(editor.codemirror.display.input);
-      $input.keydown(function(event){
-        if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
-          event.preventDefault();
-          $el.closest('form').submit();
-        }
-      });
-
-    });
-    // END 编辑器相关
-
-    //评论
-    $('.replies').on('click', '.reply-btn', function (event) {
-      var $btn = $(event.currentTarget);
-      var editorWrap = $('#reply_form');
-      var textarea = editorWrap.find('textarea.editor');
-      var user = $btn.closest('.user-info').find('.reply-author').text().trim();
-      var editor = textarea.data('editor');
-      var cm = editor.codemirror;
-      cm.focus();
-      if(cm.getValue().indexOf('@' + user) < 0){
-        editor.push('@' + user + ' ');
-      }
-    });
-
-    $('#submit_reply').click(function() {
-      var $btn = $(this).button('loading');
-    })
-  })
-</script>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":["mshare","qzone","tsina","fbook","twi","douban","weixin"],"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"6","bdPos":"right","bdTop":"148.5"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
