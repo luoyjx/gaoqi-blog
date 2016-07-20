@@ -38,6 +38,7 @@
     .done(assets, config.site_static_host, config.mini_assets)
     %>
 
+    <%- block('styles').toString() %>
 
     <!--[if lt IE 9]>
     <script src="//o7xo702bw.qnssl.com/html5shiv/3.7.0/html5shiv.min.js"></script>
@@ -99,20 +100,6 @@
             </div>
         </div>
     </nav>
-    <!-- scripts -->
-    <%- Loader('/public/js/global.js')
-    .js('/public/lib/jquery/dist/jquery.js')
-    .js('/public/lib/lodash.compat.js')
-    .js('/public/lib/jquery-ujs.js')
-    .js('/public/lib/bootstrap/dist/js/bootstrap.js')
-    .js('/public/lib/jquery.caret.js')
-    .js('/public/lib/jquery.atwho.js')
-    .js('/public/lib/jquery.scrolltofixed.js')
-    .js('/public/lib/markdownit.js')
-    .js('/public/lib/code-prettify/prettify.js')
-    .js('/public/js/common.js')
-    .done(assets, config.site_static_host, config.mini_assets)
-    %>
     <%- body %>
     <div id="page"><div id="gotoTop"><span class="glyphicon glyphicon-menu-up"></span></div></div>
     <footer class="footer">
@@ -156,6 +143,21 @@
             </div>
         </div>
     </footer>
+    <!-- scripts -->
+    <%- Loader('/public/js/global.js')
+    .js('/public/lib/jquery/dist/jquery.js')
+    .js('/public/lib/lodash.compat.js')
+    .js('/public/lib/jquery-ujs.js')
+    .js('/public/lib/bootstrap/dist/js/bootstrap.js')
+    .js('/public/lib/jquery.caret.js')
+    .js('/public/lib/jquery.atwho.js')
+    .js('/public/lib/jquery.scrolltofixed.js')
+    .js('/public/lib/markdownit.js')
+    .js('/public/lib/code-prettify/prettify.js')
+    .js('/public/js/common.js')
+    .done(assets, config.site_static_host, config.mini_assets)
+    %>
+    <%- block('script').toString() %>
     <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>

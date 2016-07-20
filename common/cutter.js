@@ -10,6 +10,7 @@ var validator = require('validator');
  * @param {Number} length 需要截取的长度
  */
 exports.shorter = function (content, length) {
+  if (!content) return '';
   content = validator.trim(content) || '';
   var len = content.length;
   var cache = content.substring(0, len);
