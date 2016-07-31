@@ -14,6 +14,7 @@
   "scripts": {
     "preinstall": "node bin/pre_install.js",
     "dev": "node app.js",
+    "prestart": "npm run build",
     "start": "./node_modules/.bin/pm2 start app.js --name 'gaoqiblog' -i max --node-args='--max-old-space-size=300' >> gaoqi-blog.log 2>&1",
     "prebuild": "npm install",
     "build": "./node_modules/.bin/loader views .",
