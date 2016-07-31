@@ -135,14 +135,14 @@
 %>
 <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
 <!-- markdown editor -->
-<% block('script', Loader('/public/editor.min.js')
+<% block('script', Loader('/public/editor.js')
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
 .done(assets, config.site_static_host, config.mini_assets))
 %>
 
-<% block('script', Loader('/public/post.index.min.js')
+<% block('script', Loader('/public/post.index.js')
 .js('/public/js/post.index.js')
 .done(assets, config.site_static_host, config.mini_assets))
 %>

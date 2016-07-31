@@ -116,13 +116,13 @@
     </div>
 </div>
 <!-- markdown editor -->
-<% block('script', Loader('/public/editor.min.js')
+<% block('script', Loader('/public/editor.js')
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
 .done(assets, config.site_static_host, config.mini_assets))
 %>
-<% block('script', Loader('/public/js/edit.min.js')
+<% block('script', Loader('/public/js/edit.js')
 .js('/public/lib/jquery.autocomplete.js')
 .js('/public/js/post.js')
 .done(assets, config.site_static_host, config.mini_assets))
