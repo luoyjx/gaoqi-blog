@@ -11,7 +11,7 @@
         <% } else { %>
         <section class="content-header">
             <% } %>
-            <div class="content-info hidden-xs">
+            <div class="content-info">
                 <div class="content-info-view">
                   <a href="/u/<%= post.author.login_name %>" >
                     <img class="user-avatar" alt="<%= post.author.login_name %>" src="<%= post.author.avatar %>" />
@@ -44,7 +44,7 @@
             </div>
         </section>
         <% }); %>
-    <div class="text-center">
+    <div>
         <%- partial('../paging', {
         pages: pages,
         current_page: current_page,

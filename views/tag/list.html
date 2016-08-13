@@ -1,33 +1,33 @@
 <div class="wrap">
     <div class="container">
         <ol class="breadcrumb" style="padding-left: 15px;">
-            <li><a href="/">首页</a></li>
-            <li class="active">标签</li>
+          <li><a href="/">首页</a></li>
+          <li class="active">标签</li>
         </ol>
         <h1 class="h3 mt-20 ml-15">标签<br><small>标签是内容的提炼，通过标签可以快速的找到自己关注的一些主题。</small></h1>
         <div class="row mt-20">
-            <% if(tags && tags.length > 0){ %>
-            <% tags.forEach(function (tag, index) { %>
-            <div class="tag-list col-md-3">
-                <div class="tag-container">
-                    <h2 class="h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
-                    <p><%= tag.description ? tag.description : '暂时还没有描述' %></p>
-                    <div class="tag-item-action">
-                        <button class="btn btn-xs btn-default font-13 mr-5 tagfollow" data-id="<%= tag._id %>">关注</button>
-                        <span class="addtion font-13 mr-5"><strong class="follows"><%= tag.follow_count %></strong> 关注</span>
-                    </div>
-                </div>
+          <% if(tags && tags.length > 0){ %>
+          <% tags.forEach(function (tag, index) { %>
+          <div class="tag-list col-md-3">
+            <div class="tag-container">
+              <h2 class="h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
+              <p><%= tag.description ? tag.description : '暂时还没有描述' %></p>
+              <div class="tag-item-action">
+                <button class="btn btn-xs btn-default font-13 mr-5 tagfollow" data-id="<%= tag._id %>">关注</button>
+                <span class="addtion font-13 mr-5"><strong class="follows"><%= tag.follow_count %></strong> 关注</span>
+              </div>
             </div>
-            <% }); %>
-            <% } %>
+          </div>
+          <% }); %>
+          <% } %>
         </div>
         <div class="text-center">
-            <%- partial('../paging', {
-            pages: pages,
-            current_page: current_page,
-            base: base,
-            tab: ''
-            }) %>
+          <%- partial('../paging', {
+          pages: pages,
+          current_page: current_page,
+          base: base,
+          tab: ''
+          }) %>
         </div>
     </div>
 </div>

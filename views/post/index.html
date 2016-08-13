@@ -36,8 +36,8 @@
 <div class="wrap">
     <div class='container'>
         <div class='row'>
-            <div class="col-xs-12 col-lg-9 overflow-hidden-x">
-                <article>
+            <article class="col-xs-12 col-lg-9 overflow-hidden-x">
+                <div class="article">
                     <% if(typeof(error) !== 'undefined' && error){ %>
                     <div class="alert alert-error">
                         <strong><%= error %></strong>
@@ -45,7 +45,7 @@
                     <% }else{ %>
                     <div class="content article-content"><%- markdown(post.linkedContent) %></div>
                     <div class="alert alert-success" role="alert">
-                      <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong><em style="color: #f2354f;">pigtx1</em></strong> 购买阿里云服务（限新用户）
+                      <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong style="color: #f2354f;">pigtx1</strong> 购买阿里云服务（限新用户）
                       </p>
                     </div>
                     <div class="article-tags">
@@ -56,72 +56,56 @@
                         <% } %>
                         <% }); }%>
                     </div>
-                    <!--<div class="ad-content-bottom">-->
-                      <!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
-                      <!--&lt;!&ndash; 自适应 &ndash;&gt;-->
-                      <!--<ins class="adsbygoogle"-->
-                           <!--style="display:block"-->
-                           <!--data-ad-client="ca-pub-6653599194334150"-->
-                           <!--data-ad-slot="6781889224"-->
-                           <!--data-ad-format="auto"></ins>-->
-                      <!--<script>-->
-                        <!--(adsbygoogle = window.adsbygoogle || []).push({});-->
-                      <!--</script>-->
-                    <!--</div>-->
                     <% } %>
                   <strong class="mb-20 section-title">相关阅读</strong>
                   <script>document.write(unescape('%3Cdiv id="hm_t_43883"%3E%3C/div%3E%3Cscript charset="utf-8" src="http://crs.baidu.com/t.js?siteId=59acccd43801ac1b47f47fd07d7a479a&planId=43883&async=0&referer=') + encodeURIComponent(document.referrer) + '&title=' + encodeURIComponent(document.title) + '&rnd=' + (+new Date) + unescape('"%3E%3C/script%3E'));</script>
-                </article>
+                </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
                 <div class="replies panel">
-                    <strong class="mb-20 section-title"> </strong>
+                    <!--<strong class="mb-20 section-title"> </strong>-->
                     <%- partial('../reply/list', {
                     replies: replies
                     }) %>
-                    <a id="comment"></a>
-                    <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
-                    <strong class="section-title">发表评论</strong>
-                    <div class='reply'>
-                        <form id='reply_form' action='/post/<%= post._id %>/reply' method='post'>
 
-                            <div class='markdown_editor in_editor'>
-                                <div class='markdown_in_editor'>
-                                    <textarea class='editor' name='r_content' rows='4'></textarea>
-                                </div>
-                            </div>
-                            <div class='editor_buttons'>
-                                <input id="submit_reply" class='btn btn-primary' type="submit" data-loading-text="回复中.."
-                                       value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
-                            </div>
-                            <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
-                        </form>
-                    </div>
-                    <% } else { %>
-                    <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link"
-                                                                                                    href="/signup">注册</a>
-                    </p>
-                    <% } %>
+                </div>
+                <div class="panel replies">
+                  <a id="comment"></a>
+                  <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
+                  <strong class="section-title">发表评论</strong>
+                  <div class='reply'>
+                    <form id='reply_form' action='/post/<%= post._id %>/reply' method='post'>
+
+                      <div class='markdown_editor in_editor'>
+                        <div class='markdown_in_editor'>
+                          <textarea class='editor' name='r_content' rows='4'></textarea>
+                        </div>
+                      </div>
+                      <div class='editor_buttons'>
+                        <input id="submit_reply" class='btn btn-primary' type="submit" data-loading-text="回复中.."
+                               value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
+                      </div>
+                      <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
+                    </form>
+                  </div>
+                  <% } else { %>
+                  <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link"
+                                                                                                  href="/signup">注册</a>
+                  </p>
+                  <% } %>
                 </div>
 
-            </div>
+            </article>
             <aside class="col-xs-12 col-lg-3">
-              <!--<div>-->
-                <!--<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>-->
-                <!--&lt;!&ndash; 边栏2_200x250 &ndash;&gt;-->
-                <!--<ins class="adsbygoogle"-->
-                     <!--style="display:inline-block;width:230px;height:200px"-->
-                     <!--data-ad-client="ca-pub-6653599194334150"-->
-                     <!--data-ad-slot="8390618822"></ins>-->
-                <!--<script>-->
-                  <!--(adsbygoogle = window.adsbygoogle || []).push({});-->
-                <!--</script>-->
-              <!--</div>-->
+              <div class="widget-side">
                 <%- partial('./recent', {
                 recent: recent
                 }) %>
+              </div>
+              <div class="widget-side">
                 <%- partial('./hot', {
-                    hots: hots
+                hots: hots
                 }) %>
+              </div>
             </aside>
         </div>
     </div>

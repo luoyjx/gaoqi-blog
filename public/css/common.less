@@ -155,35 +155,6 @@ textarea, textarea:focus, input, input:focus {
       min-width: 120px;
     }
   }
-  /*li {
-    a.menu:after {
-	position: absolute;
-	top: 44px;
-	left: 0;
-	width: 100%;
-	height: 1px;
-	background: #26a9e1;
-	content: '';
-	opacity: 0;
-	-webkit-transition: height .5s,opacity .5s,-webkit-transform .5s;
-	transition: height .5s,opacity .5s,transform .5s;
-    }
-    a.menu:hover::after {
-	position: absolute;
-	top: 44px;
-	left: 0;
-	width: 100%;
-	height: 1px;
-	background: #26a9e1;
-	content: '';
-	opacity: 1;
-	-webkit-transition: height .5s,opacity .5s,-webkit-transform .5s;
-	transition: height .5s,opacity .5s,transform .5s;
-	-webkit-transform: translateY(5px);
-	-ms-transform: translateY(5px);
-	transform: translateY(5px);
-    }
-  }*/
 }
 
 .category {
@@ -241,7 +212,7 @@ textarea, textarea:focus, input, input:focus {
 }
 
 .article-title {
-  background-color: #f3f3f3;
+  background-color: @white;
   .info {
     padding-top: 10px;
   }
@@ -251,17 +222,49 @@ textarea, textarea:focus, input, input:focus {
 .wrap {
   min-height: 90%;
   height: auto;
-  margin: 10px auto -50px;
-  padding: 0 0 60px;
-//  background-color: @light-gray-backgroud;
+  margin: 0 auto -50px;
+  padding: 10px 0 60px;
+  background-color: #f3f3f3;
 
   .tag-index {
     min-height: 400px;
   }
 
-  .container {
+  /* 白色背景 */
+  .bg-white {
     background-color: @white;
+  }
+
+  .container {
+    //background-color: @white;
     .row {
+
+      .article {
+        background-color: @white;
+        padding: @length-15;
+        border-radius: 3px;
+      }
+
+      article {
+        padding: 0 4px 0 @length-15 ;
+        .pagination {
+          margin: 5px 0 0 0
+        }
+      }
+
+      aside {
+        padding-left: 4px;
+        .widget-side {
+          background-color: @white;
+          padding: @length-5;
+          margin-bottom: 8px;
+          border-radius: 3px;
+          h4 {
+            margin-top: 0;
+          }
+        }
+      }
+
       .list-unstyled {
         word-break: break-all;
         li {
@@ -289,7 +292,7 @@ textarea, textarea:focus, input, input:focus {
             color: @blue;
             &:hover {
               color: darken(@blue, 20%);
-              
+
             }
           }
         }
@@ -393,12 +396,25 @@ textarea, textarea:focus, input, input:focus {
 
       // 左侧正文
       .content-header {
-        padding: 15px 0 5px 0;
+        padding: 10px 0 0 0;
+        background-color: @white;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:first-child {
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+        }
+
+        &:nth-last-child(2) {
+          padding-bottom: @length-10;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+        }
         .content {
           color: #777;
         }
         .content-body {
-          margin-left: 55px;
+          margin-left: 60px;
           word-break: break-all;
           .category-info {
             margin: 0;
@@ -410,7 +426,7 @@ textarea, textarea:focus, input, input:focus {
         }
         .content-info {
           float: left;
-          padding: 0 15px 0 0;
+          padding: 0 10px 0 10px;
           text-align: center;
           .reply-0 {
             color: @addtion-default-color;
@@ -437,13 +453,13 @@ textarea, textarea:focus, input, input:focus {
         }
       }
       .no-border {
-        border: 0;
+        border-bottom: 0;
       }
       .content-header .h4 a{
         color: @font-default-color;
         &:hover {
           color: @blue;
-          
+
         }
         &:visited {
           color: #888;
@@ -477,7 +493,8 @@ textarea, textarea:focus, input, input:focus {
           height: 170px;
           padding: 5px 0;
           border-radius: 1px;
-          border: 1px solid #ddd;
+          border: 1px solid #e3e3e3;
+          background-color: @white;
           > h2,p {
             margin: 0 8px;
             overflow: hidden;
@@ -491,7 +508,7 @@ textarea, textarea:focus, input, input:focus {
             > a {
               color: @blue;
               &:hover {
-                
+
               }
             }
           }
@@ -514,7 +531,7 @@ textarea, textarea:focus, input, input:focus {
       .tag-more {
         cursor: auto;
         &:hover {
-          
+
         }
       }
       .tagPopup {
@@ -546,7 +563,7 @@ textarea, textarea:focus, input, input:focus {
 
           &:hover{
             color: @blue;
-            
+
           }
         }
       }
@@ -559,12 +576,10 @@ textarea, textarea:focus, input, input:focus {
       .section-title {
         display: block;
         font-size: 16px;
-        padding: 15px 0;
-        border-top: 1px solid #ccc;
       }
 
       .replies {
-        margin: @length-15 0 @length-15 0;
+        margin: 8px 0;
 
         .CodeMirror {
           height: 200px;
@@ -578,15 +593,19 @@ textarea, textarea:focus, input, input:focus {
         .a-link {
           color: @blue;
           &:hover {
-            
+
           }
         }
 
         .reply-list {
           .reply-item {
-            margin: 20px 0;
-            padding-bottom: 10px;
+            padding: @length-10;
             border-bottom: 1px dashed #d9d9d9;
+
+            &:last-child {
+              border-bottom: 0;
+            }
+
             .author-info {
               height: 30px;
               a, span {
@@ -634,7 +653,6 @@ textarea, textarea:focus, input, input:focus {
   background-color: @white;
   font-size:12px;
   padding: 30px 0 30px 0;
-  border-top: 1px solid #ddd;
   .container {
     padding-top: 15px;
     padding-left: 15px;
@@ -734,7 +752,7 @@ div pre.prettyprint {
   a {
     color: @blue;
     &:hover {
-      
+
     }
   }
   img {
@@ -863,7 +881,7 @@ div pre.prettyprint {
   a {
     color: @blue;
     &:hover {
-      
+
     }
   }
 
@@ -899,7 +917,6 @@ div pre.prettyprint {
 
 .markdown_editor.in_editor .markdown_in_editor {
   display: block;
-  border: 1px solid @lighter-gray;
   border-radius: 4px;
   padding: 0 5px;
 }
@@ -989,7 +1006,7 @@ textarea#title {
   color: @gray;
   &:hover {
     color: @blue;
-    
+
   }
 }
 
@@ -1077,9 +1094,53 @@ textarea#title {
     border:none;
   }
 
-  .wrap .container .row .content-header .content-body {
-    margin-left: 0;
+  .wrap {
+    padding-top: 8px;
+    .container {
+      .row {
+
+        /* 文章 */
+        .article {
+          padding: @length-10;
+        }
+
+        /* 评论 */
+        .replies {
+          /* 评论列表 */
+          .reply-list {
+            /* 评论项 */
+            .reply-item {
+              padding: @length-5;
+            }
+          }
+        }
+
+        /* 左边容器 */
+        article {
+          padding-left: @length-5;
+          padding-right: @length-5;
+        }
+
+        /* 右边容器 */
+        aside {
+          padding-left: @length-5;
+          padding-right: @length-5;
+        }
+
+        /* 列表项 */
+        .content-header {
+          .content-info {
+            padding: 0 5px;
+          }
+
+          .content-body {
+            margin-left: 50px;
+          }
+        }
+      }
+    }
   }
+
 
   .article-header-warpper {
     margin:30px 0 20px 0;

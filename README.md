@@ -27,8 +27,11 @@ gaoqi-blog
 
 * 安装上面所需的3个环境
 * 安装前置 
-    * linux `make preinstall` 和 `npm run prebuild`
-    * windows `npm run prebuild`
+    * linux
+        * `make preinstall`
+        * `npm run prebuild`
+    * windows 
+        * `npm run prebuild`
 * `make install` 把依赖安装上
 * 如果`config.js`中debug 未设置为true，则需要`make build`(Windows 可使用`npm run build`来构建)，压缩合并一下js、css文件
 * 使用`node app.js`运行，推荐`pm2`管理应用进程，安装后使用`make start`
@@ -46,6 +49,9 @@ gaoqi-blog
 * `make test-cov`
 
 # 版本日志
+
+## 0.0.11 / 2016-8-13
+* 界面改版
 
 ## 0.0.10 / 2016-7-16
 * 升级依赖
