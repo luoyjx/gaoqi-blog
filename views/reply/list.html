@@ -10,7 +10,9 @@
                   </a>
                   <a class="reply-author" href="/u/<%= reply.author.login_name %>"><strong><%= reply.author.login_name %></strong></a>
                   <span class="reply-time ml-10"><%= reply.friendly_create_at%></span>
+                  <% if (typeof(user) !== 'undefined') { %>
                   <a href="javascript:;" class="pull-right reply-btn">回复</a>
+                  <% } %>
                   <a class="floor" href="#<%= reply._id %>"></a>
                 </div>
             </div>
