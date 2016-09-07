@@ -84,13 +84,11 @@
 
             </article>
             <aside class="col-xs-12 col-lg-3">
-              <% if (typeof(user) !== 'undefined') { %>
               <div class="widget-side">
                 <%- partial('../user/card', {
                 user: post.author
                 }) %>
               </div>
-              <% } %>
               <div class="widget-side">
                 <%- partial('./recent', {
                 recent: recent
