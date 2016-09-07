@@ -1,12 +1,11 @@
-<div class="article-title">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-9  col-xs-12">
-                <div class="page-header" style="margin: 20px 0 0;">
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <article class="col-xs-12 col-lg-9 overflow-hidden-x">
+                <div class="article">
                     <ol class="breadcrumb">
                         <li><a href="/">首页</a></li>
                         <li><a href="/?tab=<%= post.category %> "><%= post.categoryName %></a></li>
-                        <li class="active">文章</li>
                     </ol>
                     <h1 class="article-header h3"><%= post.title %></h1>
                     <p class="info">
@@ -28,16 +27,6 @@
                         </span>
                     </p>
                     <% } %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="wrap">
-    <div class='container'>
-        <div class='row'>
-            <article class="col-xs-12 col-lg-9 overflow-hidden-x">
-                <div class="article">
                     <% if(typeof(error) !== 'undefined' && error){ %>
                     <div class="alert alert-error">
                         <strong><%= error %></strong>
@@ -88,14 +77,20 @@
                     </form>
                   </div>
                   <% } else { %>
-                  <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link"
-                                                                                                  href="/signup">注册</a>
+                  <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link" href="/signup">注册</a>
                   </p>
                   <% } %>
                 </div>
 
             </article>
             <aside class="col-xs-12 col-lg-3">
+              <% if (typeof(user) !== 'undefined') { %>
+              <div class="widget-side">
+                <%- partial('../user/card', {
+                user: post.author
+                }) %>
+              </div>
+              <% } %>
               <div class="widget-side">
                 <%- partial('./recent', {
                 recent: recent

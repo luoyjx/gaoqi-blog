@@ -1,26 +1,24 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        个人信息
-    </div>
-    <div class="panel-body">
-        <a href="/u/<%= user.login_name %>">
-            <img class="user-avatar" src="<%= user.avatar %>" title="<%= user.login_name %>"/>
-        </a>
-        <span class='user_name'><a class='dark' href="/u/<%= user.login_name %>"><%= user.login_name %></a></span>
-        <div class='board clearfix mt-5 mb-5'>
-            <div class='floor'>
-                <span class='big'>积分: <%= user.score %> </span>
-            </div>
+<div class="page-header">
+    <h4>用户信息</h4>
+</div>
+<div>
+    <a href="/u/<%= user.login_name %>">
+        <img class="user-avatar" src="<%= user.avatar %>" title="<%= user.login_name %>"/>
+    </a>
+    <span class='user_name'><a class='dark' href="/u/<%= user.login_name %>"><%= user.login_name %></a></span>
+    <div class='board clearfix mt-5 mb-5'>
+        <div class='floor'>
+            <span class='big'>积分: <%= user.score %> </span>
         </div>
-        <div class="space clearfix"></div>
-        <span class="signature">
-            “
-            <% if (user.signature) {%>
-                <%-escapeSignature(user.signature)%>
-            <%} else {%>
-                这家伙连签名都懒得写
-            <%}%>
-            ”
-        </span>
     </div>
+    <div class="space clearfix"></div>
+    <span class="signature">
+        “
+        <% if (user.signature) {%>
+            <%-escapeSignature(user.signature)%>
+        <%} else {%>
+            这家伙连签名都懒得写
+        <%}%>
+        ”
+    </span>
 </div>

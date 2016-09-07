@@ -2,6 +2,7 @@
 @length-10 : 10px;
 @length-14 : 14px;
 @length-15 : 15px;
+@length-20 : 20px;
 @white : #ffffff;
 @blue : #3498DB;
 @font-default-color : #555;
@@ -223,7 +224,7 @@ textarea, textarea:focus, input, input:focus {
   min-height: 90%;
   height: auto;
   margin: 0 auto -50px;
-  padding: 10px 0 60px;
+  padding: 20px 0 60px;
   background-color: #efefef;
 
   .tag-index {
@@ -246,18 +247,18 @@ textarea, textarea:focus, input, input:focus {
       }
 
       article {
-        padding: 0 4px 0 @length-15 ;
+        padding: 0 @length-10 0 @length-15 ;
         .pagination {
-          margin: 5px 0 0 0
+          margin: 10px 0 0 0
         }
       }
 
       aside {
-        padding-left: 4px;
+        padding-left: @length-10;
         .widget-side {
           background-color: @white;
-          padding: @length-5;
-          margin-bottom: 8px;
+          padding: @length-10;
+          margin-bottom: @length-20;
           border-radius: 3px;
           h4 {
             margin-top: 0;
@@ -422,6 +423,7 @@ textarea, textarea:focus, input, input:focus {
           .post-title {
             margin-top: 0;
             margin-bottom: 5px;
+            font-weight: 400;
           }
         }
         .content-info {
@@ -579,7 +581,7 @@ textarea, textarea:focus, input, input:focus {
       }
 
       .replies {
-        margin: 8px 0;
+        margin: @length-20 0;
 
         .CodeMirror {
           height: 200px;
@@ -1050,15 +1052,15 @@ textarea#title {
 
 // 分辨率较大设备中
 @media (min-width: 1200px) {
-  .container {
-    width: 1050px;
-  }
+/*   .container {
+  width: 1050px;
+}
 //  .navbar .nav > li .dropdown-menu {
 //    margin: 0;
 //  }
 //  .navbar .nav > li:hover .dropdown-menu {
 //    display: block;
-//  }
+//  } */
   .article-content {
     margin-left: 20px;
   }
