@@ -84,6 +84,7 @@
                                         <button class="btn btn-primary" type="submit">保存设置</button>
                                     </div>
                                 </div>
+                                <input type='hidden' name='_csrf' value='<%= csrf %>'>
                             </form>
                         </div>
                         <!--密码设置-->
@@ -101,6 +102,7 @@
                                         <input class="form-control" id="new_pwd" name="new_pass" type="password"  />
                                     </div>
                                 </div>
+                                <input type='hidden' name='_csrf' value='<%= csrf %>'>
                                 <div class="form-group">
                                     <label class="control-label col-lg-3"></label>
                                     <div class="col-lg-5">

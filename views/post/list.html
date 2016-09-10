@@ -21,6 +21,11 @@
             <div class="content-body">
                 <h2 class="h4 post-title">
                     <a href="/p/<%= post._id %>"><%= post.title %></a>
+                    <% if (post.reply_count > 0) { %>
+                        <a href="/p/<%= post._id %>#comment">
+                            <span class="badge"><%= post.reply_count %></span>
+                        </a>
+                    <% } %>
                 </h2>
                 <p>
                     <% if (typeof tab === 'undefined' || tab === '') { %>

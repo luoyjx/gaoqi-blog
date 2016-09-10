@@ -20,6 +20,8 @@ var PostSchema = new Schema({
   category: {type: String},//分类的name(非show_name)
   reply_count: {type: Number, default: 0},
   recommend_count: {type: Number, default: 0},//推荐
+  last_reply: { type: ObjectId },
+  last_reply_at: { type: Date, default: Date.now },
   pv: {type: Number, default: 0},//浏览数
   lock: {type: Boolean, default: false},//违规文章锁定
   enable: {type: Boolean, default: true}//文章软删除时用到
