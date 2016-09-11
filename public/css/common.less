@@ -459,19 +459,34 @@ textarea, textarea:focus, input, input:focus {
           }
         }
       }
+      
       .no-border {
         border-bottom: 0;
       }
-      .content-header .h4 a{
-        color: @font-default-color;
-        &:hover {
-          color: @blue;
 
-        }
-        &:visited {
-          color: #888;
+      .content-header {
+        .h4 {
+          a {
+            color: @font-default-color;
+            &:hover {
+              color: @blue;
+            }
+          }
+
+          .badge-link:hover {
+            .badge {
+              background-color: @font-default-color;
+            }
+          }
+          
+          .badge-link:visited {
+            .badge {
+              background-color: @lighter-gray;
+            }
+          }
         }
       }
+
       .addtion{
         color: @gray;
         > a{

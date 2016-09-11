@@ -10,7 +10,7 @@
         <section class="content-header no-border">
         <% } else { %>
         <section class="content-header">
-            <% } %>
+        <% } %>
             <div class="content-info">
                 <div class="content-info-view">
                   <a href="/u/<%= post.author.login_name %>" >
@@ -22,7 +22,7 @@
                 <h2 class="h4 post-title">
                     <a href="/p/<%= post._id %>"><%= post.title %></a>
                     <% if (post.reply_count > 0) { %>
-                        <a href="/p/<%= post._id %>#comment">
+                        <a class="badge-link" href="/p/<%= post._id %>#comment">
                             <span class="badge"><%= post.reply_count %></span>
                         </a>
                     <% } %>
