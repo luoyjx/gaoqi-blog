@@ -1,44 +1,36 @@
-<nav class="category">
-  <div class="container">
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class="<%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>">
-          <a class="menu" href="/">全部</a>
-        </li>
-        <% config.tabs.forEach(function (pair) {
-        var value = pair[0];
-        var text = pair[1];
-        %>
-        <li class="<%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>">
-          <a class="menu" href="/?tab=<%= value %>"><%= text %></a>
-        </li>
-        <% }) %>
-      </ul>
-    </div>
-  </div>
-</nav>
 <div class="wrap">
   <div class="container">
     <div class="row">
       <article class="col-sm-12 col-lg-9">
-        <%- partial('post/list', {
-        posts: posts,
-        pages: pages,
-        current_page: current_page,
-        base: '/',
-        tab: tab
-        }) %>
+        <div class="box">
+          <div class="tabs">
+            <a class="tab <%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>" href="/">全部</a>
+            <% config.tabs.forEach(function (pair) {
+            var value = pair[0];
+            var text = pair[1];
+            %>
+            <a class="tab <%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>" href="/?tab=<%= value %>"><%= text %></a>
+            <% }) %>
+          </div>
+          <%- partial('post/list', {
+          posts: posts,
+          pages: pages,
+          current_page: current_page,
+          base: '/',
+          tab: tab
+          }) %>
+        </div>
       </article>
       <aside class="col-sm-12 col-lg-3">
-        <div class="widget-side">
+        <div class="box widget-side">
           <%- partial('ads/side_aliyun_code') %>
         </div>
-        <div class="widget-side">
+        <div class="box widget-side">
           <%- partial('post/hot', {
           hots: hots
           }) %>
         </div>
-        <div class="widget-side">
+        <div class="box widget-side">
           <div class="page-header">
             <h4>热门标签<a class='tag-more' href='/tags' title="所有标签"> »</a></h4>
           </div>
@@ -57,12 +49,12 @@
           </ul>
           <% } %>
         </div>
-        <div class="widget-side">
+        <div class="box widget-side">
           <%- partial('user/user_sidebar_widget', {
           users: recent_reg,
           }) %>
         </div>
-        <div class="widget-side">
+        <div class="box widget-side">
           <%- partial('reply/side_list', {
           replies: replies,
           }) %>
@@ -71,3 +63,8 @@
     </div>
   </div>
 </div>
+
+<% block('styles', Loader('/public/css/index.css')
+.css('/public/css/tabs.less')
+.done(assets, config.site_static_host, config.mini_assets))
+%>

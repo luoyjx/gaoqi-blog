@@ -7,7 +7,7 @@
 <% }else{ %>
     <% posts.forEach(function (post, index) { %>
         <% if(index === posts.length - 1){ %>
-        <section class="content-header no-border">
+        <section class="content-header">
         <% } else { %>
         <section class="content-header">
         <% } %>
@@ -20,9 +20,9 @@
             </div>
             <div class="content-body">
                 <h2 class="h4 post-title">
-                    <a href="/p/<%= post._id %>"><%= post.title %></a>
+                    <a href="/p/<%= post._id %>#reply<%= post.reply_count %>"><%= post.title %></a>
                     <% if (post.reply_count > 0) { %>
-                        <a class="badge-link" href="/p/<%= post._id %>#comment<%= post.reply_count %>">
+                        <a class="badge-link" href="/p/<%= post._id %>#reply<%= post.reply_count %>">
                             <span class="badge"><%= post.reply_count %></span>
                         </a>
                     <% } %>

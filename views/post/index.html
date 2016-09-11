@@ -51,7 +51,6 @@
                 </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
                 <div class="replies panel">
-                    <!--<strong class="mb-20 section-title"> </strong>-->
                     <%- partial('../reply/list', {
                     replies: replies
                     }) %>
@@ -84,17 +83,17 @@
 
             </article>
             <aside class="col-xs-12 col-lg-3">
-              <div class="widget-side">
+              <div class="box widget-side">
                 <%- partial('../user/card', {
                 user: post.author
                 }) %>
               </div>
-              <div class="widget-side">
+              <div class="box widget-side">
                 <%- partial('./recent', {
                 recent: recent
                 }) %>
               </div>
-              <div class="widget-side">
+              <div class="box widget-side">
                 <%- partial('./hot', {
                 hots: hots
                 }) %>

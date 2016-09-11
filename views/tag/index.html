@@ -15,13 +15,15 @@
         </div>
         <div class="row">
             <div class="col-sm-12 col-lg-9">
-                <%- partial('../post/list', {
-                posts: posts,
-                pages: pages,
-                current_page: current_page,
-                base: base,
-                tab: ''
-                }) %>
+                <div class="box">
+                    <%- partial('../post/list', {
+                    posts: posts,
+                    pages: pages,
+                    current_page: current_page,
+                    base: base,
+                    tab: ''
+                    }) %>
+                </div>
             </div>
             <div class="col-sm-12 col-lg-3 sidebox">
               <div style="background-color: #f3f3f3;">

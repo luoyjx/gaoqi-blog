@@ -2,38 +2,40 @@
     <div class='container'>
         <div class='row'>
             <div class="col-xs-12 col-lg-9">
-                <ol class="breadcrumb">
-                    <li><a href="/">首页</a></li>
-                    <li><a href="/u/<%= author.login_name %>">个人主页</a></li>
-                    <li class="active"><%= author.login_name %></li>
-                </ol>
-                <div role="tabpanel">
-                    <ul class="nav nav-tabs mt-20">
-                        <li class="active">
-                            <a href="/u/<%= author.login_name %>" >最新文章</a>
-                        </li>
-                        <li >
-                            <a href="/u/<%= author.login_name %>/top" >最热文章</a>
-                        </li>
-                        <li >
-                            <a href="/u/<%= author.login_name %>/replies" >参与话题</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <%- partial('../post/list', {
-                            posts: latest,
-                            pages: pages,
-                            current_page: current_page,
-                            base: '/u/' + author.login_name,
-                            tab: ''
-                            }) %>
+                <div class="box">
+                    <ol class="breadcrumb">
+                        <li><a href="/">首页</a></li>
+                        <li><a href="/u/<%= author.login_name %>">个人主页</a></li>
+                        <li class="active"><%= author.login_name %></li>
+                    </ol>
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs mt-20">
+                            <li class="active">
+                                <a href="/u/<%= author.login_name %>" >最新文章</a>
+                            </li>
+                            <li >
+                                <a href="/u/<%= author.login_name %>/top" >最热文章</a>
+                            </li>
+                            <li >
+                                <a href="/u/<%= author.login_name %>/replies" >参与话题</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <%- partial('../post/list', {
+                                posts: latest,
+                                pages: pages,
+                                current_page: current_page,
+                                base: '/u/' + author.login_name,
+                                tab: ''
+                                }) %>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <aside class="col-xs-12 col-lg-3">
-                <div class="widget-side">
+                <div class="box widget-side">
                     <%- partial('./card', {
                     user: author
                     }) %>
