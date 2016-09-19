@@ -29,9 +29,7 @@
                 </h2>
                 <p>
                     <% if (typeof tab === 'undefined' || tab === '') { %>
-                      <span class="label "
-                            style="color: <%= post.categoryColor %>;border: 1px solid <%= post.categoryColor %>;"
-                      ><%= post.categoryName %></span>
+                      <span class="label"><%= post.categoryName %></span>
                     <% } %>
                     <span class="addtion font-12 mr-5"><%= post.friendly_create_at %></span>
                     <span class="addtion font-12 mr-5"><%= post.friendly_pv %>浏览</span>
