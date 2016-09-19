@@ -76,27 +76,17 @@
                         消息
                       </a>
                     </li>
-
-                    <li class="dropdown">
-                        <a href="/u/<%= user.login_name %>" class="dropdown-toggle" data-toggle="dropdown">
-                          <span class="mr-10"><%=user.login_name%><b class="caret"></b></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/u/<%= user.login_name %>"></span>个人主页</a></li>
-                            <li><a href="/post/create"></span>发表文章</a></li>
-                            <li><a href="/u/<%= user.login_name %>/setting"></span>设　置</a></li>
-                            <li><a href="/signout"></span>登　出</a></li>
-                        </ul>
-                    </li>
+                    <li><a class="menu" href="/u/<%= user.login_name %>">个人主页</a></li>
+                    <li><a class="menu" href="/u/<%= user.login_name %>/setting">设置</a></li>
+                    <li><a class="menu" href="/signout">退出</a></li>
                     <% } else { %>
-                    <li><a  href="/signin" >登录</a></li>
-                    <li><a  href="/signup" >注册</a></li>
+                    <li><a class="menu" href="/signin" >登录</a></li>
+                    <li><a class="menu" href="/signup" >注册</a></li>
                     <% } %>
                 </ul>
             </div>
         </div>
     </header>
-    <!-- <div style="margin-bottom: 50px;"></div> -->
     <%- body %>
     <div id="page"><div id="gotoTop"><span class="glyphicon glyphicon-menu-up"></span></div></div>
     <footer class="footer">
