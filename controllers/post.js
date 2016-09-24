@@ -150,19 +150,21 @@ exports.create = function(req, res, next) {
           });
 
           Promise.map(tagsArr, function(tagName) {
-            Tag.getTagByName(tagName, function(err, tag) {
-              if (!tag) {
-                Tag
-                  .newAndSave(tagName, '')
-                  .then(function(newTag) {
-                    newTag.post_count += 1;
-                    newTag.save();
-                  });
-              } else {
-                tag.post_count += 1;
-                tag.save();
-              }
-            });
+            return Tag
+              .getTagByName(tagName)
+              .then(function(tag) {
+                if (!tag) {
+                  Tag
+                    .newAndSave(tagName, '')
+                    .then(function(newTag) {
+                      newTag.post_count += 1;
+                      newTag.save();
+                    });
+                } else {
+                  tag.post_count += 1;
+                  tag.save();
+                }
+              })
           });
         }
       })
