@@ -73,7 +73,7 @@
     "istanbul": "*",
     "loader-connect": "*",
     "mm": "*",
-    "mocha": "*",
+    "mocha": "3.1.2",
     "nock": "*",
     "pedding": "*",
     "should": "*",
