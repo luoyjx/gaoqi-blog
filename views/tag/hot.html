@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+  <div class="panel-heading">热门标签<a class='tag-more' href='/tags' title="所有标签"> »</a></div>
+  <div class="panel-body">
+    <%
+    if(typeof(tags) !== 'undefined' && tags.length > 0){
+    tags.forEach(function(tag, index){
+    %>
+    <span class="tag-box">
+        <a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name %></a>
+    </span>
+    <%
+    });
+    }else{ %>
+    <ul class="list-unstyled line-distance list-overhidden">
+      <li class="font-12">暂无标签</li>
+    </ul>
+    <% } %>
+  </div>
+</div>

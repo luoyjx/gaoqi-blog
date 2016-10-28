@@ -1,9 +1,8 @@
-<div class="page-header">
-    <h4>用户信息</h4>
-</div>
-<div>
+<div class="panel panel-default">
+  <div class="panel-heading">用户信息</div>
+  <div class="panel-body">
     <a href="/u/<%= user.login_name %>">
-        <img class="user-avatar" src="<%= user.avatar %>" title="<%= user.login_name %>"/>
+        <img class="avatar" src="<%= user.avatar %>" title="<%= user.login_name %>"/>
     </a>
     <span class='user_name'><a class='dark' href="/u/<%= user.login_name %>"><%= user.login_name %></a></span>
     <div class='board clearfix mt-5 mb-5'>
@@ -21,4 +20,5 @@
         <%}%>
         ”
     </span>
+  </div>
 </div>

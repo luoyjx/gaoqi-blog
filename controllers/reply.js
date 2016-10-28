@@ -51,6 +51,8 @@ exports.add = function (req, res, next) {
               at.sendMessageToMentionUsers(newContent, post_id, req.session.user._id, reply._id, userFind.login_name, _post.title);
               _post.reply_count += 1;
               _post.update_at = new Date();
+              _post.last_reply_at = new Date();
+              _post.last_reply = req.session.user._id;
               _post.save();
               return Promise.resolve(reply);
             })

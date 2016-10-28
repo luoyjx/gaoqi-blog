@@ -1,7 +1,7 @@
 <div class="wrap">
   <div class="container">
     <div class="row">
-      <article class="col-sm-12 col-lg-9">
+      <article class="col-sm-12 col-lg-9 pr-5">
         <div class="box">
           <div class="tabs">
             <a class="tab <%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>" href="/">全部</a>
@@ -22,50 +22,31 @@
         </div>
       </article>
       <aside class="col-sm-12 col-lg-3">
-        <div class="box widget-side">
-          <%- partial('ads/side_aliyun_code') %>
-        </div>
-        <% if (typeof(user) !== 'undefined') { %>
-        <div class="box widget-side">
-          <a class="btn btn-primary" href='/post/create'>
-            <span class='span-success'>发布文章</span>
-          </a>
-        </div>
-        <% } %>
-        <div class="box widget-side">
-          <%- partial('post/hot', {
-          hots: hots
-          }) %>
-        </div>
-        <div class="box widget-side">
-          <div class="page-header">
-            <h4>热门标签<a class='tag-more' href='/tags' title="所有标签"> »</a></h4>
-          </div>
-          <%
-          if(typeof(tags) !== 'undefined' && tags.length > 0){
-          tags.forEach(function(tag, index){
-          %>
-          <span class="tagPopup">
-              <a class="tag" href="/tags/<%= tag.name %>" title="<%= tag.name %>"><%= tag.name %></a>
-          </span>
-          <%
-          });
-          }else{ %>
-          <ul class="list-unstyled line-distance list-overhidden">
-            <li class="font-12 mb-10">暂无标签</li>
-          </ul>
-          <% } %>
-        </div>
-        <div class="box widget-side">
-          <%- partial('user/user_sidebar_widget', {
-          users: recent_reg,
-          }) %>
-        </div>
-        <div class="box widget-side">
-          <%- partial('reply/side_list', {
-          replies: replies,
-          }) %>
-        </div>
+        <!-- 阿里云推荐码 -->
+        <%- partial('ads/side_aliyun_code') %>
+
+        <!-- 发布文章 -->
+        <%- partial('post/sidebar_new') %>
+
+        <!-- 热门文章 -->
+        <%- partial('post/hot', {
+        hots: hots
+        }) %>
+
+        <!-- 热门标签 -->
+        <%- partial('tag/hot', {
+        tags: tags
+        }) %>
+
+        <!-- 最近加入用户 -->
+        <%- partial('user/user_sidebar_widget', {
+        users: recent_reg,
+        }) %>
+
+        <!-- 最新评论 -->
+        <%- partial('reply/side_list', {
+        replies: replies,
+        }) %>
       </aside>
     </div>
   </div>
@@ -73,5 +54,7 @@
 
 <% block('styles', Loader('/public/css/index.css')
 .css('/public/css/tabs.less')
-.done(assets, config.site_static_host, config.mini_assets))
+.css('/public/css/widget/post.list.less')
+.css('/public/css/page/site.index.less')
+.done(assets, config.site_assets_host, config.mini_assets))
 %>

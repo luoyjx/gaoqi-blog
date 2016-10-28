@@ -1,15 +1,23 @@
 <!-- style -->
-<%- Loader('/public/css/post.css')
+<%- Loader('/public/css/api.css')
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_static_host, config.mini_assets)
+.css('/public/css/widget/markdown.less')
+.done(assets, config.site_assets_host, config.mini_assets)
 %>
 <div class="wrap">
     <div class="container">
         <div class="row">
             <div class="col-sm-12 col-md-9">
-                <div class="content-header">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                          <li><a href="/">首页</a></li>
+                          <li class="active">API</li>
+                        </ol>
+                    </div>
+                    <div class="panel-body">
                 <%- markdown(multiline(function () {
 /*
 ## 文章
@@ -92,9 +100,10 @@ callback([{name: 'xxx'}, {name: 'xxx'}, ..., {name: 'xxx'}])
 
 */
 })) %>
+                    </div>
                 </div>
             </div>
-            <div class="col-xs-6 col-md-3 sidebox">
+            <div class="col-xs-6 col-md-3">
             </div>
         </div>
     </div>

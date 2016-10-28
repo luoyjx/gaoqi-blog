@@ -1,33 +1,44 @@
 <div class="wrap">
     <div class="container">
-        <ol class="breadcrumb" style="padding-left: 15px;">
-          <li><a href="/">首页</a></li>
-          <li class="active">标签</li>
-        </ol>
-        <h1 class="h3 mt-20 ml-15">标签<br><small>标签是内容的提炼，通过标签可以快速的找到自己关注的一些主题。</small></h1>
-        <div class="row mt-20">
-          <% if(tags && tags.length > 0){ %>
-          <% tags.forEach(function (tag, index) { %>
-          <div class="tag-list col-md-3">
-            <div class="tag-container">
-              <h2 class="h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
-              <p><%= tag.description ? tag.description : '暂时还没有描述' %></p>
-              <div class="tag-item-action">
-                <button class="btn btn-xs btn-default font-13 mr-5 tagfollow" data-id="<%= tag._id %>">关注</button>
-                <span class="addtion font-13 mr-5"><strong class="follows"><%= tag.follow_count %></strong> 关注</span>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <ol class="breadcrumb">
+              <li><a href="/">首页</a></li>
+              <li class="active">标签</li>
+            </ol>
+          </div>
+          <div class="panel-body">
+            <h1 class="h3 mt-0">标签<br><small>标签是内容的提炼，通过标签可以快速的找到自己关注的一些主题。</small></h1>
+            <div class="row">
+              <% if(tags && tags.length > 0){ %>
+              <% tags.forEach(function (tag, index) { %>
+              <div class="tag-list col-md-3">
+                <div class="tag-container">
+                  <h2 class="tag-title h4"><a href="/tags/<%= tag.name %>"><%= tag.name %></a></h2>
+                  <p class="tag-desc"><%= tag.description ? tag.description : '暂时还没有描述' %></p>
+                  <div class="tag-action">
+                    <button class="btn btn-xs btn-default mr-5 tagfollow" data-id="<%= tag._id %>">关注</button>
+                    <span class="addtion font-13 mr-5"><strong class="follows"><%= tag.follow_count %></strong> 关注</span>
+                  </div>
+                </div>
               </div>
+              <% }); %>
+              <% } %>
+            </div>
+            <div class="text-center">
+              <%- partial('../paging', {
+              pages: pages,
+              current_page: current_page,
+              base: base,
+              tab: ''
+              }) %>
             </div>
           </div>
-          <% }); %>
-          <% } %>
-        </div>
-        <div class="text-center">
-          <%- partial('../paging', {
-          pages: pages,
-          current_page: current_page,
-          base: base,
-          tab: ''
-          }) %>
         </div>
     </div>
 </div>
+
+<% block('styles', Loader('/public/css/tag.list.css')
+.css('/public/css/widget/tag.list.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>

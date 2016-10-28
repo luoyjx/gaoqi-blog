@@ -1,12 +1,18 @@
 /*!
  * user dao
  */
+var url = require('url');
+var qn = require('qn');
+var gravatar = require('gravatar');
+var request = require('request');
 var Promise = require('bluebird');
 var models = require('../models');
 var User = models.User;
 var utility = require('utility');
 var uuid = require('node-uuid');
 var config = require('../config');
+
+var qnClient = qn.create(config.qn_avatar_access);
 
 
 /**
@@ -116,6 +122,18 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
  * @param {String} email 邮箱
  * @returns {string} avatar地址
  */
-exports.makeGravatar = function () {
-  return config.site_static_host + '/avatar/default.png';
+exports.makeGravatar = function (email) {
+  var urlObj = url.parse(gravatar.url(email, {d: 'retro'}))
+  var avatarUrl = urlObj.path;
+  var avatarPath = avatarUrl.replace('//www.gravatar.com', '');
+  var avatarKey = avatarPath.split('?')[0];
+  console.log(avatarUrl)
+  console.log(avatarKey)
+
+  qnClient.upload(request('http:' + avatarUrl), {key: avatarKey}, function(err, result) {
+    if (err) return console.error(err);
+    console.log(result);
+  })
+
+  return config.avatar_static_host + avatarKey;
 };

@@ -4,10 +4,6 @@
 
 
 var config = require('./config');
-if (!config.debug && config.oneapm_key !== 'your oneapm key') {
-  require('oneapm');
-}
-
 var path = require('path');
 var Loader = require('loader');
 var LoaderConnect = require('loader-connect')
@@ -39,7 +35,7 @@ var app = express();
 // 静态文件目录
 var staticDir = path.join(__dirname, 'public');
 var assets = {};
-if (config.mini_assets) {
+if (process.env.NODE_ENV === 'production') {
   try {
     assets = require('./assets.json');
   } catch (e) {

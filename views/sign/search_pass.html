@@ -1,13 +1,15 @@
 <div class="wrap">
   <div class='container'>
     <div class='row'>
-      <div class="col-xs-12 col-lg-9">
-        <div class="box">
-          <ol class="breadcrumb" >
-            <li><a href="/">首页</a></li>
-            <li class="active">找回密码</li>
-          </ol>
-          <div class='inner'>
+      <div class="col-xs-12 col-lg-9 pr-5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <ol class="breadcrumb" >
+              <li><a href="/">首页</a></li>
+              <li class="active">找回密码</li>
+            </ol>
+          </div>
+          <div class='panel-body'>
             <% if(typeof(error) !== 'undefined' && error){ %>
             <div class="alert alert-danger">
               <a class="close" data-dismiss="alert" href="#">&times;</a>
@@ -41,9 +43,7 @@
         </div>
       </div>
       <aside class="col-xs-12 col-lg-3">
-        <div class="box widget-side">
-            <%- partial('sidebar') %>    
-        </div>
+          <%- partial('sidebar') %>    
       </aside>
     </div>
   </div>

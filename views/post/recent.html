@@ -1,18 +1,20 @@
-<div class="page-header">
-    <h4>近期文章</h4>
+<div class="panel panel-default">
+  <div class="panel-heading">近期文章</div>
+  <div class="panel-body">
+    <% if(recent && recent.length > 0){ %>
+    <ul class="list-unstyled posts">
+        <% recent.forEach(function(r, index){%>
+        <li class="font-12 mb-10">
+            <div><a href="/p/<%=r._id%>" title="<%=r.title%>"><%=r.title%></a></div>
+        </li>
+        <% }); %>
+    </ul>
+    <% }else{ %>
+    <ul class="list-unstyled list-overhidden">
+        <li class="font-12 mb-10">
+            <div>暂无文章</div>
+        </li>
+    </ul>
+    <% } %>
+  </div>
 </div>
-<% if(recent && recent.length > 0){ %>
-<ul class="list-unstyled list-overhidden">
-    <% recent.forEach(function(r, index){%>
-    <li class="font-12 mb-10">
-        <div><a href="/p/<%=r._id%>" title="<%=r.title%>"><%=r.title%></a></div>
-    </li>
-    <% }); %>
-</ul>
-<% }else{ %>
-<ul class="list-unstyled list-overhidden">
-    <li class="font-12 mb-10">
-        <div>暂无文章</div>
-    </li>
-</ul>
-<% } %>
