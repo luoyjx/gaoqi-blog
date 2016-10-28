@@ -134,7 +134,7 @@ exports.create = function(req, res, next) {
       })
       .then(function(userFind) {
         userFind.score += 5;
-        userFind.topic_count += 1;
+        userFind.post_count += 1;
         userFind.save();
         req.session.user = userFind;
         //发送at消息

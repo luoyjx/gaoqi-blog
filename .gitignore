@@ -1,7 +1,6 @@
 .idea
 .svn
 node_modules
-config.js
 assets.json
 logs
 *.log
@@ -11,3 +10,7 @@ pids
 *.seed
 lib-cov
 coverage
+public/**/*.debug.css
+public/**/*.min.css
+public/**/*.debug.js
+public/**/*.min.js

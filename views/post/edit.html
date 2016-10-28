@@ -1,19 +1,23 @@
 <!-- style -->
-<% block('styles', Loader('/public/css/post.css')
+<% block('styles', Loader('/public/css/post.edit.css')
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_static_host, config.mini_assets))
+.css('/public/css/page/post.edit.less')
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 <div class="wrap">
     <div class='container'>
         <div class='row'>
-            <div class="col-xs-12 col-lg-9">
-                <div class="box">
-                    <div class="content-header left-content">
-                        <h1 class="h4"><%= typeof(title) !== 'undefined' && title || '发表文章' %></h1>
+            <div class="col-xs-12 col-lg-9 pr-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                            <li><a href="/">首页</a></li>
+                            <li>发布文章</li>
+                        </ol>
                     </div>
-                    <div class="mt-10">
+                    <div class="panel-body">
                         <% if(typeof(edit_error) !== 'undefined' && edit_error){ %>
                         <div class="alert alert-danger">
                             <a class="close" data-dismiss="alert" href="#">&times;</a>
@@ -26,17 +30,15 @@
                         </div>
                         <% }else{ %>
                         <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
-                        <form id='create_topic_form' action='/post/<%= post_id %>/edit' method='post'>
+                        <form id='create_topic_form' action='/post/<%= post_id %>/edit' method='post' role="form">
                         <% } else { %>
-                        <form id='create_topic_form' action='/post/create' method='post'>
+                        <form id='create_topic_form' action='/post/create' method='post' role="form">
                         <% } %>
                         <fieldset>
                             <span id="topic_create_warn"></span>
 
                             <div>
-                                <!--[if lte IE 9]>
-                                <span>分类</span>
-                                <![endif]-->
+                                <span class="tab-selector">选择分类：</span>
                                 <select class="" name="category" id="tab-value" autofocus>
                                     <option >请选择</option>
                                     <%
@@ -50,12 +52,15 @@
                                     <%});%>
                                 </select>
                             </div>
-                            <!--[if lte IE 9]>
-                            <span>标题</span>
-                            <![endif]-->
-                            <textarea class='span9 ' id='title' name='title' rows='1'
+                            
+                            <div class="form-group">
+                                <!--[if lte IE 9]>
+                                <label for="exampleInputPassword1">Password</label>
+                                <![endif]-->
+                                <input class='span9 form-control input-sm' id='title' name='title' 
                                       placeholder="标题   字数10 字以上"
-                                    ><%= typeof(post_title) !== 'undefined' && post_title || '' %></textarea>
+                                    value="<%= typeof(post_title) !== 'undefined' && post_title || '' %>" />
+                            </div>
                             <!--[if lte IE 9]>
                             <!--<span>摘要</span>-->
                             <![endif]-->
@@ -120,15 +125,15 @@
     </div>
 </div>
 <!-- markdown editor -->
-<% block('script', Loader('/public/editor.js')
+<% block('script', Loader('/public/editor.edit.js')
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
-.done(assets, config.site_static_host, config.mini_assets))
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 <% block('script', Loader('/public/js/edit.js')
 .js('/public/lib/jquery.autocomplete.js')
 .js('/public/js/post.js')
-.done(assets, config.site_static_host, config.mini_assets))
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 

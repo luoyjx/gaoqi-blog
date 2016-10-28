@@ -1,16 +1,18 @@
-<div class="page-header">
-    <h4>热门文章</h4>
+<div class="panel panel-default">
+  <div class="panel-heading">热门文章</div>
+  <div class="panel-body">
+    <% if(hots && hots.length > 0){ %>
+    <ul class="list-unstyled posts">
+        <%  hots.forEach(function(hot, index){%>
+        <li class="font-12 mb-10" >
+        <div><a href="/p/<%=hot._id%>"  title="<%=hot.title%>"><%=hot.title%></a></div>
+        </li>
+        <% }); %>
+    </ul>
+    <% }else{ %>
+    <ul class="list-unstyled list-overhidden">
+        <li class="font-14"><div>暂无文章</div></li>
+    </ul>
+    <% } %>
+  </div>
 </div>
-<% if(hots && hots.length > 0){ %>
-<ul class="list-unstyled list-overhidden">
-    <%  hots.forEach(function(hot, index){%>
-    <li class="font-12 mb-10" >
-    <div><a href="/p/<%=hot._id%>"  title="<%=hot.title%>"><%=hot.title%></a></div>
-    </li>
-    <% }); %>
-</ul>
-<% }else{ %>
-<ul class="list-unstyled list-overhidden">
-    <li class="font-14 mb-10"><div>暂无文章</div></li>
-</ul>
-<% } %>

@@ -47,7 +47,7 @@ exports.bhash = function (str) {
 
 };
 
-exports.bcompare = function (str, hash, callback) {
+exports.bcompare = function (str, hash) {
   return new Promise(function (resolve, reject) {
     bcrypt.compare(str, hash, function(err, result) {
       if (err) return reject(err);

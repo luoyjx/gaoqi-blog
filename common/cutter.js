@@ -17,12 +17,11 @@ exports.shorter = function (content, length) {
   var t = 0;
   for (var i = 0; i < length; i++) {
     if (cache.substr(i, 1).match("[\u4e00-\u9fa5]")) {
+      if (t + 2 > length) break; 
       t = t + 2;//汉字
     } else {
+      if (t + 1 > length) break;
       t = t + 1;//英文
-    }
-    if (t > length) {
-      break;
     }
   }
   var result = cache.substring(0, t);
@@ -37,5 +36,5 @@ exports.shorter = function (content, length) {
  * @param {String} content 需要被清除的内容
  */
 exports.clearHtml = function (content) {
-
+  return content;
 };

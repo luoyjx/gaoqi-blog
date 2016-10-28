@@ -151,7 +151,7 @@ exports.signup = function (req, res, next) {
       return tools.bhash(pass);
     })
     .then(function(passhash) {
-      var avatarUrl = User.makeGravatar();
+      var avatarUrl = User.makeGravatar(email);
       User
         .newAndSave(loginname, loginname, passhash, email, avatarUrl, false)
         .then(function() {

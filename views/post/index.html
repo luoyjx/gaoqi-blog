@@ -1,126 +1,137 @@
 <div class="wrap">
     <div class='container'>
         <div class='row'>
-            <article class="col-xs-12 col-lg-9 overflow-hidden-x">
-                <div class="article">
-                    <ol class="breadcrumb">
-                        <li><a href="/">首页</a></li>
-                        <li><a href="/?tab=<%= post.category %> "><%= post.categoryName %></a></li>
-                    </ol>
-                    <h1 class="article-header h3"><%= post.title %></h1>
-                    <p class="info">
-                        <a class="link font-13 mr-10" href="/u/<%= post.author.login_name %>">
-                            <img class="user-avatar-sm mr-10" src="<%= post.author.avatar%>"/>
-                            <strong class="user-name"><%= post.author.login_name %></strong>
+            <article class="col-xs-12 col-lg-9 pr-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <div class="fr">
+                        <a href="/u/<%= post.author.login_name %>">
+                          <img class="avatar-lg" src="<%= post.author.avatar%>" />
                         </a>
-                        <span class="addtion font-13 mr-10"><%= post.frendly_create_at %></span>
-                        <span class="addtion font-13 mr-10"><%= post.pv %>次阅读</span>
-                    </p>
-                    <% if ((typeof(user) !== 'undefined' && (user._id.equals(post.author_id))) || (typeof(user) !==
-                    'undefined' && user.is_admin)) { %>
-                    <p>
-                        <span>
-                            <a class="glyphicon glyphicon-edit" href="/post/<%= post._id %>/edit" title="编辑"></a>
-                        </span>
-                        <span id="delete_post" data-id="<%= post._id %>">
-                            <a class="glyphicon glyphicon-trash" href="javascript:;" title="删除"></a>
-                        </span>
-                    </p>
-                    <% } %>
-                    <% if(typeof(error) !== 'undefined' && error){ %>
-                    <div class="alert alert-error">
-                        <strong><%= error %></strong>
-                    </div>
-                    <% }else{ %>
-                    <div class="content article-content"><%- markdown(post.linkedContent) %></div>
-                    <div class="alert alert-success" role="alert">
-                      <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong style="color: #f2354f;">pigtx1</strong> 购买阿里云服务（限新用户）
+                      </div>
+                      <ol class="breadcrumb">
+                          <li><a href="/">首页</a></li>
+                          <li><a href="/?tab=<%= post.category %> "><%= post.categoryName %></a></li>
+                      </ol>
+                      <h1 class="h2 mt-10"><%= post.title %></h1>
+                      <p class="mb-0">
+                          <a href="/u/<%= post.author.login_name %>">
+                              <strong><%= post.author.login_name %></strong>
+                          </a>
+                          <span ><%= post.frendly_create_at %></span>
+                          <span ><%= post.pv %>次阅读</span>
                       </p>
+                      <% if ((typeof(user) !== 'undefined' && (user._id.equals(post.author_id))) || (typeof(user) !==
+                      'undefined' && user.is_admin)) { %>
+                      <p>
+                          <span>
+                              <a class="glyphicon glyphicon-edit" href="/post/<%= post._id %>/edit" title="编辑"></a>
+                          </span>
+                          <span id="delete_post" data-id="<%= post._id %>">
+                              <a class="glyphicon glyphicon-trash" href="javascript:;" title="删除"></a>
+                          </span>
+                      </p>
+                      <% } %>
                     </div>
-                    <div class="article-tags">
-                        <% if(post.tags){
-                        post.tags.forEach(function (tag, index) { %>
-                        <% if (tag) { %>
-                        <a class="tag mr-5" href="/tags/<%= tag %>"><%= tag %></a>
-                        <% } %>
-                        <% }); }%>
+                    <div class="panel-body">
+                      <% if(typeof(error) !== 'undefined' && error){ %>
+                      <div class="alert alert-error">
+                          <strong><%= error %></strong>
+                      </div>
+                      <% }else{ %>
+                      <div class="content article-content"><%- markdown(post.linkedContent) %></div>
+                      <div class="alert alert-success" role="alert">
+                        <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong style="color: #f2354f;">pigtx1</strong> 购买阿里云服务（限新用户）
+                        </p>
+                      </div>
+                      <div class="article-tags">
+                          <% if(post.tags){
+                          post.tags.forEach(function (tag, index) { %>
+                          <% if (tag) { %>
+                          <a class="tag mr-5" href="/tags/<%= tag %>"><%= tag %></a>
+                          <% } %>
+                          <% }); }%>
+                      </div>
+                      <% } %>
                     </div>
-                    <% } %>
-                  <!-- <strong class="mb-20 section-title">相关阅读</strong>
-                  <script>document.write(unescape('%3Cdiv id="hm_t_43883"%3E%3C/div%3E%3Cscript charset="utf-8" src="http://crs.baidu.com/t.js?siteId=59acccd43801ac1b47f47fd07d7a479a&planId=43883&async=0&referer=') + encodeURIComponent(document.referrer) + '&title=' + encodeURIComponent(document.title) + '&rnd=' + (+new Date) + unescape('"%3E%3C/script%3E'));</script> -->
                 </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
-                <div class="replies panel">
+                <div class="panel replies">
                     <%- partial('../reply/list', {
                     replies: replies
                     }) %>
-
                 </div>
-                <div class="panel replies p-10">
+                <div class="panel panel-default mb-0">
                   <a id="comment"></a>
                   <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
-                  <strong class="section-title">发表评论</strong>
-                  <div class='reply'>
-                    <form id='reply_form' action='/post/<%= post._id %>/reply' method='post'>
+                  <div class="panel-heading">
+                    <span>发表评论</span>
+                  </div>
+                  <div class="panel-body">
+                    <div class='reply'>
+                      <form id='reply_form' action='/post/<%= post._id %>/reply' method='post'>
 
-                      <div class='markdown_editor in_editor'>
-                        <div class='markdown_in_editor'>
-                          <textarea class='editor' name='r_content' rows='4'></textarea>
+                        <div class='markdown_editor in_editor'>
+                          <div class='markdown_in_editor'>
+                            <textarea class='editor' name='r_content' rows='4'></textarea>
+                          </div>
                         </div>
-                      </div>
-                      <div class='editor_buttons'>
-                        <input id="submit_reply" class='btn btn-primary' type="submit" data-loading-text="回复中.."
-                               value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
-                      </div>
-                      <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
-                    </form>
+                        <div class='editor_buttons'>
+                          <input id="submit_reply" class='btn btn-primary' type="submit" data-loading-text="回复中.."
+                                 value="回复<%= post.lock ? '(此主题已锁定)' : ''%>" <%= post.lock ? 'disabled="disabled"' : ''%> />
+                        </div>
+                        <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
+                      </form>
+                    </div>
                   </div>
                   <% } else { %>
-                  <p class="reply-guide"><a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link" href="/signup">注册</a>
+                  <p class="reply-guide text-center mb-0" style="height: 60px;line-height: 60px;vertical-align: middle;">
+                    <a class="a-link" href="/signin">登录</a>后可以进行评论。没有账号？马上<a class="a-link" href="/signup">注册</a>
                   </p>
                   <% } %>
                 </div>
 
             </article>
             <aside class="col-xs-12 col-lg-3">
-              <div class="box widget-side">
-                <%- partial('../user/card', {
-                user: post.author
-                }) %>
-              </div>
-              <div class="box widget-side">
-                <%- partial('./recent', {
-                recent: recent
-                }) %>
-              </div>
-              <div class="box widget-side">
-                <%- partial('./hot', {
-                hots: hots
-                }) %>
-              </div>
+              <!-- 作者信息 -->
+              <%- partial('../user/card', {
+              user: post.author
+              }) %>
+
+              <!-- 近期文章 -->
+              <%- partial('./recent', {
+              recent: recent
+              }) %>
+
+              <!-- 热门文章 -->
+              <%- partial('./hot', {
+              hots: hots
+              }) %>
             </aside>
         </div>
     </div>
 </div>
 <!-- style -->
-<% block('styles', Loader('/public/css/post.css')
+<% block('styles', Loader('/public/css/post.index.css')
+.css('/public/css/page/post.detail.less')
+.css('/public/css/widget/markdown.less')
 .css('/public/lib/editor/editor.css')
 .css('/public/lib/webuploader/webuploader.css')
 .css('/public/lib/code-prettify/prettify.css')
-.done(assets, config.site_static_host, config.mini_assets))
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 <% if (typeof(user) !== 'undefined' && typeof(post) !== 'undefined') { %>
 <!-- markdown editor -->
-<% block('script', Loader('/public/editor.js')
+<% block('script', Loader('/public/editor.index.js')
 .js('/public/lib/editor/editor.js')
 .js('/public/lib/webuploader/webuploader.withoutimage.js')
 .js('/public/lib/editor/ext.js')
-.done(assets, config.site_static_host, config.mini_assets))
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 
 <% block('script', Loader('/public/post.index.js')
 .js('/public/js/post.index.js')
-.done(assets, config.site_static_host, config.mini_assets))
+.done(assets, config.site_assets_host, config.mini_assets))
 %>
 <% } %>
 <!-- <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":["mshare","qzone","tsina","fbook","twi","douban","weixin"],"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"6","bdPos":"right","bdTop":"148.5"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script> -->

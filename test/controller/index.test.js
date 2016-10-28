@@ -17,6 +17,15 @@ describe('test/controller/index.test.js', function() {
     });
   });
 
+  it('should /?tab=program 200', function(done) {
+    request.get('/?tab=program').end(function(err, res) {
+      res.status.should.equal(200);
+      res.text.should.containEql('热门文章');
+      res.text.should.containEql('热门标签');
+      done(err);
+    });
+  });
+
   it('should /?page=-1 200', function(done) {
     request.get('/?page=-1').end(function(err, res) {
       res.status.should.equal(200);
