@@ -84,7 +84,7 @@
     "loader-connect": "*",
     "mm": "*",
     "mocha": "3.1.2",
-    "nock": "*",
+    "nock": "9.0.2",
     "pedding": "*",
     "should": "*",
     "supertest": "*"
