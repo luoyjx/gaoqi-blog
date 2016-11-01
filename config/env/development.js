@@ -88,7 +88,7 @@ module.exports = {
 
   // github 登陆的配置,需要到github配置授权
   GITHUB_OAUTH: {
-    clientID: '',
+    clientID: 'your GITHUB_CLIENT_ID',
     clientSecret: '',
     callbackURL: 'http://blog.gaoqixhb.com/login/github/callback' //回调的地址 如 http://blog.gaoqixhb.com/login/github/callback
   },
