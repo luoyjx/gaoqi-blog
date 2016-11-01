@@ -12,7 +12,11 @@ var utility = require('utility');
 var uuid = require('node-uuid');
 var config = require('../config');
 
-var qnClient = qn.create(config.qn_avatar_access);
+var qnClient = null;
+
+if (config.qn_avatar_access.secretKey !== 'your secret key') {
+  qnClient = qn.create(config.qn_avatar_access)
+}
 
 
 /**
@@ -130,10 +134,12 @@ exports.makeGravatar = function (email) {
   console.log(avatarUrl)
   console.log(avatarKey)
 
-  qnClient.upload(request('http:' + avatarUrl), {key: avatarKey}, function(err, result) {
-    if (err) return console.error(err);
-    console.log(result);
-  })
+  if (qnClient) {
+    qnClient.upload(request('http:' + avatarUrl), {key: avatarKey}, function(err, result) {
+      if (err) return console.error(err);
+      console.log(result);
+    })
+  }
 
   return config.avatar_static_host + avatarKey;
 };
