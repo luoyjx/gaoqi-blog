@@ -75,7 +75,7 @@
     "utility": "^1.8.0",
     "validator": "^6.0.0",
     "xmlbuilder": "^8.2.2",
-    "xss": "*"
+    "xss": "0.2.18"
   },
   "devDependencies": {
     "coveralls": "*",
