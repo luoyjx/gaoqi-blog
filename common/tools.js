@@ -17,6 +17,18 @@ exports.formatDate = function (date, friendly) {
 
 };
 
+/**
+ * 根据给定的格式来格式化
+ * @param  {[type]} date      [description]
+ * @param  {[type]} formatStr [description]
+ * @return {[type]}           [description]
+ */
+exports.format = function format(date, formatStr) {
+  date = moment(date);
+
+  return date.format(formatStr);
+}
+
 // 超过1000转为k单位
 exports.formatPV = function (pv) {
   if (!isNaN(pv)) {

@@ -1,0 +1,61 @@
+<div class="wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-lg-9 pr-5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <ol class="breadcrumb">
+                <li><a href="/console">控制台</a></li>
+                <li>仪表盘</li>
+            </ol>
+          </div>
+          <div class="panel-body">
+            <table class="table table-data">
+              <thead class="table-heading text-center">
+                <tr class="table-row">
+                  <td></td>
+                  <td>今天</td>
+                  <td>近7天</td>
+                  <td>近30天</td>
+                  <td>全部</td>
+                </tr>
+              </thead>
+              <tbody class="table-body text-center">
+                <tr>
+                  <td class="pull-left">新用户</td>
+                  <td>1</td>
+                  <td>5</td>
+                  <td>11</td>
+                  <td>111</td>
+                </tr>
+                <tr>
+                  <td class="pull-left">新发表文章</td>
+                  <td>1</td>
+                  <td>5</td>
+                  <td>11</td>
+                  <td>111</td>
+                </tr>
+                <tr>
+                  <td class="pull-left">新增标签</td>
+                  <td>1</td>
+                  <td>5</td>
+                  <td>11</td>
+                  <td>111</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-12">
+      
+    </div>
+  </div>
+</div>
+
+<% block('styles', Loader('/public/css/console.index.css')
+.css('/public/css/page/console.index.less')
+.css('/public/css/widget/table.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>

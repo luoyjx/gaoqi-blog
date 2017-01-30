@@ -100,6 +100,42 @@ exports.findOneAndUpdate = function(query, update) {
 };
 
 /**
+ * 关注数增加
+ * @param  {[type]} userId [description]
+ * @return {[type]}        [description]
+ */
+exports.incFollowingCount = function incFollowingCount(userId) {
+  return User.update({_id: userId}, { $inc: { following_count: 1 }}).exec();
+}
+
+/**
+ * 关注数减少
+ * @param  {[type]} userId [description]
+ * @return {[type]}        [description]
+ */
+exports.decFollowingCount = function decFollowingCount(userId) {
+  return User.update({_id: userId}, { $inc: { following_count: -1 }}).exec();
+}
+
+/**
+ * 增加文章收藏数
+ * @param  {[type]} userId 用户id
+ * @return {[type]}        [description]
+ */
+exports.incCollectCount = function incCollectCount(userId) {
+  return User.update({_id: userId}, { $inc: { collect_post_count: 1 }}).exec();
+}
+
+/**
+ * 减少文章收藏数
+ * @param  {[type]} userId [description]
+ * @return {[type]}        [description]
+ */
+exports.decCollectCount = function decCollectCount(userId) {
+  return User.update({_id: userId}, { $inc: { collect_post_count: -1 }}).exec();
+}
+
+/**
  * 创建并保存用户信息
  * @param {String} name 用户名称
  * @param {String} login_name 登录名

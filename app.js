@@ -26,6 +26,7 @@ var csurf = require('csurf');
 var cors = require('cors');
 var render = require('./common/render');
 var cutter = require('./common/cutter');
+var responseTimeMiddleware = require('./middleware/statsd').responseTime;
 
 var webRouter = require('./web_router');
 var webApi = require('./web_api');
@@ -124,9 +125,21 @@ app.use(busboy({
   }
 }));
 
+app.use(responseTimeMiddleware({
+  host: '121.40.129.45',
+  requestKey: 'gaoqi_blog'
+}))
+
 app.use('/', webRouter);
 app.use('/api', cors(), webApi);
 
+// webRouter.stack.forEach(function(item) {
+//   console.log(Object.keys(item.route.methods)[0].toUpperCase(), ' ', item.route.path);
+// });
+
+// webApi.stack.forEach(function(item) {
+//   console.log(Object.keys(item.route.methods)[0].toUpperCase(), ' ', item.route.path);
+// })
 
 // error handler
 if (config.debug) {
@@ -138,8 +151,8 @@ if (config.debug) {
   });
 }
 
-app.listen(process.env.PORT ? process.env.PORT : config.port, function () {
-  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT ? process.env.PORT : config.port, app.settings.env);
+app.listen(process.env.PORT || config.port, function () {
+  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT || config.port, app.settings.env);
 });
 
 

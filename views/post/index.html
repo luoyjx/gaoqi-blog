@@ -18,8 +18,10 @@
                           <a href="/u/<%= post.author.login_name %>">
                               <strong><%= post.author.login_name %></strong>
                           </a>
-                          <span ><%= post.frendly_create_at %></span>
-                          <span ><%= post.pv %>次阅读</span>
+                          <span class="gray">·</span>
+                          <span class="gray"><%= post.frendly_create_at %></span>
+                          <span class="gray">·</span>
+                          <span class="gray"><%= post.pv %>次阅读</span>
                       </p>
                       <% if ((typeof(user) !== 'undefined' && (user._id.equals(post.author_id))) || (typeof(user) !==
                       'undefined' && user.is_admin)) { %>
@@ -39,12 +41,7 @@
                           <strong><%= error %></strong>
                       </div>
                       <% }else{ %>
-                      <div class="content article-content"><%- markdown(post.linkedContent) %></div>
-                      <div class="alert alert-success" role="alert">
-                        <p>本站部署于「<strong><a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a></strong>」。欢迎使用我的九折推荐码 <strong style="color: #f2354f;">pigtx1</strong> 购买阿里云服务（限新用户）
-                        </p>
-                      </div>
-                      <div class="article-tags">
+                      <div class="tag-box">
                           <% if(post.tags){
                           post.tags.forEach(function (tag, index) { %>
                           <% if (tag) { %>
@@ -52,7 +49,20 @@
                           <% } %>
                           <% }); }%>
                       </div>
+                      <div class="content article-content"><%- markdown(post.linkedContent) %></div>
+                      <div class="alert alert-warning" role="alert" style="border: 0;">
+                        <p>本站部署于「<a href="http://s.click.taobao.com/t?e=m%3D2%26s%3DVV5ehvMGID0cQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAgrjjiYVFiVc0Rzpoaa3sxkiWCUEgcPaQsk%2F4%2B4oykvhjBZ92QAszTqWgqT30qFfY%2Bdn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9NkKVMHClW0QbMqOpFMIvnvjQXzzpXdTHGJe8N%2FwNpGw%3D%3D" target="_blank">阿里云 ECS</a>」。欢迎使用我的九折推荐码 <strong style="color: #f2354f;">pigtx1</strong> 购买阿里云服务（限新用户）
+                        </p>
+                      </div>
                       <% } %>
+                      <div class="text-center mb-10">
+                        <div class="btn btn-success btn-collection pl-10 <%= hasCollect ? 'active' : '' %>"
+                          data-id="<%= post._id %>"
+                          >
+                          <span class="glyphicon glyphicon-bookmark mr-5"></span>
+                          <span class="f-16">收藏</span>
+                        </div>
+                      </div>
                     </div>
                 </div>
                 <input type='hidden' name='_csrf' id="_csrf" value='<%= csrf %>'/>
@@ -93,10 +103,8 @@
 
             </article>
             <aside class="col-xs-12 col-lg-3">
-              <!-- 作者信息 -->
-              <%- partial('../user/card', {
-              user: post.author
-              }) %>
+              <!-- 用户卡片 -->
+              <%- partial('../user/card') %>
 
               <!-- 近期文章 -->
               <%- partial('./recent', {
@@ -107,6 +115,9 @@
               <%- partial('./hot', {
               hots: hots
               }) %>
+  
+              <!-- 百度分享 -->
+              <%- partial('./bd_share') -%>
             </aside>
         </div>
     </div>
@@ -134,4 +145,5 @@
 .done(assets, config.site_assets_host, config.mini_assets))
 %>
 <% } %>
-<!-- <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":["mshare","qzone","tsina","fbook","twi","douban","weixin"],"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"6","bdPos":"right","bdTop":"148.5"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script> -->
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//oj9e37t4h.qnssl.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>

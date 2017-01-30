@@ -11,26 +11,58 @@
                         </ol>
                     </div>
                     <div class="panel-body">
+                        <div class="base-info mb-10">
+                            <div class="">
+                                <img src="<%= author.avatar %>" alt="" class="avatar-lg mr-5">
+                                <span class="h4"><%= author.login_name %></span>
+                                <% if (typeof user === 'undefined' || user.login_name !== author.login_name) { %>
+                                <button type="button" class="btn btn-success btn-sm pull-right <%= hasFollow ? 'btn-cancel' : '' %>" id="btnFollow" data-id="<%= author._id %>"><%= hasFollow ? '取消关注' : '关注' %></button>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="mb-10">
+                            <a href="mailto:<%= author.email %>" class="mr-5"><span class="glyphicon glyphicon-envelope"></span></a>
+                            <% if (author.github_id) { %>
+                            <a href="https://github.com/<%= author.github_username %>" class="mr-5">github</a>
+                            <% } %>
+                            <% if (author.weibo) { %>
+                            <a href="<%= author.weibo %>" class="mr-5" target="_blank">微博</a>
+                            <% } %>
+                        </div>
+
+                        <div class="mb-10 addtion">
+                            注册于 <%= author.frendly_create_at %>
+                        </div>
+
                         <div role="tabpanel">
-                            <ul class="nav nav-tabs mt-20">
-                                <li class="active">
-                                    <a href="/u/<%= author.login_name %>" >最新文章</a>
+                            <ul class="nav nav-tabs mt-20" role="tablist">
+                                <li role="presentation" class="active">
+                                    <a href="#new" role="tab" data-toggle="tab">最新文章</a>
                                 </li>
-                                <li >
-                                    <a href="/u/<%= author.login_name %>/top" >最热文章</a>
+                                <li role="presentation" >
+                                    <a href="#top" role="tab" data-toggle="tab">最热文章</a>
                                 </li>
-                                <li >
-                                    <a href="/u/<%= author.login_name %>/replies" >参与话题</a>
+                                <li role="presentation" >
+                                    <a href="#replies" role="tab" data-toggle="tab">参与话题</a>
                                 </li>
                             </ul>
                             <div class="tab-content">
-                                <div class="tab-pane active">
-                                    <%- partial('../post/list', {
+                                <div class="tab-pane active" role="tabpanel" id="new">
+                                    <%- partial('./post_list', {
                                     posts: latest,
-                                    pages: pages,
-                                    current_page: current_page,
-                                    base: '/u/' + author.login_name,
                                     tab: ''
+                                    }) %>
+                                </div>
+                                <div class="tab-pane " role="tabpanel" id="top">
+                                    <%- partial('./post_list', {
+                                    posts: top,
+                                    tab: ''
+                                    }) %>
+                                </div>
+                                <div class="tab-pane replies" role="tabpanel" id="replies">
+                                    <%- partial('../reply/list_pure', {
+                                    replies: replies
                                     }) %>
                                 </div>
                             </div>
@@ -39,9 +71,7 @@
                 </div>
             </div>
             <aside class="col-xs-12 col-lg-3">
-                <%- partial('./card', {
-                user: author
-                }) %>
+                <%- partial('./card') %>
             </aside>
         </div>
     </div>
@@ -49,5 +79,12 @@
 
 <% block('styles', Loader('/public/css/user.home.css')
 .css('/public/css/widget/post.list.less')
+.css('/public/css/widget/markdown.less')
+.css('/public/css/page/post.detail.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+
+<% block('script', Loader('/public/user.home.js')
+.js('/public/js/user.home.js')
 .done(assets, config.site_assets_host, config.mini_assets))
 %>

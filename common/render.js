@@ -80,7 +80,7 @@ exports.multiline = multiline;
 exports.escapeSignature = function(signature) {
   return signature.split('\n').map(function(item) {
     return _.escape(item);
-  }).join('<b>');
+  }).join('<br>');
 };
 
 /**

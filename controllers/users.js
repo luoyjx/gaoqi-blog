@@ -6,6 +6,7 @@ var Promise = require('bluebird');
 var Post = require('../dao').Post;
 var User = require('../dao').User;
 var Reply = require('../dao').Reply;
+var UserFollow = require('../dao').UserFollow;
 var validator = require('validator');
 var config = require('../config');
 var tools = require('../common/tools');
@@ -18,8 +19,6 @@ var tools = require('../common/tools');
  */
 exports.index = function (req, res, next) {
   var user_name = validator.trim(req.params.name);
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1;
-  page = page > 0 ? page : 1;
 
   User
     .getUserByLoginName(user_name)
@@ -31,27 +30,32 @@ exports.index = function (req, res, next) {
       }
 
       var post_query = {author_id: user._id};
-      var limit = config.list_topic_count;
 
-      var latest_options = {skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
+      var latest_options = { limit: 10, sort: '-create_at' };
+      var top_options = { limit: 10, sort: '-pv' };
+      var reply_options = { limit: 10, sort: '-create_at' };
       return Promise
         .all([
           Post.getPostsByQuery(post_query, latest_options),
-          Post.getCountByQuery(post_query)
-            .then(function(all_count) {
-              return Promise.resolve(Math.ceil(all_count / limit));
-            }),
-          Promise.resolve(user)
+          Post.getPostsByQuery(post_query, top_options),
+          Reply.getRepliesByAuthorId(user._id, reply_options),
+          Promise.resolve(user),
+          req.session.user 
+            ? UserFollow.hasFollow(user._id, req.session.user._id) 
+            : Promise.resolve(false),
         ]);
     })
-    .spread(function(latest, pages, user) {
+    .spread(function(latest, top, replies, user, hasFollow) {
+
+      user.frendly_create_at = tools.format(user.create_at, 'YYYY-MM-DD HH:mm:ss Z');
 
       res.wrapRender('user/home', {
         author: user,
         latest: latest,
-        pages: pages,
-        current_page: page,
-        title: user.login_name + '的个人主页 - 第' + page + '页'
+        top: top,
+        replies: replies,
+        hasFollow: hasFollow,
+        title: user.login_name
       });
     })
     .catch(function(err) {
@@ -189,11 +193,9 @@ exports.setting = function (req, res, next) {
  */
 exports.updateSetting = function updateSetting(req, res, next) {
   var url = validator.trim(req.body.url);
-  url = validator.escape(url);
   var location = validator.trim(req.body.location);
   location = validator.escape(location);
   var weibo = validator.trim(req.body.weibo);
-  weibo = validator.escape(weibo);
   var signature = validator.trim(req.body.signature);
   signature = validator.escape(signature);
 

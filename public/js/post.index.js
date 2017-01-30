@@ -59,4 +59,27 @@ $(function() {
     $('#submit_reply').click(function() {
       var $btn = $(this).button('loading');
     })
+
+    // 收藏文章
+    $('.btn-collection').click(function() {
+      var $this = $(this);
+      var hasCollect = $this.hasClass('active');
+      var url = '/post/' + $this.data('id') + (hasCollect ? '/un_collect' : '/collect') + '?_csrf=' + $('#_csrf').val();
+
+      $.ajax({
+        url: url
+      })
+      .done(function(result) {
+        if (result.success) {
+          if (hasCollect) {
+            $this.removeClass('active');
+          } else {
+            $this.addClass('active');
+          }
+        }
+      })
+      .fail(function() {
+        alert('收藏出错');
+      })
+    })
   })

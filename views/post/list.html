@@ -24,11 +24,14 @@
             <p class="item-attr">
                 <% if (typeof tab === 'undefined' || tab === '') { %>
                   <a class="category" href="/?tab=<%= post.category %>"><%= post.categoryName %></a>
+                  <span class="addtion">&nbsp;•&nbsp;</span>
                 <% } %>
                 <strong><a href="/u/<%= post.author.login_name %>"><%= post.author.login_name %></a></strong>
-                <span class="addtion f-12 mr-5"><%= post.friendly_create_at %></span>
-                <span class="addtion f-12 mr-5"><%= post.friendly_pv %>浏览</span>
-                <span class="tags">
+                <span class="addtion">&nbsp;•&nbsp;</span>
+                <span class="addtion f-12"><%= post.friendly_create_at %></span>
+                <!-- <span class="addtion">&nbsp;•&nbsp;</span>
+                <span class="addtion f-12 mr-5"><%= post.friendly_pv %>浏览</span> -->
+                <!-- <span class="tags">
                 <% if(post.tags){ %>
                 <span>
                 <% post.tags.forEach(function (tag, index) { %>
@@ -37,7 +40,7 @@
                 <% }}); %>
                 </span>
                 <% }%>
-                </span>
+                </span> -->
             </p>
         </div>
     </section>

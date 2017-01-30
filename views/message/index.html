@@ -10,7 +10,7 @@
             </ol>
           </div>
           <div class="panel-body">
-            <h1 class="h4">未读消息</h1>
+            <h1 class="h5">未读消息</h1>
             <% if (typeof(hasnot_read_messages) !== 'undefined' && hasnot_read_messages.length > 0) { %>
             <%- partial('./message', { collection: hasnot_read_messages, as: 'message' }) %>
             <% } else { %>
@@ -18,7 +18,7 @@
               <p>无</p>
             </div>
             <% } %>
-            <h1 class="h4">已读消息</h1>
+            <h1 class="h5">已读消息</h1>
             <% if (typeof(has_read_messages) !== 'undefined' && has_read_messages.length > 0) { %>
             <%- partial('./message', { collection: has_read_messages, as: 'message' }) %>
             <% } else { %>
@@ -30,11 +30,7 @@
         </div>
       </div>
       <aside class="col-xs-12 col-lg-3">
-        <% if (typeof(user) !== 'undefined') { %>
-          <%- partial('../user/card', {
-          user: user
-          }) %>
-        <% } %>
+          <%- partial('../user/card') %>
       </aside>
     </div>
   </div>

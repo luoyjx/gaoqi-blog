@@ -79,6 +79,7 @@ exports.getPostsByQuery = function (query, opt) {
           .then(function(author) {
             post.author = author;
             post.friendly_create_at = tools.formatDate(post.create_at, true);
+            post.friendly_update_at = tools.formatDate(post.update_at, true);
             post.friendly_pv = tools.formatPV(post.pv);
             return post;
           })

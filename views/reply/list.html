@@ -8,11 +8,11 @@
             </div>
             <div class="author-info">
                 <div class="user-info">
-                  <a class="fl mr-5" href="/u/<%= reply.author.login_name%>">
+                  <a class="fl mr-10" href="/u/<%= reply.author.login_name%>">
                     <img class="avatar" src="<%= reply.author.avatar%>" title="<%= reply.author.login_name%>" />
                   </a>
-                  <a class="reply-author" href="/u/<%= reply.author.login_name %>"><strong><%= reply.author.login_name %></strong></a>
-                  <span class="reply-time ml-10"><%= reply.friendly_create_at%></span>
+                  <a class="reply-author mr-5" href="/u/<%= reply.author.login_name %>"><strong><%= reply.author.login_name %></strong></a>
+                  <span class="reply-time addtion"><%= reply.friendly_create_at%></span>
                   <% if (typeof(user) !== 'undefined') { %>
                   <a href="javascript:;" class="pull-right reply-btn">回复</a>
                   <% } %>

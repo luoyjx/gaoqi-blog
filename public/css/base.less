@@ -18,15 +18,33 @@ button, input, textarea, select {
   border-color: transparent!important;
   box-shadow: none!important;
   border-radius: 3px;
+  outline: none;
+  &:hover,
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+.btn-cancel {
+  background-color: #ccc;
+  color: #999;
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: #999;
+    color: #fff;
+  }
 }
 
 /* 标徽 */
 
 .badge {
   float: right;
-  margin-right: 15px;
+  margin-right: 10px;
   margin-top: 13px;
-  padding: 1px 7px;
+  padding: 1px 10px;
+  font-size: 10px;
 }
 
 /* 标签 */
@@ -40,8 +58,10 @@ button, input, textarea, select {
     padding: 2px 6px;
     border: 1px solid #efefef;
     border-radius: 3px;
+    color: #778087;
     &:hover {
       border-color: #ccc;
+      color: #4d5256;
     }
   }
 }
@@ -120,8 +140,16 @@ button, input, textarea, select {
 
 /* margin 和 padding */
 
+.ml-0 {
+  margin-left: 0 !important;
+}
+
 .mr-5 {
   margin-right: 5px;
+}
+
+.mr-10 {
+  margin-right: 10px;
 }
 
 .mt-10 {
@@ -136,12 +164,32 @@ button, input, textarea, select {
   margin-bottom: 0;
 }
 
+.mb-5 {
+  margin-bottom: 5px;
+}
+
 .mb-10 {
   margin-bottom: 10px
 }
 
+.mb-20 {
+margin-bottom: 20px;
+}
+
 .pr-5 {
   padding-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.pb-5 {
+  padding-bottom: 5px;
+}
+
+.pl-10 {
+  padding-left: 10px;
 }
 
 @media (max-width: 768px) {
@@ -150,10 +198,28 @@ button, input, textarea, select {
   }
 }
 
+/* 边框 */
+
+.b-r {
+  border-right: 1px solid #f0f0f0;
+}
+
 /* 字体大小 */
 
 .f-12 {
   font-size: 12px;
+}
+
+.f-14 {
+  font-size: 14px;
+}
+
+.f-16 {
+  font-size: 16px;
+}
+
+.f-18 {
+  font-size: 18px;
 }
 
 /* 浮动 */
@@ -168,7 +234,39 @@ button, input, textarea, select {
   text-align: left;
 }
 
+/* 对齐 */
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
 /* 颜色 */
 .color-hot {
   color: #f2354f;
+}
+
+.addtion {
+  color: #cccccc;
+}
+
+.gray {
+    color: #999;
+}
+
+/* 分页 */
+.pagination>.active>a, 
+.pagination>.active>a:focus, 
+.pagination>.active>a:hover, 
+.pagination>.active>span, 
+.pagination>.active>span:focus, 
+.pagination>.active>span:hover {
+    z-index: 2;
+    color: #fff;
+    cursor: default;
+    background-color: #3498DB;
+    border-color: #3498DB;
 }

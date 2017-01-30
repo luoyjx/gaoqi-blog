@@ -8,6 +8,7 @@ var Post = require('../dao').Post;
 var User = require('../dao').User;
 var Tag = require('../dao').Tag;
 var Reply = require('../dao').Reply;
+var PostCollection = require('../dao').PostCollection;
 var tools = require('../common/tools');
 var at = require('../common/at');
 var config = require('../config');
@@ -56,10 +57,11 @@ exports.index = function(req, res, next) {
         .all([
           Promise.resolve(post),
           Post.getSimplePosts(hot_options),
-          Post.getSimplePosts(recent_options)
+          Post.getSimplePosts(recent_options),
+          PostCollection.hasCollect(post._id, req.session.user._id)
         ]);
     })
-    .spread(function(post, hotPosts, recentPosts) {
+    .spread(function(post, hotPosts, recentPosts, hasCollect) {
       res.wrapRender('post/index', {
         title: post.title + ' - ' + post.author.login_name, //文章名 - 作者名
         description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
@@ -67,7 +69,8 @@ exports.index = function(req, res, next) {
         post: post,
         recent: recentPosts,
         hots: hotPosts,
-        replies: post.replies
+        replies: post.replies,
+        hasCollect: !!hasCollect // 转义boolean
       });
     })
     .catch(function(err) {
@@ -380,26 +383,6 @@ exports.unRecommend = function unRecommend(req, res, next) {
  * @param next
  */
 exports.good = function(req, res, next) {
-
-};
-
-/**
- * 收藏文章
- * @param req
- * @param res
- * @param next
- */
-exports.collect = function(req, res, next) {
-
-};
-
-/**
- * 取消收藏文章
- * @param req
- * @param res
- * @param next
- */
-exports.unCollect = function(req, res, next) {
 
 };
 

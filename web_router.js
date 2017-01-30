@@ -14,6 +14,12 @@ var reply = require('./controllers/reply');
 var github = require('./controllers/github');
 var search = require('./controllers/search');
 var message = require('./controllers/message');
+var userFollow = require('./controllers/user_follow');
+var postCollection = require('./controllers/post_collection');
+
+var consoleIndex = require('./controllers/console/index');
+var consolePost = require('./controllers/console/post');
+
 var configMiddleware = require('./middleware/conf');
 var passport = require('passport');
 
@@ -49,8 +55,8 @@ router.post('/post/:_id/top', auth.adminRequired, post.top);//顶置
 router.post('/post/:_id/good', auth.adminRequired, post.good);//精华
 router.post('/post/:_id/recommend', auth.userRequired, post.recommend);//推荐
 router.post('/post/:_id/unrecommend', auth.userRequired, post.unRecommend);//取消推荐
-router.post('/post/:_id/collect', auth.userRequired, post.collect);//收藏
-router.post('/post/:_id/un_collect', auth.userRequired, post.unCollect);//取消收藏
+router.get('/post/:_id/collect', auth.userRequired, postCollection.create);//收藏
+router.get('/post/:_id/un_collect', auth.userRequired, postCollection.removeById);//取消收藏
 router.post('/post/create', auth.userRequired, post.create);//新增文章
 router.post('/upload', auth.userRequired, post.upload); //上传图片
 
@@ -62,6 +68,12 @@ router.get('/u/:name/replies', user.replies);//发表的回复
 router.get('/u/:name/setting', auth.userRequired, user.setting);//设置
 router.post('/u/:name/setting/info', auth.userRequired, user.updateSetting);//修改设置
 router.post('/u/:name/setting/pwd', auth.userRequired, user.updatePassword);//修改密码
+router.get('/u/:id/follow', auth.userRequired, userFollow.follow); // 关注用户
+router.get('/u/:id/unfollow', auth.userRequired, userFollow.unFollow); // 取消关注
+
+router.get('/my/following', auth.userRequired, userFollow.getFollowUserPost); // 关注用户文章
+
+router.get('/my/post_collection', auth.userRequired, postCollection.getPostCollection); // 用户收藏的文章
 
 router.get('/tags/:name', tag.getTagByName);//某个标签
 router.get('/tags', tag.index);//所有标签
@@ -81,5 +93,9 @@ router.get('/login/github/callback',
   github.callback);
 router.get('/login/github/new', github.new);
 router.post('/login/github/create', github.create);
+
+router.get('/console', auth.adminRequired, consoleIndex.index); //后台首页
+
+router.get('/console/posts', auth.adminRequired, consolePost.index); // 文章管理
 
 module.exports = router;

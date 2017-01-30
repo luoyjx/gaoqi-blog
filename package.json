@@ -1,6 +1,6 @@
 {
   "name": "gaoqi-blog",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "private": true,
   "main": "app.js",
   "description": "A Node.js blog using MongoDB",
@@ -13,22 +13,15 @@
   ],
   "scripts": {
     "dev": "node app.js",
-
     "preinstall": "node bin/pre_install.js",
-
     "build": "./node_modules/.bin/loader views .",
-    
     "prestart": "npm install && npm run build",
     "start": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 start app.js --name 'gaoqiblog' -i max --node-args='--max-old-space-size=300'",
-    
     "prerestart": "npm install && npm run build",
     "restart": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
-    
     "reboot": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
-    
     "pretest": "npm install",
     "test": "mocha --reporter spec -r should -r test/env --timeout 10000 ./test/**/*.test.js",
-    
     "pretest-cov": "npm install",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- -r should -r test/env --timeout 10000 ./test/**/*.test.js -R spec"
   },
@@ -49,13 +42,14 @@
     "data2xml": "^1.2.5",
     "ejs-mate": "^2.3.0",
     "express": "^4.14.0",
-    "express-session": "^1.14.2",
+    "express-session": "^1.14.0",
     "gravatar": "^1.5.2",
     "html2markdown": "*",
     "ioredis": "^2.2.0",
     "loader": "^2.1.1",
     "loader-builder": "^2.3.0",
-    "lodash": "^4.16.6",
+    "lodash": "^4.15.0",
+    "lynx": "^0.2.0",
     "markdown-it": "^8.0.0",
     "method-override": "^2.3.6",
     "mkdirp": "^0.5.1",
@@ -63,6 +57,7 @@
     "mongoose": "^4.6.8",
     "multiline": "^1.0.2",
     "node-uuid": "^1.4.7",
+    "nodejieba": "^2.2.4",
     "nodemailer": "^2.5.0",
     "nodemailer-smtp-transport": "^2.6.0",
     "passport": "^0.3.2",
@@ -75,7 +70,7 @@
     "utility": "^1.8.0",
     "validator": "^6.0.0",
     "xmlbuilder": "^8.2.2",
-    "xss": "0.3.3"
+    "xss": "*"
   },
   "devDependencies": {
     "coveralls": "*",
@@ -83,8 +78,8 @@
     "istanbul": "*",
     "loader-connect": "*",
     "mm": "*",
-    "mocha": "3.2.0",
-    "nock": "9.0.2",
+    "mocha": "3.1.2",
+    "nock": "*",
     "pedding": "*",
     "should": "*",
     "supertest": "*"

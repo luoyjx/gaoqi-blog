@@ -15,7 +15,7 @@
               <%- shorter(reply.post_id.title, 13) %>
           </a>
           <br/>
-          <%= shorter(cleanMarkdown(reply.content), 100) %>
+          <div class="addtion"><%= shorter(cleanMarkdown(reply.content), 100) %></div>
         </li>
         <% } %>
         <% }); %>

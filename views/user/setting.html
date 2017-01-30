@@ -20,122 +20,130 @@
                           <strong><%= success %></strong>
                         </div>
                         <% } %>
-                        <div role="tabpanel">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs mt-20" role="tablist">
-                                <li role="presentation" class="active"><a href="#base_info" aria-controls="base_info" role="tab" data-toggle="tab">基本设置</a></li>
-                                <li role="presentation"><a href="#reset_pwd" aria-controls="reset_pwd" role="tab" data-toggle="tab">修改密码</a></li>
-                                <li role="presentation"><a href="#token" aria-controls="token" role="tab" data-toggle="tab">Token</a></li>
-                            </ul>
-                            <!-- Tab panes -->
-                            <div class="tab-content cell">
-                                <!--基本信息-->
-                                <div role="tabpanel" class="tab-pane active mt-20" id="base_info">
-                                    <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/info">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="name">用户名</label>
-                                            <div class="col-lg-5">
-                                                <input id="name" name="name" type="text" disabled placeholder="eg.username"
-                                                       class="form-control" value="<%= (typeof(user) !== 'undefined' && user.login_name) ? user.login_name : '' %>" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="email">电子邮件</label>
-                                            <div class="col-lg-5">
-                                                <input id="email" name="email" type="text" disabled placeholder="eg.example@xx.com"
-                                                       class="form-control" value="<%= (typeof(user) !== 'undefined' && user.email) ? user.email : '' %>" />
-                                                <p class="help-block">注册时绑定的邮箱</p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="url">个人网站</label>
-                                            <div class="col-lg-5">
-                                                <input id="url" name="url" type="text" placeholder="eg.http://example.com" class="form-control"
-                                                       value="<%= (typeof(user) !== 'undefined' && user.url) ? user.url : '' %>" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="location">所在地</label>
-                                            <div class="col-lg-5">
-                                                <input id="location" name="location" type="text" placeholder="eg.北京" class="form-control"
-                                                       value="<%= (typeof(user) !== 'undefined' && user.location) ? user.location : '' %>" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="weibo">新浪微博</label>
-                                            <div class="col-lg-5">
-                                                <input id="weibo" name="weibo" type="text" placeholder="eg.http://weibo.com/yanjixiong" class="form-control"
-                                                       value="<%= (typeof(user) !== 'undefined' && user.weibo) ? user.weibo : '' %>" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="github">GitHub</label>
-                                            <div class="col-lg-5">
-                                                <input id="github" name="github" type="text" disabled placeholder="eg. luoyjx" class="form-control"
-                                                        value="<%= (typeof(user) !== 'undefined' && user.github_username) ? user.github_username : '' %>" />
-                                                <p class="help-block">可通过github登陆绑定当前账号</p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3">个性签名</label>
-                                            <div class="textarea col-lg-5">
-                                                <textarea id="signature" name="signature" class="form-control" rows="3"><%= (typeof(user) !== 'undefined' && user.signature) ? user.signature : '' %></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3"></label>
-                                            <div class="col-lg-5">
-                                                <button class="btn btn-primary" type="submit">保存设置</button>
-                                            </div>
-                                        </div>
-                                        <input type='hidden' name='_csrf' value='<%= csrf %>'>
-                                    </form>
+                        <!--基本信息-->
+                        <div class="cell" id="base_info">
+                            <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/info">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="name">用户名</label>
+                                    <div class="col-lg-5">
+                                        <input id="name" name="name" type="text" disabled placeholder="eg.username"
+                                               class="form-control" value="<%= (typeof(user) !== 'undefined' && user.login_name) ? user.login_name : '' %>" />
+                                    </div>
                                 </div>
-                                <!--密码设置-->
-                                <div role="tabpanel" class="tab-pane mt-20" id="reset_pwd">
-                                    <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/pwd">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="old_pwd">当前密码</label>
-                                            <div class="col-lg-5">
-                                                <input class="form-control" id="old_pwd" name="old_pass" type="password"  />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="new_pwd">新密码</label>
-                                            <div class="col-lg-5">
-                                                <input class="form-control" id="new_pwd" name="new_pass" type="password"  />
-                                            </div>
-                                        </div>
-                                        <input type='hidden' name='_csrf' value='<%= csrf %>'>
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3"></label>
-                                            <div class="col-lg-5">
-                                                <button class="btn btn-primary">修改密码</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="email">电子邮件</label>
+                                    <div class="col-lg-5">
+                                        <input id="email" name="email" type="text" disabled placeholder="eg.example@xx.com"
+                                               class="form-control" value="<%= (typeof(user) !== 'undefined' && user.email) ? user.email : '' %>" />
+                                        <p class="help-block">注册时绑定的邮箱</p>
+                                    </div>
                                 </div>
-                                <!--Access Token-->
-                                <div role="tabpanel" class="tab-pane mt-20" id="token">
-                                    <form class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-lg-3" for="accesstoken">Access Token</label>
-                                            <div class="col-lg-6">
-                                                <input class="form-control" id="accesstoken" name="accesstoken"
-                                                       type="text" disabled value="<%= (typeof(user) !== 'undefined' && user.accessToken ) ? user.accessToken : '' %>" />
-                                            </div>
-                                        </div>
-                                    </form>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="url">个人网站</label>
+                                    <div class="col-lg-5">
+                                        <input id="url" name="url" type="text" placeholder="eg.http://example.com" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.url) ? user.url : '' %>" />
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="location">所在地</label>
+                                    <div class="col-lg-5">
+                                        <input id="location" name="location" type="text" placeholder="eg.北京" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.location) ? user.location : '' %>" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="weibo">新浪微博</label>
+                                    <div class="col-lg-5">
+                                        <input id="weibo" name="weibo" type="text" placeholder="eg.http://weibo.com/yanjixiong" class="form-control"
+                                               value="<%= (typeof(user) !== 'undefined' && user.weibo) ? user.weibo : '' %>" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="github">GitHub</label>
+                                    <div class="col-lg-5">
+                                        <input id="github" name="github" type="text" disabled placeholder="eg. luoyjx" class="form-control"
+                                                value="<%= (typeof(user) !== 'undefined' && user.github_username) ? user.github_username : '' %>" />
+                                        <p class="help-block">可通过github登陆绑定当前账号</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">个性签名</label>
+                                    <div class="textarea col-lg-5">
+                                        <textarea id="signature" name="signature" class="form-control" rows="3"><%= (typeof(user) !== 'undefined' && user.signature) ? user.signature : '' %></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2"></label>
+                                    <div class="col-lg-5">
+                                        <button class="btn btn-primary" type="submit">保存设置</button>
+                                    </div>
+                                </div>
+                                <input type='hidden' name='_csrf' value='<%= csrf %>'>
+                            </form>
                         </div>
                     </div>
-                    
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                            <li class="active">密码设置</li>
+                        </ol>
+                    </div>
+                    <div class="panel-body">
+                        <!--密码设置-->
+                        <div class="cell" id="reset_pwd">
+                            <form class="form-horizontal" method="post" action="/u/<%= user.login_name %>/setting/pwd">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="old_pwd">当前密码</label>
+                                    <div class="col-lg-5">
+                                        <input class="form-control" id="old_pwd" name="old_pass" autocomplete="off" type="password"  />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="new_pwd">新密码</label>
+                                    <div class="col-lg-5">
+                                        <input class="form-control" id="new_pwd" name="new_pass" autocomplete="off" type="password"  />
+                                    </div>
+                                </div>
+                                <input type='hidden' name='_csrf' value='<%= csrf %>'>
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2"></label>
+                                    <div class="col-lg-5">
+                                        <button class="btn btn-primary">修改密码</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                            <li class="active">Token</li>
+                        </ol>
+                    </div>
+                    <div class="panel-body">
+                        <!--Access Token-->
+                        <div class="cell" id="token">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2" for="accesstoken">Access Token</label>
+                                    <div class="col-lg-6">
+                                        <input class="form-control" id="accesstoken" name="accesstoken"
+                                               type="text" disabled value="<%= (typeof(user) !== 'undefined' && user.accessToken ) ? user.accessToken : '' %>" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
             <aside class="col-xs-12 col-lg-3">
-
+                <%- partial('./card') %>
             </aside>
         </div>
     </div>

@@ -69,9 +69,11 @@ function tagFollowAction() {
 }
 
 $(document).ready(function() {
+  NProgress.done();
   $('[data-toggle="tooltip"]').tooltip();
   if (browserRedirect() != "phone") {
     //$('.ad-right').scrollToFixed({ marginTop: 60});
+    $('#bd_share').scrollToFixed({ marginTop: 20});
   } else {
     $('nav').scrollToFixed();
   }
