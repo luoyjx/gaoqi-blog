@@ -14,4 +14,4 @@ public/**/*.debug.css
 public/**/*.min.css
 public/**/*.debug.js
 public/**/*.min.js
-
+config/**/*.js
