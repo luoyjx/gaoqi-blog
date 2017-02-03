@@ -58,7 +58,7 @@ exports.index = function(req, res, next) {
           Promise.resolve(post),
           Post.getSimplePosts(hot_options),
           Post.getSimplePosts(recent_options),
-          PostCollection.hasCollect(post._id, req.session.user._id)
+          eq.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
         ]);
     })
     .spread(function(post, hotPosts, recentPosts, hasCollect) {
