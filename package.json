@@ -59,7 +59,7 @@
     "node-uuid": "^1.4.7",
     "nodejieba": "^2.2.4",
     "nodemailer": "^2.5.0",
-    "nodemailer-smtp-transport": "^2.6.0",
+    "nodemailer-smtp-transport": "^2.7.3",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
     "pm2": "^2.0.12",
