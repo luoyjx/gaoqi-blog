@@ -58,7 +58,7 @@
     "multiline": "^1.0.2",
     "node-uuid": "^1.4.7",
     "nodejieba": "^2.2.4",
-    "nodemailer": "^2.5.0",
+    "nodemailer": "^3.1.1",
     "nodemailer-smtp-transport": "^2.6.0",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
