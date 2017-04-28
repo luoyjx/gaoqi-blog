@@ -5,6 +5,7 @@ gaoqi-blog
 [![Coverage Status][coverage-image]][coverage-url]
 [![David deps][david-image]][david-url]
 [![node version][node-image]][node-url]
+[![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
 
 [travis-image]: https://img.shields.io/travis/luoyjx/gaoqi-blog/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/luoyjx/gaoqi-blog
@@ -14,7 +15,7 @@ gaoqi-blog
 [david-url]: https://david-dm.org/luoyjx/gaoqi-blog
 [node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
-[![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
+
 
 基于Node.js的多人博客
 
@@ -25,8 +26,6 @@ gaoqi-blog
 * redis v2.6.13
 
 # 安装运行
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
 
 * 安装上面所需的3个环境
 * 安装依赖 `npm install`
