@@ -26,6 +26,8 @@ gaoqi-blog
 
 # 安装运行
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
+
 * 安装上面所需的3个环境
 * 安装依赖 `npm install`
 * js、css压缩合并 `npm run build`
