@@ -1,6 +1,6 @@
 {
   "name": "gaoqi-blog",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "main": "app.js",
   "description": "A Node.js blog using MongoDB",
@@ -26,7 +26,7 @@
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- -r should -r test/env --timeout 10000 ./test/**/*.test.js -R spec"
   },
   "engines": {
-    "node": "4.4.3"
+    "node": ">=6"
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",
@@ -67,6 +67,7 @@
     "ready": "^0.1.1",
     "request": "^2.75.0",
     "response-time": "^2.3.1",
+    "twit": "^2.2.5",
     "utility": "^1.8.0",
     "validator": "^7.0.0",
     "xmlbuilder": "^8.2.2",

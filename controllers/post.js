@@ -16,6 +16,8 @@ var uploader = require('../common/upload');
 var cache = require('../common/cache');
 var cutter = require('../common/cutter');
 var render = require('../common/render');
+var meta = require('../common/meta');
+var twitter = require('../common/twitter');
 
 /**
  * 文章页
@@ -25,6 +27,7 @@ var render = require('../common/render');
  */
 exports.index = function(req, res, next) {
   var post_id = req.params._id;
+  var twitterMeta = '';
 
   if (post_id.length !== 24) {
     return res.wrapRender('notify/notify', {
@@ -43,6 +46,8 @@ exports.index = function(req, res, next) {
       post.author = author;
       //回复
       post.replies = replies;
+
+      twitterMeta = meta.getTwitterMeta(post.category, author, post);
 
       var hot_options = {
         limit: 6,
@@ -63,14 +68,15 @@ exports.index = function(req, res, next) {
     })
     .spread(function(post, hotPosts, recentPosts, hasCollect) {
       res.wrapRender('post/index', {
-        title: post.title + ' - ' + post.author.login_name, //文章名 - 作者名
+        title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
         description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
         tags: post.tags.join(','),
         post: post,
         recent: recentPosts,
         hots: hotPosts,
         replies: post.replies,
-        hasCollect: !!hasCollect // 转义boolean
+        hasCollect: !!hasCollect, // 转义boolean
+        twitterMeta: twitterMeta
       });
     })
     .catch(function(err) {
@@ -170,6 +176,15 @@ exports.create = function(req, res, next) {
               })
           });
         }
+
+        var status = [];
+        status.push('[' + tools.getCategoryName(_post.category) + ']');
+        status.push(_post.title + ':\n');
+        status.push(render.cleanMarkdown(_post.content));
+        // 截取50个字
+        status = cutter.shorter(status.join(''), 70);
+        status += 'https://' + config.host + '/p/' + _post._id + '?from=post_twitter';
+        twitter.postStatus(status);
       })
       .catch(function(err) {
         return next(err);

@@ -1,41 +1,42 @@
-/*!
+/**
  gaoqi-blog app.js
  */
 
+'use strict';
 
-var config = require('./config');
-var path = require('path');
-var Loader = require('loader');
-var LoaderConnect = require('loader-connect')
-var express = require('express');
-var session = require('express-session');
-var errorhandler = require('errorhandler');
-var RedisStore = require('connect-redis')(session);
-var redisClient = require('./common/redis.js');
-var passport = require('passport');
+const config = require('./config');
+const path = require('path');
+const Loader = require('loader');
+const LoaderConnect = require('loader-connect');
+const express = require('express');
+const session = require('express-session');
+const errorhandler = require('errorhandler');
+const RedisStore = require('connect-redis')(session);
+const redisClient = require('./common/redis.js');
+const passport = require('passport');
 require('./models');
-var auth = require('./middleware/auth');
-var online = require('./middleware/online');
-var GitHubStrategy = require('passport-github').Strategy;
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var compress = require('compression');
-var busboy = require('connect-busboy');
-var _ = require('lodash');
-var csurf = require('csurf');
-var cors = require('cors');
-var render = require('./common/render');
-var cutter = require('./common/cutter');
-var responseTimeMiddleware = require('./middleware/statsd').responseTime;
+const auth = require('./middleware/auth');
+const online = require('./middleware/online');
+const GitHubStrategy = require('passport-github').Strategy;
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const compress = require('compression');
+const busboy = require('connect-busboy');
+const _ = require('lodash');
+const csurf = require('csurf');
+const cors = require('cors');
+const render = require('./common/render');
+const cutter = require('./common/cutter');
+const responseTimeMiddleware = require('./middleware/statsd').responseTime;
 
-var webRouter = require('./web_router');
-var webApi = require('./web_api');
+const webRouter = require('./web_router');
+const webApi = require('./web_api');
 
-var app = express();
+const app = express();
 
 // 静态文件目录
-var staticDir = path.join(__dirname, 'public');
-var assets = {};
+const staticDir = path.join(__dirname, 'public');
+let assets = {};
 if (process.env.NODE_ENV === 'production') {
   try {
     assets = require('./assets.json');
@@ -61,20 +62,20 @@ app.use(require('method-override')());
 app.use(cookieParser(config.session_secret));
 app.use(compress());
 app.use(session({
-    secret: config.session_secret,
-    store: new RedisStore({
-        client: redisClient,
-        port: config.redis_port,
-        host: config.redis_host
-    }),
-    resave: true,
-    saveUninitialized: true
+  secret: config.session_secret,
+  store: new RedisStore({
+    client: redisClient,
+    port: config.redis_port,
+    host: config.redis_host
+  }),
+  resave: true,
+  saveUninitialized: true
 }));
 app.use(passport.initialize());
 
 // custom middleware 过滤未登陆
 app.use(auth.authUser);
-//缓存已登录用户标识在线
+// 缓存已登录用户标识在线
 app.use(online.cacheOnline);
 
 // 静态资源
@@ -94,7 +95,7 @@ if (!config.debug) {
   app.set('view cache', true);
 }
 
-//github oauth
+// github oauth
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
@@ -107,9 +108,9 @@ passport.use(new GitHubStrategy(config.GITHUB_OAUTH, function (accessToken, refr
 
 // set static, dynamic helpers
 _.extend(app.locals, {
-  config: config,
-  Loader: Loader,
-  assets: assets
+  config,
+  Loader,
+  assets
 });
 _.extend(app.locals, render);
 _.extend(app.locals, cutter);
@@ -128,32 +129,23 @@ app.use(busboy({
 app.use(responseTimeMiddleware({
   host: '121.40.129.45',
   requestKey: 'gaoqi_blog'
-}))
+}));
 
 app.use('/', webRouter);
 app.use('/api', cors(), webApi);
-
-// webRouter.stack.forEach(function(item) {
-//   console.log(Object.keys(item.route.methods)[0].toUpperCase(), ' ', item.route.path);
-// });
-
-// webApi.stack.forEach(function(item) {
-//   console.log(Object.keys(item.route.methods)[0].toUpperCase(), ' ', item.route.path);
-// })
 
 // error handler
 if (config.debug) {
   app.use(errorhandler());
 } else {
-  app.use(function (err, req, res, next) {
+  app.use(function (err, req, res) {
     console.log(err);
     return res.status(500).send('500 status');
   });
 }
 
 app.listen(process.env.PORT || config.port, function () {
-  console.log("GaoqiBlog listening on port %s in %s mode", process.env.PORT || config.port, app.settings.env);
+  console.log('GaoqiBlog listening on port %s in %s mode', process.env.PORT || config.port, app.settings.env);
 });
-
 
 module.exports = app;

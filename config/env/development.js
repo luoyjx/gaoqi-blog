@@ -95,6 +95,15 @@ module.exports = {
   // 是否允许直接注册（否则只能走 github 的方式）
   allow_sign_up: true,
 
+  // twitter app keys
+  twitter: {
+    consumer_key: 'TUkuPGOnKwzdpN1X4c9kHPmnz',
+    consumer_secret: 'vuB6SQvadUfKcpVyBdPya7joucj5TjoKeg6nOmlZ7RCd4IEal6',
+    access_token: '3282165895-XTvKpQuW7bhFVjNx6u1R3LWb5wo6VLp8n7BA8qB',
+    access_token_secret: 'oFHv5mmp5l1wm7lWSiNIF5qSw1HgtztuHHNirQxaDHoep',
+    timeout_ms: 60 * 1000
+  },
+
   //7牛的access信息，用于文件上传
   qn_access: {
     accessKey: '',

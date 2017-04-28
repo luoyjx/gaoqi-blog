@@ -95,6 +95,15 @@ module.exports = {
   // 是否允许直接注册（否则只能走 github 的方式）
   allow_sign_up: true,
 
+  // twitter app keys
+  twitter: {
+    consumer_key: 'your consumer key',
+    consumer_secret: '',
+    access_token: '',
+    access_token_secret: '',
+    timeout_ms: 60 * 1000
+  },
+
   //7牛的access信息，用于文件上传
   qn_access: {
     accessKey: '',
