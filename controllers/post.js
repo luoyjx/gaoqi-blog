@@ -366,7 +366,48 @@ exports.delete = function(req, res, next) {
  * @param next
  */
 exports.top = function(req, res, next) {
+var id = req.params._id;
+  var user = req.session.user;
+  Post
+    .setTop(id)
+    .then(function(updated) {
+      res.wrapSend({
+        success: true
+      })
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.wrapSend({
+        success: false,
+        message: err.message
+      })
+    });
+};
 
+/**
+ * 取消顶置
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
+exports.unTop = function unTop(req, res, next) {
+  var id = req.params._id;
+  var user = req.session.user;
+  Post
+    .cancelTop(id)
+    .then(function(updated) {
+      res.wrapSend({
+        success: true
+      })
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.wrapSend({
+        success: false,
+        message: err.message
+      })
+    });
 };
 
 /**

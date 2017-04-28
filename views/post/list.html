@@ -15,6 +15,9 @@
         <div class="item-content">
             <h2 class="h4 item-title">
                 <a href="/p/<%= post._id %>#reply<%= post.reply_count %>"><%= post.title %></a>
+                <% if (post.top == true) { %>
+                <span class="glyphicon glyphicon-pushpin gray f-12" title="顶置"></span>
+                <% } %>
                 <% if (post.reply_count > 0) { %>
                     <a class="badge-link" href="/p/<%= post._id %>#reply<%= post.reply_count %>">
                         <span class="badge"><%= post.reply_count %></span>

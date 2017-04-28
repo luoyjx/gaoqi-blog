@@ -207,3 +207,20 @@ exports.importNew = function (title, description, content, author_id, tags, cate
 exports.remove = function(query) {
   return Post.remove(query);
 };
+
+/**
+ * 设置置顶
+ * @param {[type]} id [description]
+ */
+exports.setTop = function setTop(id) {
+  return Post.update({_id: id}, {$set: { top: true }});
+}
+/**
+ * 取消置顶
+ * @param  {[type]} id [description]
+ * @return {[type]}    [description]
+ */
+exports.cancelTop = function cancelTop(id) {
+  return Post.update({_id: id}, {$set: { top: false }});
+}
+

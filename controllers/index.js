@@ -36,7 +36,7 @@ exports.index = function (req, res, next) {
     : '';
 
   var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-update_at'};
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at'};
 
   //取热门标签
   var tag_options = {limit: config.list_hot_tag_count, sort: '-post_count'};

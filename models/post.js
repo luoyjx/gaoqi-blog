@@ -27,10 +27,8 @@ var PostSchema = new Schema({
   enable: {type: Boolean, default: true}//文章软删除时用到
 });
 
-PostSchema.index({create_at: -1});
-PostSchema.index({update_at: -1});
-PostSchema.index({description: 1});
 PostSchema.index({author: 1, create_at: -1});
+PostSchema.index({top: -1, update_at: -1});
 PostSchema.index({pv: -1});
 PostSchema.index({recommend_count: -1});
 PostSchema.index({reply_count: -1});

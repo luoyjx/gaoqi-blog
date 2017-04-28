@@ -23,7 +23,7 @@ module.exports = {
     var query = {};
 
     var limit = config.list_topic_count;
-    var options = { skip: (page - 1) * limit, limit: limit, sort: '-update_at'};
+    var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at'};
 
     Promise
       .all([

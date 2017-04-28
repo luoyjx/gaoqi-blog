@@ -51,7 +51,8 @@ router.get('/messages', auth.userRequired, message.index);//消息
 router.post('/post/:_id/edit', auth.userRequired, post.update);
 router.post('/post/:_id/delete', auth.userRequired, post.delete);
 router.post('/post/:_id/lock', auth.adminRequired, post.lock); //锁定文章
-router.post('/post/:_id/top', auth.adminRequired, post.top);//顶置
+router.get('/post/:_id/top', auth.adminRequired, post.top);//顶置
+router.get('/post/:_id/cancel_top', auth.adminRequired, post.unTop);// 取消顶置
 router.post('/post/:_id/good', auth.adminRequired, post.good);//精华
 router.post('/post/:_id/recommend', auth.userRequired, post.recommend);//推荐
 router.post('/post/:_id/unrecommend', auth.userRequired, post.unRecommend);//取消推荐

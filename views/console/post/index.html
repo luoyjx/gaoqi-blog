@@ -44,7 +44,7 @@
                     <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-good" >
                       <span class="glyphicon glyphicon-star" title="精华"></span>
                     </a>
-                    <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-top">
+                    <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-top <%= posts[i].top == true ? 'active' : '' %>">
                       <span class="glyphicon glyphicon-pushpin" title="顶置"></span>
                     </a>
                     <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-delete">
@@ -80,5 +80,10 @@
 <% block('styles', Loader('/public/css/console.post.css')
 .css('/public/css/page/console.post.less')
 .css('/public/css/widget/table.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+
+<% block('script', Loader('/public/js/console.post.js')
+.js('/public/js/console.post.js')
 .done(assets, config.site_assets_host, config.mini_assets))
 %>
