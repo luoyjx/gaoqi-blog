@@ -14,6 +14,7 @@ gaoqi-blog
 [david-url]: https://david-dm.org/luoyjx/gaoqi-blog
 [node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
+[![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
 
 基于Node.js的多人博客
 
