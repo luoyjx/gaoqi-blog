@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>用户助手</title>
+    <link rel="stylesheet" href="/libs/bootstrap2/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/services.css" />
+    <!--<script type="text/javascript" src="js/jquery-1.12.2.min.js" ></script>
+    <script type="text/javascript" src="js/Price.js" ></script>-->
+</head>
+<body>
+<!--	header-->
+{% include "./inc/header.html" %}
+<!--bannner-->
+<div class="bxslider">
+    <img src="/images/img/banner4.jpg" />
+    <p class="bxP1">汉阳造云渲染集群全部采用高性能图形处理服务器,</p>
+    <p class="bxP2">价格灵活透明，可根据自身需求选择不同档位，批量提交，极速渲染。</p>
+</div>
+<!---->
+<div>
+    <div class="container pgate2">
+        <div class="priceBox price">
+            <p class="priceP1" style="margin-top: 80px;"><b>挡位</b></p>
+            <p class="priceP2">0.50/元/核/时</p>
+            <p class="priceP1"><b>优惠</b></p>
+            <p class="priceP2">累计充值金额5000以下</p>
+            <p class="priceP2">买一送一</p>
+            <p class="priceP1"><b>实际价格</b></p>
+            <p class="priceP2" style="line-height: 30px;"><span class="priceSpan">0.25</span>/元/核/时</p>
+        </div>
+        <div class="priceBox02 price">
+            <p class="priceP1" style="margin-top: 80px;"><b>挡位</b></p>
+            <p class="priceP2">0.40/元/核/时</p>
+            <p class="priceP1"><b>优惠</b></p>
+            <p class="priceP2">累计充值金额5000元</p>
+            <p class="priceP2">赠送5000元</p>
+            <p class="priceP1"><b>实际价格</b></p>
+            <p class="priceP2" style="line-height: 30px;"><span class="priceSpan">0.20</span>/元/核/时</p>
+        </div>
+        <div class="priceBox03 price">
+            <p class="priceP1" style="margin-top: 80px;"><b>挡位</b></p>
+            <p class="priceP2">0.36/元/核/时</p>
+            <p class="priceP1"><b>优惠</b></p>
+            <p class="priceP2">累计充值金额10000元</p>
+            <p class="priceP2">赠送10000元</p>
+            <p class="priceP1"><b>实际价格</b></p>
+            <p class="priceP2" style="line-height: 30px;"><span class="priceSpan">0.18</span>/元/核/时</p>
+        </div>
+        <div class="priceBox04 price">
+            <p class="priceP1" style="margin-top: 80px;"><b>挡位</b></p>
+            <p class="priceP2">0.30/元/核/时</p>
+            <p class="priceP1"><b>优惠</b></p>
+            <p class="priceP2">累计充值金额30000元</p>
+            <p class="priceP2">赠送30000元</p>
+            <p class="priceP1"><b>实际价格</b></p>
+            <p class="priceP2" style="line-height: 30px;"><span class="priceSpan">0.15</span>/元/核/时</p>
+        </div>
+        <div class="priceBox05 price">
+            <p class="priceP1" style="margin-top: 80px;"><b>挡位</b></p>
+            <p class="priceP2">0.24/元/核/时</p>
+            <p class="priceP1"><b>优惠</b></p>
+            <p class="priceP2">累计充值金额50000元</p>
+            <p class="priceP2">赠送50000元</p>
+            <p class="priceP1"><b>实际价格</b></p>
+            <p class="priceP2" style="line-height: 30px;"><span class="priceSpan">0.12</span>/元/核/时</p>
+        </div>
+    </div>
+</div>
+<!--关注我们-->
+<div style="background: #313131;">
+    <div class="container pgate" style=" padding-top: 28px; text-align: center;">
+        <div style="width: 1px;height: 90px; margin: 0 auto; margin-bottom: 50px;"><div class="ysDiv" style="width: 1px;height: 90px;background: #000000;margin: 0px auto; display: none;"></div></div>
+        <p style="font-size: 26px;color: #FFFFFF; letter-spacing:5px;font-family: '黑体';">关注我们</p>
+        <div style="width: 40px;height: 2px;background: #FFFFFF;margin: 20px auto;margin-bottom: 80px;"></div>
+        <div class="footBox">
+            <p class="footP1"><span class="footSpan"></span>企业QQ：123456789</p>
+            <p class="footP1"><span class="footSpan2"></span>企业客服1：123456789</p>
+            <p class="footP1"><span class="footSpan3"></span>企业客服2：123456789</p>
+            <p class="footP1"><span class="footSpan3"></span>企业客服3：123456789</p>
+            <div class="gzwx">
+                <div class="img01"></div>
+                <p style="color: #BEBEBE;margin-top: 10px;">关注微信</p>
+            </div>
+            <div class="gzwb">
+                <div class="img01"></div>
+                <p style="color: #BEBEBE;margin-top: 10px;">关注微博</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--   footer-->
+{% include "./inc/footer.html"%}
+<script type="text/javascript" src="/libs/jquery-2.1.1.min.js" ></script>
+<script type="text/javascript">
+    $(".price").mouseover(function(){
+        $(this).addClass("current");
+    }).mouseout(function(){
+        $(this).removeClass("current");
+    })
+</script>
+</body>
+</html>

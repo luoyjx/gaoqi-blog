@@ -1,0 +1,41 @@
+{
+  "bitwise": true,
+  "boss": true,
+  "browser": true,
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "expr": true,
+  "immed": true,
+  "noarg": true,
+  "node": true,
+  "onevar": true,
+  "quotmark": "double",
+  "smarttabs": true,
+  "trailing": true,
+  "unused": true,
+  "globals": {
+    "jQuery": true,
+    "$": true,
+    "devel": true,
+    // QUnit
+    "QUnit": true,
+    "test": true,
+    "module": true,
+    "expect": true,
+    "stop": true,
+    "start": true,
+    "ok": true,
+    "equal": true,
+    "notEqual": true,
+    "deepEqual": true,
+    "notDeepEqual": true,
+    "strictEqual": true,
+    "notStrictEqual": true,
+    "raises": true,
+    // util functions
+    "keypress": true,
+    "keydown": true
+  }
+}

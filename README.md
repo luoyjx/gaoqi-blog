@@ -19,8 +19,8 @@ gaoqi-blog
 
 基于Node.js的多人博客
 
-* Node.js 4.1.1
-* mongodb v2.6(已经迁移到3.0版本的 wiredTiger 引擎，可使用2.6，不影响)
+* Node.js 6.x
+* mongodb v3.x(已经迁移到3.0版本的 wiredTiger 引擎，可使用2.6，不影响)
   迁移过程看这里
   http://blog.gaoqixhb.com/p/55cb5fc17c68e69a01af69aa
 * redis v2.6.13

@@ -1,32 +1,27 @@
-/*!
- * controller index
- */
+'use strict';
 
-var Promise = require('bluebird');
-var xmlbuilder = require('xmlbuilder');
-var multiline = require('multiline');
-var validator = require('validator');
-var _ = require('lodash');
-var Post = require('../dao').Post;
-var Tag = require('../dao').Tag;
-var Reply = require('../dao').Reply;
-var User = require('../dao').User;
-var config = require('../config');
-var cache = require('../common/cache');
+const Promise = require('bluebird');
+const xmlbuilder = require('xmlbuilder');
+const validator = require('validator');
+const _ = require('lodash');
+const Post = require('../dao').Post;
+const Tag = require('../dao').Tag;
+const Reply = require('../dao').Reply;
+const User = require('../dao').User;
+const config = require('../config');
+const cache = require('../common/cache');
 
-//站点首页
-exports.index = function (req, res, next) {
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1;
+// 站点首页
+exports.index = function *index() {
+  let page = this.query.page ? parseInt(this.query.page, 10) : 1;
   page = page > 0 ? page : 1;
-  var tab = validator.trim(req.query.tab || '');
-  var tabName;//分类名
+  const tab = validator.trim(this.query.tab || '');
+  let tabName; // 分类名
 
-  var query = {};
+  const query = {};
   if (tab) {
     query.category = tab;
-    var kv = _.find(config.tabs, function(kv) {
-      return kv[0] === tab;
-    });
+    const kv = _.find(config.tabs, (kv) => kv[0] === tab);
     tabName = kv ? kv[1] + '版块' : '';
   } else {
     tabName = '首页';
@@ -35,120 +30,116 @@ exports.index = function (req, res, next) {
     ? ' 第' + page + '页'
     : '';
 
-  var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at'};
+  const limit = config.list_topic_count;
+  const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' };
 
-  //取热门标签
-  var tag_options = {limit: config.list_hot_tag_count, sort: '-post_count'};
+  // 取热门标签
+  const tag_options = { limit: config.list_hot_tag_count, sort: '-post_count' };
 
-  //取最新评论
-  var reply_query = {};
-  var reply_options = {limit: config.list_latest_replies_count, sort: '-create_at'};
+  // 取最新评论
+  const reply_query = {};
+  const reply_options = { limit: config.list_latest_replies_count, sort: '-create_at' };
 
-  //最近注册用户
-  var users_query = {is_active: true};
-  var recent_reg_options = {limit: 10, sort: '-create_at'};
+  // 最近注册用户
+  const users_query = { is_active: true };
+  const recent_reg_options = { limit: 10, sort: '-create_at' };
 
-  Promise
-    .all([
-      cache.get('hots' + tab),
-      cache.get('hot_tags')
-    ])
-    .spread(function(hotPosts, hotTags) {
-      var arr = [
-        Post.getPostsByQuery(query, options),
-        Post.getCountByQuery(query),
-        Reply.getRepliesByQuery(reply_query, reply_options),
-        User.getUsersByQuery(users_query, recent_reg_options),
-      ];
-      if (hotPosts) {
-        arr.push(Promise.resolve(hotPosts));
-      } else {
-        arr.push(Post.getNewHot(query));
-      }
-      if (hotTags) {
-        arr.push(Promise.resolve(hotTags));
-      } else {
-        arr.push(Tag.getHotTagsByQuery(tag_options));
-      }
+  const [hotPostsCache, hotTagsCache] = yield Promise.all([
+    cache.get('hots' + tab),
+    cache.get('hot_tags')
+  ]);
 
-      return Promise.all(arr);
-    })
-    .spread(function(posts, count, replies, recentReg, hotPosts, hotTags) {
-      //总页数
-      var pages = Math.ceil(count / limit);
-      //热门文章
-      hotPosts = hotPosts.sort(function sortFn(a, b) {
-        //pv排序
-        return b.pv - a.pv;
-      });
-      //取前10条
-      hotPosts = Array.prototype.slice.call(hotPosts, 0, 10);
-      cache.set('hots' + tab, hotPosts, 60 * 5);//5分钟
-      //热门标签
-      cache.set('hot_tags', hotTags, 60 * 5);//5分钟
+  const arr = [
+    Post.getPostsByQuery(query, options),
+    Post.getCountByQuery(query),
+    Reply.getRepliesByQuery(reply_query, reply_options),
+    User.getUsersByQuery(users_query, recent_reg_options)
+  ];
 
-      res.wrapRender('index', {
-        posts: posts,
-        tab: tab,
-        base: '/',
-        current_page: page,
-        pages: pages,
-        hots: hotPosts,
-        tags: hotTags,
-        recent_reg: recentReg,
-        replies: replies,
-        title: tabName
-      });
-    })
-    .catch(function(err) {
-      return next(err);
-    });
+  if (hotPostsCache) {
+    arr.push(Promise.resolve(hotPostsCache));
+  } else {
+    arr.push(Post.getNewHot(query));
+  }
+  if (hotTagsCache) {
+    arr.push(Promise.resolve(hotTagsCache));
+  } else {
+    arr.push(Tag.getHotTagsByQuery(tag_options));
+  }
+
+  const [posts, count, replies, recentReg, hotPosts, hotTags] = Promise.all(arr);
+  // 总页数
+  const pages = Math.ceil(count / limit);
+  // 热门文章
+  let hotPostsSorted = hotPosts.sort(function sortFn(a, b) {
+    // pv排序
+    return b.pv - a.pv;
+  });
+  // 取前10条
+  hotPostsSorted = Array.prototype.slice.call(hotPosts, 0, 10);
+
+  // 缓存热门文章和标签
+  yield Promise.all([
+    cache.set('hots' + tab, hotPosts, 60 * 5), // 5分钟
+    cache.set('hot_tags', hotTags, 60 * 5) // 5分钟
+  ]);
+
+  yield this.render('index', {
+    posts,
+    tab,
+    base: '/',
+    current_page: page,
+    pages,
+    hots: hotPostsSorted,
+    tags: hotTags,
+    recent_reg: recentReg,
+    replies,
+    title: tabName
+  });
 };
 
-//站点地图
-exports.sitemap = function (req, res, next) {
-  var urlset = xmlbuilder.create('urlset', {version: '1.0', encoding: 'UTF-8'});
+// 站点地图
+exports.sitemap = function *sitemap() {
+  const urlset = xmlbuilder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
   urlset.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
-  cache
-    .get('sitemap')
-    .then(function(sitemapData) {
-      if (sitemapData) return res.type('xml').send(sitemapData);
-      return Promise
-      .all([
-        Post.getLimit5w(),
-        Tag.getAllTagsByQuery({}, {sort: '-post_count'})
-      ]);
-    })
-    .spread(function(posts, tags) {
-      if (!res.headersSent) {
-        posts.forEach(function (post) {
-          urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
-        });
-        tags.forEach(function(tag) {
-          urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
-        });
-        var sitemapData = urlset.end();
-        // 缓存
-        cache.set('sitemap', sitemapData, 3600 * 2);
-        res.type('xml').send(sitemapData);
-      }
-    })
-    .catch(function(err) {
-      return next(err);
-    });
+  const sitemapCache = yield cache.get('sitemap');
+
+  if (sitemapCache) {
+    this.type = 'xml';
+    this.body = sitemapCache;
+    return;
+  }
+
+  const [posts, tags] = yield Promise.all([
+    Post.getLimit5w(),
+    Tag.getAllTagsByQuery({}, { sort: '-post_count' })
+  ]);
+
+  posts.forEach(function (post) {
+    urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
+  });
+  tags.forEach(function (tag) {
+    urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
+  });
+  const sitemapData = urlset.end();
+  // 缓存
+  yield cache.set('sitemap', sitemapData, 3600 * 2);
+
+  this.type = 'xml';
+  this.body = sitemapData;
 };
 
-exports.robots = function (req, res, next) {
-  res.type('text/plain');
-  res.send(multiline(function () {/*
- # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
- #
- # To ban all spiders from the entire site uncomment the next two lines:
- # User-Agent: *
- # allow: /
- */}));
+exports.robots = function *robots() {
+  this.type = 'text/plain';
+  this.body = `
+  /*
+  # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+  #
+  # To ban all spiders from the entire site uncomment the next two lines:
+  # User-Agent: *
+  # allow: /
+  */`;
 };
 
 /**
@@ -157,8 +148,8 @@ exports.robots = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.tools = function (req, res, next) {
-  res.render('static/tools', {
+exports.tools = function *tools() {
+  yield this.render('static/tools', {
     title: '常用工具'
   });
 };
@@ -169,8 +160,8 @@ exports.tools = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.feNav = function(req, res, next) {
-  res.render('static/fe_nav', {
+exports.feNav = function *feNav() {
+  yield this.render('static/fe_nav', {
     title: '前端导航'
   });
 };
@@ -181,8 +172,8 @@ exports.feNav = function(req, res, next) {
  * @param res
  * @param next
  */
-exports.api = function (req, res, next) {
-  res.render('static/api', {
+exports.api = function *api() {
+  yield this.render('static/api', {
     title: 'api接口说明'
   });
 };

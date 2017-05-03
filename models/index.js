@@ -1,5 +1,7 @@
-var mongoose = require('mongoose');
-var config = require('../config');
+'use strict';
+
+const mongoose = require('mongoose');
+const config = require('../config');
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.db, function (err) {
@@ -9,7 +11,7 @@ mongoose.connect(config.db, function (err) {
   }
 });
 
-//models
+// models
 require('./user');
 require('./post');
 require('./tag');

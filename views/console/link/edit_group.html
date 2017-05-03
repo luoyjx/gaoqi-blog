@@ -1,0 +1,310 @@
+{% extends "../layout.html" %}
+
+{% block css %}
+<style>
+  a {
+    color: #18a689;
+  }
+  #addLinkGroupItem {
+    margin-bottom: 10px;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="wrapper wrapper-content animated ">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>{{ '编辑' if action == 'edit' else '创建' }}链接组信息</h5>
+        </div>
+        <div class="ibox-content">
+          {% if (action === 'edit') %}
+          <form id="linkGroupForm" method="post" action="/console/linkGroups/{{ linkGroup.id }}
+            /update" class="form-horizontal">
+          {% else %}
+          <form id="linkGroupForm" method="post" action="/console/linkGroups/save" class="form-horizontal">
+          {% endif %}
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">链接组名称</label>
+              <div class="col-sm-10">
+                <input type="text" id="name" name="name" required="" placeholder="输入链接组名称" class="form-control" value="{{ linkGroup.name }}"/>
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">备注</label>
+              <div class="col-sm-10">
+                <input type="text" id="description" name="description" required="" placeholder="输入链接组备注" class="form-control" value="{{ linkGroup.description }}" />
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" href="/console/linkGroups">取消</a>
+                <button class="btn btn-primary" id="saveBtn" type="submit">保存</button>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+
+        {% if (action === 'edit') %}
+        <div class="ibox-title">
+          <h5>子链接信息</h5>
+        </div>
+        <div class="ibox-content">
+          <div>
+            <div class="row">
+              <div class="col-lg-12">
+                <a class="btn btn-primary btn-sm" id="addLinkGroupItem">添加子链接</a>
+              </div>
+            </div>
+          </div>
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+              <th width="30%">链接名称</th>
+              <th width="40%">链接地址</th>
+              <th width="10%">状态</th>
+              <th width="10%">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for linkGroupItem in linkGroupItems %}
+            <tr>
+              <td>
+              <a 
+                class="edit-link-group-item" 
+                data-id="{{ linkGroupItem.id }}"
+                data-name="{{ linkGroupItem.name }}"
+                data-url="{{ linkGroupItem.url }}"
+              >{{ linkGroupItem.name }}</a></td>
+              <td>{{ linkGroupItem.url }}</td>
+              <td>{{ '启用' if linkGroupItem.valid else '禁用' }}</td>
+              <td>
+                <a 
+                  class=" btn btn-outline btn-xs {{ 'btnInvalid btn-danger' if linkGroupItem.valid else 'btnValid btn-primary' }}" 
+                  data-id="{{ linkGroupItem.id }}">{{ '禁用' if linkGroupItem.valid else '启用' }}</a>
+                <a class="btnRemove btn btn-danger btn-outline btn-xs" data-id="{{ linkGroupItem.id }}">删除</a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4"><div class="text-center"><span>暂时没有子链接</span></div></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal inmodal in" id="addGroupItemModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content animated ">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+                <span class="sr-only">关闭</span>
+              </button>
+              <h4 class="modal-title">添加子链接</h4>
+            </div>
+            <div class="modal-body">
+              <form id="routerRuleForm" class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-sm-2 form-control-static">链接名称</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="groupItemName" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 form-control-static">链接地址</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="groupItemUrl"/>
+                  </div>
+                </div>
+                <input type="hidden" id="groupId" value="{{ linkGroup.id }}" />
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+              <button id="btnSaveGroupItem" type="button" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal inmodal in" id="editGroupItemModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content animated ">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+                <span class="sr-only">关闭</span>
+              </button>
+              <h4 class="modal-title">编辑子链接</h4>
+            </div>
+            <div class="modal-body">
+              <form id="routerRuleForm" class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-sm-2 form-control-static">链接名称</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="groupItemNameEdit" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 form-control-static">链接地址</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="groupItemUrlEdit"/>
+                  </div>
+                </div>
+                <input type="hidden" id="groupIdEdit" value="{{ linkGroup.id }}" />
+                <input type="hidden" id="groupItemId" />
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+              <button id="btnUpdateGroupItem" type="button" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+  $('#addLinkGroupItem').click(function() {
+    $('#addGroupItemModal').modal('toggle');
+  });
+
+  // 添加子链接
+  $('#btnSaveGroupItem').click(function() {
+    var groupId = $('#groupId').val();
+    var itemName = $('#groupItemName').val();
+    var itemUrl = $('#groupItemUrl').val();
+
+    $.ajax({
+      type: 'POST',
+      url: '/console/linkGroupItems/save',
+      data: { groupId: groupId, itemName: itemName, itemUrl: itemUrl }
+    })
+    .done(function(result) {
+      $('#addGroupItemModal').modal('toggle');
+      if (result.success) {
+        setTimeout(function() {
+          location.reload();
+        }, 200)
+      } else {
+        toastr.error('', '保存子链接失败')
+      }
+    })
+    .fail(function() {
+      toastr.error('', '保存子链接失败')
+    })
+  });
+
+  $('.edit-link-group-item').click(function() {
+    $('#groupItemNameEdit').val($(this).data('name'));
+    $('#groupItemUrlEdit').val($(this).data('url'));
+    $('#groupItemId').val($(this).data('id'));
+    $('#editGroupItemModal').modal('toggle');
+  })
+
+  // 更新
+  $('#btnUpdateGroupItem').click(function() {
+    var id = $('#groupItemId').val();
+    var groupId = $('#groupIdEdit').val();
+    var itemName = $('#groupItemNameEdit').val();
+    var itemUrl = $('#groupItemUrlEdit').val();
+
+    $.ajax({
+      url: '/console/linkGroupItems/' + id + '/update',
+      type: 'POST',
+      data: { groupId: groupId, itemName: itemName, itemUrl: itemUrl }
+    })
+    .done(function(result) {
+      $('#editGroupItemModal').modal('toggle');
+      if (result.success) {
+        setTimeout(function() {
+          location.reload();
+        })
+      } else {
+        toastr.error('', '更新子链接失败')
+      }
+    })
+    .fail(function() {
+      toastr.error('', '更新子链接失败')
+    })
+  })
+
+  // 删除
+  $('.btnRemove').click(function() {
+    var id = $(this).data('id');
+
+    if (!confirm('确定要删除吗?')) return;
+
+    $.ajax({
+      url: '/console/linkGroupItems/' + id + '/remove'
+    })
+    .done(function(result) {
+      if (result.success) {
+        setTimeout(function() {
+          location.reload();
+        }, 200);
+      } else {
+        toastr.error('', '删除子链接失败')
+      }
+    })
+    .fail(function() {
+      toastr.error('', '删除子链接失败')
+    })
+  });
+
+  // 禁用
+  $('.btnInvalid').click(function() {
+    var id = $(this).data('id');
+
+    $.ajax({
+      url: '/console/linkGroupItems/' + id + '/disable'
+    })
+    .done(function(result) {
+      if (result.success) {
+        setTimeout(function() {
+          location.reload();
+        }, 200);
+      } else {
+        toastr.error('', '禁用子链接失败');
+      }
+    })
+    .fail(function() {
+      toastr.error('', '禁用子链接失败');
+    })
+  });
+
+  // 启用
+  $('.btnValid').click(function() {
+    var id = $(this).data('id');
+
+    $.ajax({
+      url: '/console/linkGroupItems/' + id + '/enable'
+    })
+    .done(function(result) {
+      if (result.success) {
+        setTimeout(function() {
+          location.reload();
+        }, 200);
+      } else {
+        toastr.error('', '启用子链接失败');
+      }
+    })
+    .fail(function() {
+      toastr.error('', '启用子链接失败');
+    })
+  })
+</script>
+{% endblock %}

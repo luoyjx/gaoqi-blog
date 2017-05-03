@@ -63,12 +63,12 @@ exports.index = function(req, res, next) {
           Promise.resolve(post),
           Post.getSimplePosts(hot_options),
           Post.getSimplePosts(recent_options),
-          eq.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
+          req.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
         ]);
     })
     .spread(function(post, hotPosts, recentPosts, hasCollect) {
       res.wrapRender('post/index', {
-        title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
+        title: post.title + ' - ' + post.author.login_name, //文章名 - 作者名
         description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
         tags: post.tags.join(','),
         post: post,
@@ -184,6 +184,7 @@ exports.create = function(req, res, next) {
         // 截取50个字
         status = cutter.shorter(status.join(''), 70);
         status += 'https://' + config.host + '/p/' + _post._id + '?from=post_twitter';
+
         twitter.postStatus(status);
       })
       .catch(function(err) {
@@ -351,6 +352,7 @@ exports.delete = function(req, res, next) {
         });
     })
     .catch(function(err) {
+      console.log(err);
       res.wrapSend({
         success: false,
         message: err.message
@@ -366,8 +368,9 @@ exports.delete = function(req, res, next) {
  * @param next
  */
 exports.top = function(req, res, next) {
-var id = req.params._id;
+  var id = req.params._id;
   var user = req.session.user;
+
   Post
     .setTop(id)
     .then(function(updated) {
@@ -384,16 +387,10 @@ var id = req.params._id;
     });
 };
 
-/**
- * 取消顶置
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
- */
 exports.unTop = function unTop(req, res, next) {
   var id = req.params._id;
   var user = req.session.user;
+
   Post
     .cancelTop(id)
     .then(function(updated) {

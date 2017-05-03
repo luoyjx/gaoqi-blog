@@ -1,0 +1,8 @@
+#thumbnail_preview {
+  max-width: 300px;
+  max-height: 200px;
+}
+
+#filePicker {
+  margin-top: 10px;
+}

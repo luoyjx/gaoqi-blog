@@ -1,0 +1,36 @@
+<ul class="pagination">
+    {% set reg = r/\?/ %}
+    {% set divider = '&' if reg.test(base) else '?' %}
+    {% set base_url = base + divider + 'page=' %}
+
+    {% if (current_page == 1) %}
+    <li class='paginate_button disabled'><a>«</a></li>
+    {% else %}
+    <li class="paginate_button"><a href="{{ base_url }}1">«</a></li>
+    {% endif %}
+
+    {% set page_start = current_page - 2 if current_page - 2 > 0 else 1 %}
+    {% set page_end = pages if page_start + 4 >= pages else page_start + 4 %}
+
+    {% if page_start > 1 %}
+    <li><a>...</a></li>
+    {% endif %}
+
+    {% for i in range(page_start, page_end + 1) %}
+    {% if (i === current_page) %}
+    <li class='paginate_button active'><a>{{ i }}</a></li>
+    {% else %}
+    <li class="paginate_button"><a href='{{ base_url + i }}'>{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_end < pages %}
+    <li><a>...</a></li>
+    {% endif %}
+
+    {% if (current_page == pages) or pages < 1 %}
+    <li class='paginate_button disabled'><a>»</a></li>
+    {% else %}
+    <li class="paginate_button"><a href='{{ base_url + pages }}'>»</a></li>
+    {% endif %}
+</ul>

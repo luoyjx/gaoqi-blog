@@ -1,0 +1,14 @@
+
+.category-levels {
+  width: 450px;
+}
+
+.category-parent {
+  width: 200px;
+  display: inline-block;
+}
+
+.category-child {
+  width: 200px;
+  display: inline-block;
+}

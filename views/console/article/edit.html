@@ -1,0 +1,144 @@
+{% extends "../layout.html" %}
+<!-- css -->
+{% block css %}
+<link rel="stylesheet" href="/libs/webuploader/webuploader.css" />
+<link href="/libs/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" href="/css/console/article.edit.css"/>
+{% endblock %}
+<!-- html -->
+{% block body %}
+<div class="wrapper wrapper-content animated ">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>{{ '编辑文章' if action == 'edit' else '发布文章' }}</h5>
+        </div>
+        <div class="ibox-content">
+          {% if (action === 'edit') %}
+          <form id="articleForm" method="post" action="/console/articles/{{ article.id }}
+            /update" class="form-horizontal">
+          {% else %}
+          <form id="articleForm" method="post" action="/console/articles/save" class="form-horizontal">
+          {% endif %}
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">标题</label>
+              <div class="col-sm-10">
+                <input type="text" id="title" name="title" required="required" placeholder="新闻标题" class="form-control" value="{{ article.title }}"/>
+              </div>
+            </div>
+            <!-- <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">缩略图</label>
+              <div class="col-sm-10">
+                <input type="text" id="thumbnail" name="thumbnail" placeholder="缩略图" class="form-control" value="{{ article.thumbnail }}"/>
+                <div id="uploader-demo">
+                  <div id="filePicker">选择图片</div>
+                  <div id="fileList" class="uploader-list">
+                    <img src="{{ article.thumbnail }}" id="thumbnail_preview" />
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">栏目</label>
+              <div class="col-sm-10">
+                <select id="category_id" name="category_id" class="form-control" required="">
+                  <option value="">选择栏目</option>
+                  {% for category in categories %}
+                  <option value="{{category.id}}" {{ 'selected="selected"' if article.category_id == category.id }}>{{ '　' if category.pid != null }}{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+              <label class="col-sm-2 form-control-static">内容</label>
+              <div class="col-sm-10">
+                <textarea id="myEditor" name="content" required="" style="width:100%;height:400px;">{{article.content}}</textarea>
+                <div class="clear"></div>
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <input type="hidden" id="userId" name="user_id" value="{{user.id}}" />
+            <div class="form-group">
+              <div class="col-sm-4 col-sm-offset-2">
+                <a class="btn btn-white" href="/console/articles">取消</a>
+                <button class="btn btn-primary" id="saveBtn" type="button">保存</button>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script type="text/javascript" src="/libs/template.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/libs/umeditor/umeditor.config.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/libs/umeditor/umeditor.min.js"></script>
+  <script type="text/javascript" src="/libs/umeditor/lang/zh-cn/zh-cn.js"></script>
+  <script type="text/javascript" src="/libs/webuploader/webuploader.min.js"></script>
+  <script type="text/javascript">
+    //实例化编辑器
+    var um = UM.getEditor('myEditor');
+    $('#saveBtn').click(function() {
+      if (!$('#title').val()) {
+        return toastr.error('', '标题不能为空');
+      }
+
+      if (!$('#category_id').val()) {
+        return toastr.error('', '栏目不能为空');
+      }
+
+      if (!$('#myEditor').val()) {
+        return toastr.error('', '内容不能为空');
+      }
+
+      console.log(UM.getEditor('myEditor').getContent());
+      $('#myEditor').text(UM.getEditor('myEditor').getContent());
+      $('#articleForm').submit();
+    })
+
+    // 初始化Web Uploader
+    // var uploader = WebUploader.create({
+
+    //   // 选完文件后，是否自动上传。
+    //   auto: true,
+
+    //   // swf文件路径
+    //   swf: '/libs/webuploader/Uploader.swf',
+
+    //   // 文件接收服务端。
+    //   server: '/upload',
+
+    //   // 选择文件的按钮。可选。
+    //   // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+    //   pick: '#filePicker',
+
+    //   // 只允许选择图片文件。
+    //   accept: {
+    //     title: 'Images',
+    //     extensions: 'gif,jpg,jpeg,bmp,png',
+    //     mimeTypes: 'image/*'
+    //   }
+    // });
+
+    // // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    // uploader.on( 'uploadSuccess', function( file, data ) {
+    //   $('#thumbnail').val(data.url);
+    //   $('#thumbnail_preview').attr('src', data.url);
+    //   toastr.success('', '上传成功');
+    // });
+
+    // // 文件上传失败，显示上传出错。
+    // uploader.on( 'uploadError', function( file ) {
+    //   toastr.error('', '上传失败');
+    // });
+
+  </script>
+{% endblock %}

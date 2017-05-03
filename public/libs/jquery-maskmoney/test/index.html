@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jQuery maskMoney Test Suite</title>
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.23.1.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<script src="http://code.jquery.com/qunit/qunit-1.23.1.js"></script>
+	<script src="../src/jquery.maskMoney.js"></script>
+	<script src="util.js"></script>
+	<script src="init_and_destroy_test.js"></script>
+	<script src="mask_test.js"></script>
+	<script src="data_dash_test.js"></script>
+	<script src="unmasked_test.js"></script>
+	<script src="focus_test.js"></script>
+	<script src="change_test.js"></script>
+	<script src="typing_test.js"></script>
+	<script src="cut_paste_test.js"></script>
+</head>
+<body>
+    <div id="qunit"></div>
+	<div id="qunit-fixture">
+		<input type="text" id="input1" class="all"/>
+		<input type="text" id="input2" class="all"/>
+		<input type="text" class="multiple-dash" id="input3" data-prefix="R$" data-thousands="." data-decimal=","/>
+		<input type="text" class="multiple-dash" id="input4" data-prefix="U$" data-thousands="," data-decimal="."/>
+	</div>
+</body>
+</html>

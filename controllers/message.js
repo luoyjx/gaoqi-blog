@@ -1,33 +1,37 @@
-/*!
- * 消息 controller
- */
+'use strict';
 
-var Promise = require('bluebird');
-var Message = require('../dao').Message;
+const Promise = require('bluebird');
+const Message = require('../dao/message');
 
-exports.index = function (req, res, next) {
-  var user_id = req.session.user._id;
+exports.index = function *index() {
+  const userId = this.session.user._id;
 
-  Promise
-      .all([
-        Message.getReadMessagesByUserId(user_id),
-        Message.getUnreadMessageByUserId(user_id)
-      ])
-      .spread(function(hasRead, hasNotRead) {
-        Message.updateMessagesToRead(user_id, hasNotRead);
-        return Promise
-            .all([
-              Promise.map(hasRead, function(doc) { return Message.getMessageRelations(doc);}),
-              Promise.map(hasNotRead, function(doc) { return Message.getMessageRelations(doc);})
-            ]);
-      })
-      .spread(function(hasRead, hasNotRead) {
-        hasRead = hasRead.filter(function (doc) {
-          return !doc.is_invalid;
-        });
-        hasNotRead = hasNotRead.filter(function (doc) {
-          return !doc.is_invalid;
-        });
-        res.render('message/index', {has_read_messages: hasRead, hasnot_read_messages: hasNotRead});
-      });
+  const [hasRead, hasNotRead] = yield Promise.all([
+    Message.getReadMessagesByUserId(userId),
+    Message.getUnreadMessageByUserId(userId)
+  ]);
+
+  Message.updateMessagesToRead(userId, hasNotRead);
+
+  let [hasReadDetail, hasNotReadDetail] = yield Promise.all([
+    Promise.map(hasRead, function (doc) {
+      return Message.getMessageRelations(doc);
+    }),
+    Promise.map(hasNotRead, function (doc) {
+      return Message.getMessageRelations(doc);
+    })
+  ]);
+
+  hasReadDetail = hasRead.filter(function (doc) {
+    return !doc.is_invalid;
+  });
+
+  hasNotReadDetail = hasNotRead.filter(function (doc) {
+    return !doc.is_invalid;
+  });
+
+  yield this.render('message/index', {
+    has_read_messages: hasReadDetail,
+    hasnot_read_messages: hasNotReadDetail
+  });
 };
