@@ -1,26 +1,21 @@
-/*!
- * sign controller
- */
+'use strict';
 
-var Promise = require('bluebird');
-var validator = require('validator');
-var tools = require('../common/tools');
-var User = require('../dao').User;
-var mail = require('../common/mail');
-var utility = require('utility');
-var config = require('../config');
-var authFilter = require('../middleware/auth');
-var uuid = require('node-uuid');
+const Promise = require('bluebird');
+const validator = require('validator');
+const tools = require('../common/tools');
+const User = require('../services/user');
+const mail = require('../common/mail');
+const utility = require('utility');
+const config = require('../config');
+const authFilter = require('../middleware/auth');
+const uuid = require('node-uuid');
 
 /**
  * 跳转到登录页面
- * @param req
- * @param res
- * @param next
  */
-exports.showLogin = function (req, res, next) {
-  req.session._loginReferer = req.headers.referer;
-  res.render('sign/signin', {
+exports.showLogin = function *showLogin() {
+  this.session._loginReferer = this.headers.referer;
+  yield this.render('sign/signin', {
     title: '登录'
   });
 };
@@ -29,11 +24,11 @@ exports.showLogin = function (req, res, next) {
  * 定义一些登录时跳到首页的页面
  * @type {Array}
  */
-var notJump = [
-  '/active_account', //active page
-  '/reset_pass',     //reset password page, avoid to reset twice
-  '/signup',         //regist page
-  '/search_pass'    //serch pass page
+const notJump = [
+  '/active_account', // active page
+  '/reset_pass',     // reset password page, avoid to reset twice
+  '/signup',         // regist page
+  '/search_pass'    // serch pass page
 ];
 
 /**
@@ -67,22 +62,22 @@ exports.signIn = function (req, res, next) {
       _user = user;
 
       var passhash = user.pwd;
-      //验证密码
+      // 验证密码
       return tools.bcompare(pass, passhash);
     })
     .then(function(flag) {
       if (!flag) return res.wrapRender('sign/signin', {error: '用户名不存在'});
 
-      //验证是否激活，未激活再次发送激活邮件
+      // 验证是否激活，未激活再次发送激活邮件
       if (!_user.is_active) {
         mail.sendActiveMail(_user.email, utility.md5(_user.email + _user.pwd + config.session_secret), user.login_name);
         res.status(403);
         return res.wrapRender('sign/signin', {error: '账号未激活，已重新发送激活邮件到' + user.email });
       }
 
-      //验证成功，存储session cookie，跳转到首页
+      // 验证成功，存储session cookie，跳转到首页
       authFilter.gen_session(_user, res);
-      //检查需要跳转到首页的页面
+      // 检查需要跳转到首页的页面
       var refer = req.session._loginReferer || '/';
       for (var i = 0, len = notJump.length; i !== len; ++i) {
         if (refer.indexOf(notJump[i]) >= 0) {
@@ -103,8 +98,8 @@ exports.signIn = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.showSignup = function (req, res, next) {
-  res.render('sign/signup', {
+exports.showSignup = function *showSignup() {
+  yield this.render('sign/signup', {
     title: '注册'
   });
 };
@@ -115,15 +110,15 @@ exports.showSignup = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.signup = function (req, res, next) {
-  var loginname = validator.trim(req.body.loginname).toLowerCase();
-  var email = validator.trim(req.body.email).toLowerCase();
-  var pass = validator.trim(req.body.pass);
-  var re_pass = validator.trim(req.body.re_pass);
+exports.signup = function *signup() {
+  const loginname = validator.trim(this.request.body.loginname).toLowerCase();
+  const email = validator.trim(this.request.body.email).toLowerCase();
+  const pass = validator.trim(this.request.body.pass);
+  const re_pass = validator.trim(this.request.body.re_pass);
 
-  var errInfo = '';
+  let errInfo = '';
 
-  var hasEmpty = [loginname, pass, re_pass, email].some(function (item) {
+  const hasEmpty = [loginname, pass, re_pass, email].some((item) => {
     return item === '';
   });
 
@@ -134,138 +129,122 @@ exports.signup = function (req, res, next) {
   errInfo = pass !== re_pass ? '两次密码填写不一致' : '';
 
   if (errInfo) {
-    return res.status(422).wrapRender('sign/signup', {error: errInfo, loginname: loginname, email: email});
+    this.status = 422;
+    return yield this.render('sign/signup', { error: errInfo, loginname, email });
   }
 
-  User
-    .getUsersByQuery({
-      '$or': [
-        {'login_name': loginname},
-        {'email': email}
-      ]
-    }, {})
-    .then(function(users) {
-      if ( users.length > 0 )
-        return res.status(422).render('sign/signup', {error: '用户名或邮箱已被使用', loginname: loginname, email: email});
+  const users = yield User.getUsersByQuery({
+    '$or': [
+      { 'login_name': loginname },
+      { email }
+    ]
+  }, {});
 
-      return tools.bhash(pass);
-    })
-    .then(function(passhash) {
-      var avatarUrl = User.makeGravatar(email);
-      User
-        .newAndSave(loginname, loginname, passhash, email, avatarUrl, false)
-        .then(function() {
-          mail.sendActiveMail(email, utility.md5(email + passhash + config.session_secret), loginname);
-          res.wrapRender('sign/signup', {
-            success: '欢迎加入' + config.name + '！我们已经向您的邮箱发送了一封邮件，点击邮件中的链接激活账号',
-            title: '注册'
-          });
-        });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  if (users.length > 0) {
+    this.status = 422;
+    return yield this.render('sign/signup', { error: '用户名或邮箱已被使用', loginname, email });
+  }
+
+  const passHashed = yield tools.bhash(pass);
+  const avatarUrl = User.makeGravatar(email);
+
+  yield User.newAndSave(loginname, loginname, passHashed, email, avatarUrl, false);
+
+  mail.sendActiveMail(email, utility.md5(email + passHashed + config.session_secret), loginname);
+
+  yield this.render('sign/signup', {
+    success: '欢迎加入' + config.name + '！我们已经向您的邮箱发送了一封邮件，点击邮件中的链接激活账号',
+    title: '注册'
+  });
 };
 
 /**
  * 退出登录
- * @param req
- * @param res
- * @param next
  */
-exports.signout = function (req, res, next) {
-  req.session.destroy();
-  res.clearCookie(config.auth_cookie_name, { path: '/' });
-  res.redirect('back');
+exports.signout = function *signout() {
+  this.session.destroy();
+  this.cookies.clear(config.auth_cookie_name, { signed: true });
+  this.redirect('back');
 };
 
 /**
  * 激活用户账号
- * @param req
- * @param res
- * @param next
  */
-exports.activeUser = function activeUser(req, res, next) {
-  //邮箱中的激活链接参数
-  var key = req.query.key;
-  var name = req.query.name;
+exports.activeUser = function *activeUser() {
+  // 邮箱中的激活链接参数
+  const key = this.query.key;
+  const name = this.query.name;
 
-  User
-    .getUserByLoginName(name)
-    .then(function(user) {
-      if (!user) return next(new Error('[ACTIVE_USER] 未能找到用户：' + name));
+  const user = yield User.getUserByLoginName(name);
+  if (!user) {
+    return this.throw(404, '[ACTIVE_USER] 未能找到用户：' + name);
+  }
 
-      var passhash = user.pwd;
-      if (!user || utility.md5(user.email + passhash + config.session_secret) !== key) {
-        return res.wrapRender('notify/notify', {
-          error: '信息有误，账号无法激活',
-          title: '通知'
-        });
-      }
-
-      if (user.is_active) {
-        return res.wrapRender('notify/notify', {
-          error: '账号已经是激活状态',
-          title: '通知'
-        });
-      }
-
-      user.is_active = true;
-      return user.save();
-    })
-    .then(function() {
-      res.wrapRender('notify/notify', {
-        success: '帐号已被激活，请登录',
-        title: '通知'
-      });
-    })
-    .catch(function(err) {
-      next(err);
+  const passhash = user.pwd;
+  if (!user || utility.md5(user.email + passhash + config.session_secret) !== key) {
+    return yield this.render('notify/notify', {
+      error: '信息有误，账号无法激活',
+      title: '通知'
     });
+  }
+
+  if (user.is_active) {
+    return yield this.render('notify/notify', {
+      error: '账号已经是激活状态',
+      title: '通知'
+    });
+  }
+
+  user.is_active = true;
+  user.save();
+
+  yield this.render('notify/notify', {
+    success: '帐号已被激活，请登录',
+    title: '通知'
+  });
 };
 
-exports.showSearchPass = function (req, res) {
-  res.render('sign/search_pass');
+/**
+ * 找回密码
+ */
+exports.showSearchPass = function *showSearchPass() {
+  yield this.render('sign/search_pass');
 };
 
-exports.updateSearchPass = function (req, res, next) {
-  var email = validator.trim(req.body.email).toLowerCase();
+/**
+ * 更新
+ */
+exports.updateSearchPass = function *updateSearchPass() {
+  const email = validator.trim(this.request.body.email).toLowerCase();
   if (!validator.isEmail(email)) {
-    return res.wrapRender('sign/search_pass', {error: '邮箱不合法', email: email});
+    return yield this.render('sign/search_pass', { error: '邮箱不合法', email });
   }
 
   // 动态生成retrive_key和timestamp到users collection,之后重置密码进行验证
-  var retrieveKey  = uuid.v4();
-  var retrieveTime = new Date().getTime();
+  const retrieveKey = uuid.v4();
+  const retrieveTime = new Date().getTime();
 
-  User
-    .getUserByEmail(email)
-    .then(function(user) {
-      if (!user) {
-        return res.wrapRender('sign/search_pass', {error: '没有这个电子邮箱。', email: email});
-      }
+  const user = User.getUserByEmail(email);
+  if (!user) {
+    return yield this.render('sign/search_pass', { error: '没有这个电子邮箱。', email });
+  }
 
-      user.retrieve_key = retrieveKey;
-      user.retrieve_time = retrieveTime;
-      user.save()
-        .then(function() {
-          // 发送重置密码邮件
-          mail.sendResetPassMail(email, retrieveKey, user.login_name);
-          res.wrapRender('notify/notify', {success: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'});
-        });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  user.retrieve_key = retrieveKey;
+  user.retrieve_time = retrieveTime;
+  yield user.save();
+
+  // 发送重置密码邮件
+  mail.sendResetPassMail(email, retrieveKey, user.login_name);
+
+  yield this.render('notify/notify', {
+    success: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'
+  });
 };
 
 /**
  * reset password
  * 'get' to show the page, 'post' to reset password
  * after reset password, retrieve_key&time will be destroy
- * @param  {http.req}   req
- * @param  {http.res}   res
- * @param  {Function} next
  */
 exports.resetPass = function (req, res, next) {
   var key  = validator.trim(req.query.key);

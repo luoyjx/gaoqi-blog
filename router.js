@@ -6,89 +6,77 @@
  */
 
 const router = require('koa-router')();
+const auth = require('./middleware/auth');
 const index = require('./controllers/index');
-const manage = require('./controllers/console/index');
-const adminArticle = require('./controllers/console/article');
-const adminCategory = require('./controllers/console/category');
-const adminUser = require('./controllers/console/user');
-const adminLink = require('./controllers/console/link');
-const adminLinkGroup = require('./controllers/console/link_group');
-const adminRole = require('./controllers/console/role');
+const user = require('./controllers/users');
+const sign = require('./controllers/sign');
+const rss = require('./controllers/rss');
+const post = require('./controllers/post');
+const tag = require('./controllers/tag');
+const reply = require('./controllers/reply');
+const github = require('./controllers/github');
+const search = require('./controllers/search');
+const message = require('./controllers/message');
+const userFollow = require('./controllers/user_follow');
+const postCollection = require('./controllers/post_collection');
+const consoleIndex = require('./controllers/console/index');
+const consolePost = require('./controllers/console/post');
+const configMiddleware = require('./middleware/conf');
+const passport = require('passport');
 
-const upload = require('./controllers/upload');
-
-const auth = require('./middlewares/auth');
-
-// routes definition
-router.get('/', index.index);
-router.get('/newestArticles', index.newestArticles);
-router.get('/price', index.price);
-router.get('/services', index.services);
-router.get('/userAssistant', index.userAssistant);
-router.get('/userCenter', index.userCenter);
-router.get('/news', index.news);
-router.get('/detail/:id', index.detail);
-
-router.get('/console', manage.index);
-router.get('/console/login', manage.showLogin);
-router.post('/console/login', manage.login);
-router.get('/console/logout', auth.userRequired, manage.logout);
-
-router.get('/console/articles', auth.userRequired, adminArticle.list);
-router.get('/console/articles/verify', auth.userRequired, adminArticle.verifyList);
-router.get('/console/articles/create', auth.userRequired, adminArticle.create);
-router.get('/console/articles/:id', adminArticle.show);
-router.post('/console/articles/save', auth.userRequired, adminArticle.save);
-router.post('/console/articles/verified', auth.userRequiredApi, adminArticle.verifiedByIds);
-router.get('/console/articles/:id/edit', auth.userRequired, adminArticle.edit);
-router.post('/console/articles/:id/update', auth.userRequired, adminArticle.update);
-router.get('/console/articles/:id/remove', auth.userRequiredApi, adminArticle.remove);
-router.get('/console/articles/:id/cancelVerified', auth.userRequiredApi, adminArticle.cancelVerified);
-router.get('/console/articles/:id/top', auth.userRequiredApi, adminArticle.top);
-router.get('/console/articles/:id/cancelTop', auth.userRequiredApi, adminArticle.cancelTop);
-
-router.get('/console/categories', auth.userRequired, adminCategory.list);
-router.post('/console/categories/save', auth.userRequiredApi, adminCategory.save);
-router.post('/console/categories/:id/update', auth.userRequiredApi, adminCategory.update);
-router.get('/console/categories/:id/remove', auth.userRequiredApi, adminCategory.removeById);
-
-router.get('/console/users', auth.userRequired, adminUser.list);
-router.get('/console/users/create', auth.userRequired, adminUser.create);
-router.post('/console/users/save', auth.userRequired, adminUser.save);
-router.get('/console/users/:id/edit', auth.userRequired, adminUser.edit);
-router.post('/console/users/:id/update', auth.userRequired, adminUser.update);
-router.post('/console/users/remove', auth.userRequiredApi, adminUser.removeByIds);
-router.post('/console/users/authorizeBatch', auth.userRequiredApi, adminUser.authorize);
-router.get('/console/users/:name/isExsist', auth.userRequiredApi, adminUser.isExsist);
-
-router.get('/console/links', auth.userRequired, adminLink.list);
-router.get('/console/links/create', auth.userRequired, adminLink.create);
-router.post('/console/links/save', auth.userRequired, adminLink.save);
-router.get('/console/links/:id/edit', auth.userRequired, adminLink.edit);
-router.post('/console/links/:id/update', auth.userRequired, adminLink.update);
-router.get('/console/links/:id/remove', auth.userRequiredApi, adminLink.removeById);
-
-router.get('/console/linkGroups', auth.userRequired, adminLinkGroup.list);
-router.get('/console/linkGroups/create', auth.userRequired, adminLinkGroup.create);
-router.post('/console/linkGroups/save', auth.userRequired, adminLinkGroup.save);
-router.get('/console/linkGroups/:id/edit', auth.userRequired, adminLinkGroup.edit);
-router.post('/console/linkGroups/:id/update', auth.userRequired, adminLinkGroup.update);
-router.get('/console/linkGroups/:id/remove', auth.userRequiredApi, adminLinkGroup.removeById);
-
-router.post('/console/linkGroupItems/save', auth.userRequiredApi, adminLinkGroup.createGroupItem);
-router.post('/console/linkGroupItems/:id/update', auth.userRequiredApi, adminLinkGroup.updateGroupItem);
-router.get('/console/linkGroupItems/:id/remove', auth.userRequiredApi, adminLinkGroup.removeGroupItem);
-router.get('/console/linkGroupItems/:id/enable', auth.userRequiredApi, adminLinkGroup.enableGroupItem);
-router.get('/console/linkGroupItems/:id/disable', auth.userRequiredApi, adminLinkGroup.disableGroupItem);
-
-router.get('/console/roles', auth.userRequired, adminRole.list);
-router.get('/console/roles/create', auth.userRequired, adminRole.create);
-router.post('/console/roles/save', auth.userRequired, adminRole.save);
-router.get('/console/roles/:id/edit', auth.userRequired, adminRole.edit);
-router.post('/console/roles/:id/update', auth.userRequired, adminRole.update);
-router.get('/console/roles/:id/remove', auth.userRequiredApi, adminRole.removeById);
-router.get('/console/roles/:name/isExsist', auth.userRequiredApi, adminRole.isExists);
-
-router.post('/upload', auth.userRequiredApi, upload.upload);
+router.get('/', index.index); // 首页
+router.get('/sitemap.xml', index.sitemap);
+router.get('/signin', sign.showLogin); // 跳到登录页面
+router.post('/signin', sign.signIn); // 登录
+router.get('/signup', sign.showSignup); // 跳到注册页面
+router.post('/signup', sign.signup); // 注册
+router.get('/active_account', sign.activeUser); // 帐号激活
+router.get('/signout', sign.signout); // 退出
+router.get('/search_pass', sign.showSearchPass);  // 找回密码页面
+router.post('/search_pass', sign.updateSearchPass);  // 更新密码
+router.get('/reset_pass', sign.resetPass);  // 进入重置密码页面
+router.post('/reset_pass', sign.updatePass);  // 更新密码
+router.get('/post/create', auth.userRequired, post.showCreate); // 创建文章页面
+router.get('/post/:_id/edit', auth.userRequired, post.edit);
+router.get('/p/:_id', post.index); // 文章内容页
+router.get(/\/post\/(\w+).html/, post.index); // 文章内容页
+router.get('/messages', auth.userRequired, message.index); // 消息
+router.post('/post/:_id/edit', auth.userRequired, post.update);
+router.post('/post/:_id/delete', auth.userRequired, post.remove);
+router.post('/post/:_id/lock', auth.adminRequired, post.lock); // 锁定文章
+router.post('/post/:_id/top', auth.adminRequired, post.top); // 顶置
+router.post('/post/:_id/good', auth.adminRequired, post.good); // 精华
+router.post('/post/:_id/recommend', auth.userRequired, post.recommend); // 推荐
+router.post('/post/:_id/unrecommend', auth.userRequired, post.unRecommend); // 取消推荐
+router.post('/post/:_id/collect', auth.userRequired, post.collect); // 收藏
+router.post('/post/:_id/un_collect', auth.userRequired, post.unCollect); // 取消收藏
+router.post('/post/create', auth.userRequired, post.create); // 新增文章
+router.post('/upload', auth.userRequired, post.upload); // 上传图片
+router.post('/post/:_id/reply', auth.userRequired, reply.add); // 添加评论
+router.get('/u/:name', user.index); // 个人主页
+router.get('/u/:name/top', user.top); // 热门文章
+router.get('/u/:name/replies', user.replies); // 发表的回复
+router.get('/u/:name/setting', auth.userRequired, user.setting); // 设置
+router.post('/u/:name/setting/info', auth.userRequired, user.updateSetting); // 修改设置
+router.post('/u/:name/setting/pwd', auth.userRequired, user.updatePassword); // 修改密码
+router.get('/my/following', auth.userRequired, userFollow.getFollowUserPost); // 关注用户文章
+router.get('/my/post_collection', auth.userRequired, postCollection.getPostCollection); // 用户收藏的文章
+router.get('/tags/:name', tag.getTagByName); // 某个标签
+router.get('/tags', tag.index); // 所有标签
+router.get('/search', search.index); // 搜索
+router.get('/robots.txt', index.robots);
+router.get('/frontEndNavigation', index.feNav); // 前端导航
+router.get('/tools', index.tools); // 常用工具
+router.get('/api', index.api); // api接口
+router.get('/rss', rss.index);
+// github oauth
+router.get('/login/github', configMiddleware.github, passport.authenticate('github'));
+router.get('/login/github/callback',
+  passport.authenticate('github', { failureRedirect: '/signin' }),
+  github.callback);
+router.get('/login/github/new', github.new);
+router.post('/login/github/create', github.create);
+router.get('/console', auth.adminRequired, consoleIndex.index); // 后台首页
+router.get('/console/posts', auth.adminRequired, consolePost.index); // 文章管理
 
 module.exports = router;

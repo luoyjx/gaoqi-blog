@@ -9,6 +9,7 @@ const session = require('koa-generic-session');
 const compress = require('koa-compress');
 const mount = require('koa-mount');
 const serve = require('koa-static');
+const clearCookie = require('koa-clear-cookie');
 
 const config = require('./config');
 const router = require('./router');
@@ -40,6 +41,7 @@ app.use(compress({
   threshold: 2048,
   flush: require('zlib').Z_SYNC_FLUSH
 }));
+app.use(clearCookie());
 app.use(mount('/public', serve(path.join(__dirname, 'public'))));
 app.use(require('koa-bodyparser')({
   formLimit: '10mb',

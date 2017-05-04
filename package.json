@@ -18,6 +18,7 @@
     "is-number": "^3.0.0",
     "koa": "^1.1.2",
     "koa-bodyparser": "^2.0.1",
+    "koa-clear-cookie": "^0.0.2",
     "koa-compress": "^1.0.9",
     "koa-generic-session": "^1.11.5",
     "koa-json": "^1.1.1",

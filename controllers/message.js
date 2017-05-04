@@ -1,7 +1,7 @@
 'use strict';
 
 const Promise = require('bluebird');
-const Message = require('../dao/message');
+const Message = require('../services/message');
 
 exports.index = function *index() {
   const userId = this.session.user._id;

@@ -1,5 +1,10 @@
-exports.index = function (req, res, next) {
-  var q = req.query.q;
+'use strict';
+
+/**
+ * 搜索文章
+ */
+exports.index = function *index() {
+  let q = this.query.q;
   q = encodeURIComponent(q);
-  res.redirect('https://www.baidu.com/s?wd=site:blog.gaoqixhb.com+' + q);
+  this.redirect('https://www.baidu.com/s?wd=site:blog.gaoqixhb.com+' + q);
 };

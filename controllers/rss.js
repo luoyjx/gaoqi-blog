@@ -1,13 +1,10 @@
-/*!
- * rss controller
- */
+'use strict';
 
-var Promise = require('bluebird');
-var config = require('../config');
-var cache = require('../common/cache');
-var convert = require('data2xml')();
-var Post = require('../dao/').Post;
-var render = require('../common/render');
+const config = require('../config');
+const cache = require('../common/cache');
+const convert = require('data2xml')();
+const Post = require('../services/post');
+const render = require('../common/render');
 
 /**
  * rss输出
@@ -15,51 +12,52 @@ var render = require('../common/render');
  * @param res
  * @param next
  */
-exports.index = function (req, res, next) {
+exports.index = function *index() {
   if (!config.rss) {
-    res.statusCode = 404;
-    return res.send('Please set `rss` in configuration');
+    this.status = 404;
+    this.body = 'Please set `rss` in configuration';
+    return;
   }
-  res.contentType('application/xml');
-  cache
-      .get('rss')
-      .then(function(rss) {
-        if (rss) {
-          res.wrapSend(rss);
-          return Promise.resolve();
-        }
 
-        var query_opt = {limit: config.rss.max_rss_items, sort: '-create_at'};
-        return Post.getPostsByQuery({}, query_opt);
-      })
-      .then(function(posts) {
-        if (posts) {
-          var rss_obj = {
-            _attr: { version: '2.0' },
-            channel: {
-              title: config.rss.title,
-              link: config.rss.link,
-              language: config.rss.language,
-              description: config.rss.description,
-              item: []
-            }
-          };
-          posts.forEach(function (post) {
-            rss_obj.channel.item.push({
-              title: post.title,
-              link: config.rss.link + '/p/' + post._id,
-              guid: config.rss.link + '/p/' + post._id,
-              description: render.markdown(post.content),
-              author: post.author.login_name,
-              pubDate: post.create_at.toUTCString()
-            });
-          });
-          var rssContent = convert('rss', rss_obj);
-          cache.set('rss', rssContent, 60 * 5); // 五分钟
-          res.wrapSend(rssContent);
-        }
-      })
-      .catch(function(err) {
-        res.status(500).wrapSend(' rss error');
+  this.type = 'application/xml';
+
+  const rssCache = cache.get('rss');
+
+  if (rssCache) {
+    this.body = rssCache;
+    return;
+  }
+
+  const query_opt = { limit: config.rss.max_rss_items, sort: '-create_at' };
+  const posts = yield Post.getPostsByQuery({}, query_opt);
+
+  const rss_obj = {
+    _attr: { version: '2.0' },
+    channel: {
+      title: config.rss.title,
+      link: config.rss.link,
+      language: config.rss.language,
+      description: config.rss.description,
+      item: []
+    }
+  };
+
+  if (posts) {
+    posts.forEach(function (post) {
+      rss_obj.channel.item.push({
+        title: post.title,
+        link: config.rss.link + '/p/' + post._id,
+        guid: config.rss.link + '/p/' + post._id,
+        description: render.markdown(post.content),
+        author: post.author.login_name,
+        pubDate: post.create_at.toUTCString()
       });
+    });
+  }
+
+  const rssContent = convert('rss', rss_obj);
+
+  yield cache.set('rss', rssContent, 60 * 5); // 五分钟
+
+  this.body = rssContent;
 };

@@ -1,106 +1,57 @@
-/**
- * post collection controller
- * @authors yanjixiong ()
- * @date    2016-12-09 22:43:20
- * @version $Id$
- */
+'use strict';
 
-var _ = require('lodash');
-var config = require('../config');
-var PostCollection = require('../dao').PostCollection;
-var User = require('../dao').User;
+const config = require('../config');
+const PostCollection = require('../services/post_collection');
+const User = require('../services/user');
 
 /**
  * 查询收藏文章
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
  */
-exports.getPostCollection = function getPostCollection(req, res ,next) {
-  var page = req.query.page ? parseInt(req.query.page) : 1;
+exports.getPostCollection = function *getPostCollection() {
+  let page = this.query.page ? parseInt(this.query.page, 10) : 1;
   page = page > 0 ? page : 1;
-  var user = req.session.user;
+  const user = this.session.user;
+  const limit = config.list_topic_count;
+  const options = { skip: (page - 1) * limit, limit, sort: '-create_at' };
 
-  var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' };
-  
-  PostCollection
-    .getCollectionPostByUser(user._id, options)
-    .spread(function(posts, count) {
+  const [posts, count] = yield PostCollection.getCollectionPostByUser(user._id, options);
+  const pages = Math.ceil(count / config.list_topic_count);
 
-      var pages = Math.ceil(count / config.list_topic_count);
-
-      res.render('user/post_collection', {
-        current_page: page,
-        posts: posts,
-        pages: pages,
-        base: '/my/post_collection',
-        title: '文章收藏'
-      });
-    })
-    .catch(function(err) {
-      console.log(err);
-      next(err);
-    })
-}
+  yield this.render('user/post_collection', {
+    current_page: page,
+    posts,
+    pages,
+    base: '/my/post_collection',
+    title: '文章收藏'
+  });
+};
 
 /**
  * 收藏文章
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
  */
-exports.create = function create(req, res, next) {
-  var postId = req.params._id;
-  var user = req.session.user;
+exports.create = function *create() {
+  const postId = this.params._id;
+  const user = this.session.user;
 
-  PostCollection
-    .create(postId, user._id)
-    .then(function() {
-      return User.incCollectCount(user._id)
-        .then(function() {
-          user.collect_post_count++;
-          req.session.user = res.locals.user = user;
-          return Promise.resolve();
-        })
-    })
-    .then(function() {
-      res.wrapSend({ success: 1 });
-    })
-    .catch(function(err) {
-      console.log(err);
-      next(err);
-    })
-}
+  yield PostCollection.create(postId, user._id);
+  yield User.incCollectCount(user._id);
+  user.collect_post_count++;
+  this.session.user = user;
+  this.body = { success: 1 };
+};
 
 /**
  * 取消收藏文章
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
  */
-exports.removeById = function removeById(req, res, next) {
-  var postId = req.params._id;
-  var user = req.session.user;
+exports.removeById = function *removeById() {
+  const postId = this.params._id;
+  const user = this.session.user;
 
-  PostCollection
-    .remove(postId, user._id)
-    .then(function() {
-      return User.decCollectCount(user._id)
-        .then(function() {
-          user.collect_post_count--;
-          req.session.user = res.locals.user = user;
-          return Promise.resolve();
-        })
-    })
-    .then(function() {
-      res.wrapSend({ success: 1 });
-    })
-    .catch(function(err) {
-      console.log(err);
-      next(err);
-    })
-}
+  yield PostCollection.remove(postId, user._id);
+  yield User.decCollectCount(user._id);
+
+  user.collect_post_count--;
+  this.session.user = user;
+
+  this.body = { success: 1 };
+};

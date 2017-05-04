@@ -4,10 +4,10 @@ const Promise = require('bluebird');
 const xmlbuilder = require('xmlbuilder');
 const validator = require('validator');
 const _ = require('lodash');
-const Post = require('../dao').Post;
-const Tag = require('../dao').Tag;
-const Reply = require('../dao').Reply;
-const User = require('../dao').User;
+const Post = require('../services/post');
+const Tag = require('../services/tag');
+const Reply = require('../services/reply');
+const User = require('../services/user');
 const config = require('../config');
 const cache = require('../common/cache');
 

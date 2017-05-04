@@ -869,6 +869,10 @@ koa-bodyparser@^2.0.1:
     co-body "^4.2.0"
     copy-to "^2.0.1"
 
+koa-clear-cookie:
+  version "0.0.2"
+  resolved "http://registry.npm.taobao.org/koa-clear-cookie/download/koa-clear-cookie-0.0.2.tgz#50e9bbcdb6aee6350e495e124212b096e50abfda"
+
 koa-compose@^2.2.0, koa-compose@^2.3.0:
   version "2.5.1"
   resolved "http://registry.npm.taobao.org/koa-compose/download/koa-compose-2.5.1.tgz#726cfb17694de5cb9fbf03c0adf172303f83f156"
