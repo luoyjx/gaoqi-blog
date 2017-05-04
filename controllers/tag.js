@@ -1,107 +1,90 @@
-/*!
- * tag controller
- */
+'use strict';
 
-var Promise = require('bluebird');
-var Tag = require('../dao').Tag;
-var Post = require('../dao').Post;
-var validator = require('validator');
-var cutter = require('../common/cutter');
-var config = require('../config');
+const Promise = require('bluebird');
+const Tag = require('../services/tag');
+const Post = require('../services/post');
+const validator = require('validator');
+const cutter = require('../common/cutter');
+const config = require('../config');
 
 /**
  * 查询所有标签信息
- * @param req
- * @param res
- * @param next
  */
-exports.index = function (req, res, next) {
-  var path = req.path;
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1;
+exports.index = function *index() {
+  const path = this.path;
+  let page = this.query.page ? parseInt(this.query.page, 10) : 1;
   page = page > 0 ? page : 1;
 
-  var limit = 20;
-  var options = {skip: (page - 1) * limit, limit: limit, sort: '-post_count'};
+  const limit = 20;
+  const options = { skip: (page - 1) * limit, limit, sort: '-post_count' };
 
-  Promise
-    .all([
-      Tag.getAllTagsByQuery({}, options)
-        .then(function(tags) {
-          return Promise.map(tags, function(tag) {
-            tag.description = cutter.shorter(tag.description, 200);
-            return tag;
-          })
-        }),
-      Tag.getCountByQuery({})
-        .then(function(all_count) {
-          return Promise.resolve(Math.ceil(all_count / limit));
-        })
-    ])
-    .spread(function(tags, pages) {
-      res.render('tag/list', {
-        base: path,
-        current_page: page,
-        pages: pages,
-        tags: tags,
-        title: '标签 - 第' + page + '页'
-      });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  const [tags, pages] = yield Promise.all([
+    Tag.getAllTagsByQuery({}, options)
+      .then(function (tags) {
+        return Promise.map(tags, function (tag) {
+          tag.description = cutter.shorter(tag.description, 200);
+          return tag;
+        });
+      }),
+    Tag.getCountByQuery({})
+      .then(function (all_count) {
+        return Promise.resolve(Math.ceil(all_count / limit));
+      })
+  ]);
+
+  yield this.render('tag/list', {
+    base: path,
+    current_page: page,
+    pages,
+    tags,
+    title: '标签 - 第' + page + '页'
+  });
 };
 
 /**
  * 某个tag的信息
- * @param req
- * @param res
- * @param next
  */
-exports.getTagByName = function (req, res, next) {
-  var path = req.path;
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1;
-  var name = validator.trim(req.params.name);
+exports.getTagByName = function *getTagByName() {
+  const path = this.path;
+  const page = this.query.page ? parseInt(this.query.page, 10) : 1;
+  let name = validator.trim(this.params.name);
   name = validator.escape(name);
-  var limit = config.list_topic_count;
+  const limit = config.list_topic_count;
 
-  var errorInfo = '';
+  let errorInfo = '';
   if (name.length === '') {
     errorInfo = 'tag名称不能为空';
   }
 
   if (errorInfo) {
-    return res.status(422).render('notify/notify', {error: errorInfo});
+    this.status = 422;
+    return yield this.render('notify/notify', { error: errorInfo });
   }
 
   // post options
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
+  const options = { skip: (page - 1) * limit, limit, sort: '-create_at' };
 
-  Promise
-    .all([
-      Tag.getTagByName(name),
-      Post.getPostsByQuery({tags: name}, options),
-      Post.getCountByQuery({tags: name})
-        .then(function(all_count) {
-          return Promise.resolve(Math.ceil(all_count / limit));
-        })
-    ])
-    .spread(function(tag, posts, pages) {
-      if (!tag) {
-        return res.wrapRender('notify/notify', {error: '该标签可能已经去了火星'});
-      }
+  const [tag, posts, pages] = yield Promise.all([
+    Tag.getTagByName(name),
+    Post.getPostsByQuery({ tags: name }, options),
+    Post.getCountByQuery({ tags: name })
+      .then(function (all_count) {
+        return Promise.resolve(Math.ceil(all_count / limit));
+      })
+  ]);
 
-      tag.short_desc = cutter.shorter(tag.description, 200);
+  if (!tag) {
+    return yield this.render('notify/notify', { error: '该标签可能已经去了火星' });
+  }
 
-      res.wrapRender('tag/index', {
-        title: name  + ' 第' + page + '页',
-        tag: tag,
-        posts: posts.length === 0 ? [] : posts,
-        base: path,
-        current_page: page,
-        pages: pages
-      });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  tag.short_desc = cutter.shorter(tag.description, 200);
+
+  yield this.render('tag/index', {
+    title: name + ' 第' + page + '页',
+    tag,
+    posts: posts.length === 0 ? [] : posts,
+    base: path,
+    current_page: page,
+    pages
+  });
 };

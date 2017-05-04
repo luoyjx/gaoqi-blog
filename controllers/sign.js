@@ -1,6 +1,5 @@
 'use strict';
 
-const Promise = require('bluebird');
 const validator = require('validator');
 const tools = require('../common/tools');
 const User = require('../services/user');
@@ -33,63 +32,55 @@ const notJump = [
 
 /**
  * 登录操作
- * @param req
- * @param res
- * @param next
  */
-exports.signIn = function (req, res, next) {
-  var loginname = validator.trim(req.body.name);
-  var pass = validator.trim(req.body.pass);
+exports.signIn = function *signIn() {
+  const loginname = validator.trim(this.request.body.name);
+  const pass = validator.trim(this.request.body.pass);
 
   if (!loginname || !pass) {
-    res.status(422);
-    return res.render('sign/signin', {error: '信息不完整'});
+    this.status = 422;
+    return yield this.render('sign/signin', { error: '信息不完整' });
   }
 
-  var getUserFunc;
+  let getUserFunc;
   if (loginname.indexOf('@') !== -1) {
     getUserFunc = User.getUserByEmail;
   } else {
     getUserFunc = User.getUserByLoginName;
   }
 
-  var _user;
+  const user = yield getUserFunc(loginname);
 
-  getUserFunc(loginname)
-    .then(function(user) {
-      if (!user) return res.wrapRender('sign/signin', {error: '用户名不存在'});
+  if (!user) {
+    return yield this.render('sign/signin', { error: '用户名不存在' });
+  }
 
-      _user = user;
+  const passhash = user.pwd;
+  // 验证密码
+  const flag = yield tools.bcompare(pass, passhash);
 
-      var passhash = user.pwd;
-      // 验证密码
-      return tools.bcompare(pass, passhash);
-    })
-    .then(function(flag) {
-      if (!flag) return res.wrapRender('sign/signin', {error: '用户名不存在'});
+  if (!flag) {
+    return yield this.render('sign/signin', { error: '用户名不存在' });
+  }
 
-      // 验证是否激活，未激活再次发送激活邮件
-      if (!_user.is_active) {
-        mail.sendActiveMail(_user.email, utility.md5(_user.email + _user.pwd + config.session_secret), user.login_name);
-        res.status(403);
-        return res.wrapRender('sign/signin', {error: '账号未激活，已重新发送激活邮件到' + user.email });
-      }
+  // 验证是否激活，未激活再次发送激活邮件
+  if (!user.is_active) {
+    mail.sendActiveMail(user.email, utility.md5(user.email + user.pwd + config.session_secret), user.login_name);
+    this.status = 403;
+    return yield this.render('sign/signin', { error: '账号未激活，已重新发送激活邮件到' + user.email });
+  }
 
-      // 验证成功，存储session cookie，跳转到首页
-      authFilter.gen_session(_user, res);
-      // 检查需要跳转到首页的页面
-      var refer = req.session._loginReferer || '/';
-      for (var i = 0, len = notJump.length; i !== len; ++i) {
-        if (refer.indexOf(notJump[i]) >= 0) {
-          refer = '/';
-          break;
-        }
-      }
-      res.redirect(refer);
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  // 验证成功，存储session cookie，跳转到首页
+  authFilter.gen_session(user, res);
+  // 检查需要跳转到首页的页面
+  let refer = this.session._loginReferer || '/';
+  for (let i = 0, len = notJump.length; i !== len; ++i) {
+    if (refer.indexOf(notJump[i]) >= 0) {
+      refer = '/';
+      break;
+    }
+  }
+  this.redirect(refer);
 };
 
 /**
@@ -246,62 +237,54 @@ exports.updateSearchPass = function *updateSearchPass() {
  * 'get' to show the page, 'post' to reset password
  * after reset password, retrieve_key&time will be destroy
  */
-exports.resetPass = function (req, res, next) {
-  var key  = validator.trim(req.query.key);
-  var name = validator.trim(req.query.name);
+exports.resetPass = function *resetPass() {
+  const key = validator.trim(this.query.key);
+  const name = validator.trim(this.query.name);
 
-  User
-    .getUserByNameAndKey(name, key)
-    .then(function(user) {
-      if (!user) {
-        return res.status(403).wrapRender('notify/notify', {error: '信息有误，密码无法重置。'});
-      }
+  const user = yield User.getUserByNameAndKey(name, key);
 
-      var now = new Date().getTime();
-      var oneDay = 1000 * 60 * 60 * 24;
-      if (!user.retrieve_time || now - user.retrieve_time > oneDay) {
-        return res.status(403).wrapRender('notify/notify', {error: '该链接已过期，请重新申请。'});
-      }
-      return res.wrapRender('sign/reset', {name: name, key: key});
-    })
-    .catch(function(err) {
-      next(err);
-    });
-};
-
-exports.updatePass = function (req, res, next) {
-  var psw   = validator.trim(req.body.psw) || '';
-  var repsw = validator.trim(req.body.repsw) || '';
-  var key   = validator.trim(req.body.key) || '';
-  var name  = validator.trim(req.body.name) || '';
-
-  if (psw !== repsw) {
-    return res.wrapRender('sign/reset', {name: name, key: key, error: '两次密码输入不一致。'});
+  if (!user) {
+    this.status = 403;
+    return yield this.render('notify/notify', { error: '信息有误，密码无法重置。' });
   }
 
-  User
-    .getUserByNameAndKey(name, key)
-    .then(function(user) {
-      if (!user) {
-        return res.wrapRender('notify/notify', {error: '错误的激活链接'});
-      }
+  const now = new Date().getTime();
+  const oneDay = 1000 * 60 * 60 * 24;
+  if (!user.retrieve_time || now - user.retrieve_time > oneDay) {
+    this.status = 403;
+    return yield this.render('notify/notify', { error: '该链接已过期，请重新申请。' });
+  }
 
-      tools
-        .bhash(psw)
-        .then(function(passhash) {
-          user.pwd           = passhash;
-          user.retrieve_key  = null;
-          user.retrieve_time = null;
-          user.is_active     = true; // 用户激活
+  yield this.render('sign/reset', { name, key });
+};
 
-          user
-            .save()
-            .then(function() {
-              return res.render('notify/notify', {success: '你的密码已重置。'});
-            });
-        });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+/**
+ * 修改密码
+ */
+exports.updatePass = function *updatePass() {
+  const psw = validator.trim(this.request.body.psw) || '';
+  const repsw = validator.trim(this.request.body.repsw) || '';
+  const key = validator.trim(this.request.body.key) || '';
+  const name = validator.trim(this.request.body.name) || '';
+
+  if (psw !== repsw) {
+    return yield this.render('sign/reset', { name, key, error: '两次密码输入不一致。' });
+  }
+
+  const user = yield User.getUserByNameAndKey(name, key);
+
+  if (!user) {
+    return yield this.render('notify/notify', { error: '错误的激活链接' });
+  }
+
+  const passhash = yield tools.bhash(psw);
+
+  user.pwd = passhash;
+  user.retrieve_key = null;
+  user.retrieve_time = null;
+  user.is_active = true; // 用户激活
+
+  yield user.save();
+
+  yield this.render('notify/notify', { success: '你的密码已重置。' });
 };

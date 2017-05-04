@@ -1,49 +1,34 @@
-/**
- * console post controller
- * @authors luoyjx (yjk99@qq.com)
- * @date    2016-11-07 20:35:51
- */
+'use strict';
 
-var Promise = require('bluebird');
-var Post = require('../../dao').Post;
-var config = require('../../config');
+const Promise = require('bluebird');
+const Post = require('../../services/post');
+const config = require('../../config');
 
 module.exports = {
   /**
    * 文章管理首页
-   * @param  {[type]}   req  [description]
-   * @param  {[type]}   res  [description]
-   * @param  {Function} next [description]
-   * @return {[type]}        [description]
    */
-  index: function index(req, res, next) {
-    var page = req.query.page ? parseInt(req.query.page, 10) : 1;
+  index: function *index() {
+    let page = this.query.page ? parseInt(this.query.page, 10) : 1;
     page = page > 0 ? page : 1;
 
-    var query = {};
+    const query = {};
+    const limit = config.list_topic_count;
+    const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' };
 
-    var limit = config.list_topic_count;
-    var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at'};
+    const [posts, count] = yield Promise.all([
+      Post.getPostsByQuery(query, options),
+      Post.getCountByQuery(query)
+    ]);
 
-    Promise
-      .all([
-        Post.getPostsByQuery(query, options),
-        Post.getCountByQuery(query),
-      ])
-      .spread(function(posts, count) {
-        //总页数
-        var pages = Math.ceil(count / limit);
+    // 总页数
+    const pages = Math.ceil(count / limit);
 
-        res.wrapRender('console/post/index', {
-          posts: posts,
-          base: '/',
-          current_page: page,
-          pages: pages,
-        });
-      })
-      .catch(function(err) {
-        return next(err);
-      });
-
+    yield this.render('console/post/index', {
+      posts,
+      base: '/',
+      current_page: page,
+      pages
+    });
   }
 };
