@@ -1,3 +1,6 @@
+{% extends 'layout.html' %}
+
+{% block body %}
 <div class="wrap">
   <div class="container">
     <div class="row">
@@ -5,52 +8,35 @@
         <div class="box">
           <div class="tabs">
             <a class="tab <%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>" href="/">全部</a>
-            <% config.tabs.forEach(function (pair) {
-            var value = pair[0];
-            var text = pair[1];
-            %>
-            <a class="tab <%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>" href="/?tab=<%= value %>"><%= text %></a>
-            <% }) %>
+            {% for pair in config.tabs %}
+            <a class="tab {% if tab and value === tab %} active {% endif %}" href="/?tab={{ pair[0] }}">{{ pair[1] }}</a>
+            {% endfor %}
           </div>
-          <%- partial('post/list', {
-          posts: posts,
-          pages: pages,
-          current_page: current_page,
-          base: '/',
-          tab: tab
-          }) %>
+          {% include './post/list.html' %}
         </div>
       </article>
       <aside class="col-sm-12 col-lg-3">
 
         <!-- 用户卡片 -->
-        <%- partial('./user/card') %>
+        {% include './user/card.html' %}
         
         <!-- 热门标签 -->
-        <%- partial('tag/hot', {
-        tags: tags
-        }) %>
+        {% include './tag/hot.html' %}
 
         <!-- 热门文章 -->
-        <%- partial('post/hot', {
-        hots: hots
-        }) %>
+        {% include './post/hot.html' %}
 
         <!-- 最近加入用户 -->
-        <%- partial('user/user_sidebar_widget', {
-        users: recent_reg,
-        }) %>
+        {% include './user/user_sidebar_widget.html' %}
 
         <!-- 最新评论 -->
-        <%- partial('reply/side_list', {
-        replies: replies,
-        }) %>
-
+        {% include './reply/side_list.html' %}
         
       </aside>
     </div>
   </div>
 </div>
+{% endblock %}
 
 <% block('styles', Loader('/public/css/index.css')
 .css('/public/css/tabs.less')

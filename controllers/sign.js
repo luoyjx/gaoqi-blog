@@ -6,8 +6,8 @@ const User = require('../services/user');
 const mail = require('../common/mail');
 const utility = require('utility');
 const config = require('../config');
-const authFilter = require('../middleware/auth');
-const uuid = require('node-uuid');
+const authFilter = require('../middlewares/auth');
+const uuid = require('uuid');
 
 /**
  * 跳转到登录页面

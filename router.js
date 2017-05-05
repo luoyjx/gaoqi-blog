@@ -22,7 +22,7 @@ const postCollection = require('./controllers/post_collection');
 const consoleIndex = require('./controllers/console/index');
 const consolePost = require('./controllers/console/post');
 const configMiddleware = require('./middlewares/conf');
-const passport = require('passport');
+const passport = require('koa-passport');
 
 router.get('/', index.index); // 首页
 router.get('/sitemap.xml', index.sitemap);
@@ -48,8 +48,8 @@ router.post('/post/:_id/top', auth.adminRequired, post.top); // 顶置
 router.post('/post/:_id/good', auth.adminRequired, post.good); // 精华
 router.post('/post/:_id/recommend', auth.userRequired, post.recommend); // 推荐
 router.post('/post/:_id/unrecommend', auth.userRequired, post.unRecommend); // 取消推荐
-router.post('/post/:_id/collect', auth.userRequired, post.collect); // 收藏
-router.post('/post/:_id/un_collect', auth.userRequired, post.unCollect); // 取消收藏
+router.get('/post/:_id/collect', auth.userRequired, postCollection.create); // 收藏
+router.get('/post/:_id/un_collect', auth.userRequired, postCollection.removeById); // 取消收藏
 router.post('/post/create', auth.userRequired, post.create); // 新增文章
 router.post('/upload', auth.userRequired, post.upload); // 上传图片
 router.post('/post/:_id/reply', auth.userRequired, reply.add); // 添加评论

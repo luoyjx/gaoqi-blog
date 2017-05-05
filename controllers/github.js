@@ -1,9 +1,9 @@
 //var Promise = require('bluebird');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var validator = require('validator');
 var Models = require('../models');
 var User = Models.User;
-var authMiddleWare = require('../middleware/auth');
+var authMiddleWare = require('../middlewares/auth');
 var tools = require('../common/tools');
 var config = require('../config');
 

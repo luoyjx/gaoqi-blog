@@ -85,14 +85,15 @@ app.on('error', function (err, ctx) {
   err.url = err.url || ctx.request.url;
   console.log(err);
   console.log(err.stack);
-  logger.error(err);
   log.error('server error', err, ctx);
 });
 
 app = http.createServer(app.callback());
 
 if (!module.parent) {
-  app.listen(config.port);
+  app.listen(config.port, function () {
+    console.log(`Server listening on port => ${config.port} at ${new Date()}`);
+  });
 }
 
 module.exports = app;

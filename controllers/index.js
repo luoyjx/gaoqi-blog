@@ -67,7 +67,7 @@ exports.index = function *index() {
     arr.push(Tag.getHotTagsByQuery(tag_options));
   }
 
-  const [posts, count, replies, recentReg, hotPosts, hotTags] = Promise.all(arr);
+  const [posts, count, replies, recentReg, hotPosts, hotTags] = yield Promise.all(arr);
   // 总页数
   const pages = Math.ceil(count / limit);
   // 热门文章

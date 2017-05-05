@@ -5,8 +5,8 @@
  */
 
 const Promise = require('bluebird');
-const Reply = models.Reply;
 const models = require('../models');
+const Reply = models.Reply;
 const tools = require('../common/tools');
 const at = require('../common/at');
 const User = require('./user');

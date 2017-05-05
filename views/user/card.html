@@ -14,11 +14,11 @@
     <div class="clearfix mb-10"></div>
     <span class="signature">
         “
-        <% if (user.signature) {%>
-            <%-escapeSignature(user.signature)%>
-        <%} else {%>
+        {% if user.signature %}
+            {{ escapeSignature(user.signature) | safe }}
+        {% else %}
             这家伙连签名都懒得写
-        <%}%>
+        {% endif %}
         ”
     </span>
   </div>

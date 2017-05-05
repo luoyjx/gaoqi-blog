@@ -1,59 +1,42 @@
-<% if(!posts || posts.length === 0){ %>
-<section class="cell">
-    <h5>这里还什么都还没有留下</h5>
-</section>
-<% }else{ %>
-    <% posts.forEach(function (post, index) { %>
+{% if posts and posts.length == 0 %}
+    {% for post in posts %}
     <section class="cell clearfix">
         <div class="item-img">
             <div class="content-info-view">
-              <a href="/u/<%= post.author.login_name %>" >
-                <img class="avatar" alt="<%= post.author.login_name %>" src="<%= post.author.avatar %>" />
+              <a href="/u/{{ post.author.login_name }}" >
+                <img class="avatar" alt="{{ post.author.login_name }}" src="{{ post.author.avatar }}" />
               </a>
             </div>
         </div>
         <div class="item-content">
             <h2 class="h4 item-title">
-                <a href="/p/<%= post._id %>#reply<%= post.reply_count %>"><%= post.title %></a>
-                <% if (post.top == true) { %>
+                <a href="/p/{{ post._id }}#reply{{ post.reply_count }}">{{ post.title }}</a>
+                {% if post.top == true %}
                 <span class="glyphicon glyphicon-pushpin gray f-12" title="顶置"></span>
-                <% } %>
-                <% if (post.reply_count > 0) { %>
-                    <a class="badge-link" href="/p/<%= post._id %>#reply<%= post.reply_count %>">
-                        <span class="badge"><%= post.reply_count %></span>
+                {% endif %}
+                {% if post.reply_count > 0 %}
+                    <a class="badge-link" href="/p/{{ post._id }}#reply{{ post.reply_count }}">
+                        <span class="badge">{{ post.reply_count }}</span>
                     </a>
-                <% } %>
+                {% endif %}
             </h2>
             <p class="item-attr">
-                <% if (typeof tab === 'undefined' || tab === '') { %>
-                  <a class="category" href="/?tab=<%= post.category %>"><%= post.categoryName %></a>
+                {% if (not tab) or (tab === '') %}
+                  <a class="category" href="/?tab={{ post.category }}">{{ post.categoryName }}</a>
                   <span class="addtion">&nbsp;•&nbsp;</span>
-                <% } %>
-                <strong><a href="/u/<%= post.author.login_name %>"><%= post.author.login_name %></a></strong>
+                {% endif %}
+                <strong><a href="/u/{{ post.author.login_name }}">{{ post.author.login_name }}</a></strong>
                 <span class="addtion">&nbsp;•&nbsp;</span>
-                <span class="addtion f-12"><%= post.friendly_create_at %></span>
-                <!-- <span class="addtion">&nbsp;•&nbsp;</span>
-                <span class="addtion f-12 mr-5"><%= post.friendly_pv %>浏览</span> -->
-                <!-- <span class="tags">
-                <% if(post.tags){ %>
-                <span>
-                <% post.tags.forEach(function (tag, index) { %>
-                <% if (tag) {%>
-                <a class="tag mr-5" href="/tags/<%= tag %>" title="<%= tag %>相关的文章"><%= tag %></a>
-                <% }}); %>
-                </span>
-                <% }%>
-                </span> -->
+                <span class="addtion f-12">{{ post.friendly_create_at }}</span>
             </p>
         </div>
     </section>
-    <% }); %>
+    {% endfor %}
     <div>
-        <%- partial('../paging', {
-        pages: pages,
-        current_page: current_page,
-        base: base,
-        tab: tab || ''
-        }) %>
+    {% include '../paging.html' %}
     </div>
-<% } %>
+{% else %}
+<section class="cell">
+    <h5>这里还什么都还没有留下</h5>
+</section>
+{% endif %}
