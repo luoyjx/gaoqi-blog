@@ -6,7 +6,7 @@
  */
 
 const router = require('koa-router')();
-const auth = require('./middleware/auth');
+const auth = require('./middlewares/auth');
 const index = require('./controllers/index');
 const user = require('./controllers/users');
 const sign = require('./controllers/sign');
@@ -21,7 +21,7 @@ const userFollow = require('./controllers/user_follow');
 const postCollection = require('./controllers/post_collection');
 const consoleIndex = require('./controllers/console/index');
 const consolePost = require('./controllers/console/post');
-const configMiddleware = require('./middleware/conf');
+const configMiddleware = require('./middlewares/conf');
 const passport = require('passport');
 
 router.get('/', index.index); // 首页

@@ -1,5 +1,6 @@
 'use strict';
 
+require('./models');
 const http = require('http');
 const path = require('path');
 const logger = require('koa-logger');
