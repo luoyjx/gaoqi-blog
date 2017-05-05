@@ -1,31 +1,25 @@
-/*!
- * filter api
- */
+'use strict';
 
-var UserModel = require('../models').User;
-var validator = require('validator');
+const UserModel = require('../models').User;
+const validator = require('validator');
 
 /**
  * 通过accesstoken查找用户
- * @param req
- * @param res
- * @param next
  */
-var auth = function (req, res, next) {
-  var accessToken = req.body.accesstoken || req.query.accesstoken;
+const auth = function *auth(next) {
+  let accessToken = this.request.body.accesstoken || this.query.accesstoken;
   accessToken = validator.trim(accessToken);
   console.log(accessToken);
-  UserModel
-    .findOne({accessToken: accessToken})
-    .exec()
-    .then(function(user) {
-      if (!user) {
-        res.status(403);
-        return res.send({error_msg: 'wrong accessToken'});
-      }
-      req.user = user;
-      next();
-    });
+  const user = yield UserModel.findOne({ accessToken }).exec();
+
+  if (!user) {
+    this.status = 403;
+    this.body = { error_msg: 'wrong accessToken' };
+    return;
+  }
+  this.user = user;
+
+  yield next;
 };
 
 exports.auth = auth;

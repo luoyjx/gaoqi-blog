@@ -27,6 +27,7 @@
     "koa-nunjucks-2": "^2.2.0",
     "koa-onerror": "^1.2.1",
     "koa-router": "^5.3.0",
+    "koa-safe-jsonp": "^0.3.1",
     "koa-static": "^1.5.2",
     "koa-views": "^3.1.0",
     "lodash": "^4.17.4",

@@ -1,8 +1,7 @@
-/*!
- * tag web api
- */
-var Tag = require('../dao').Tag;
-var validator = require('validator');
+'use strict';
+
+const Tag = require('../services/tag');
+const validator = require('validator');
 
 /**
  * 根据名称关键字搜索标签
@@ -10,127 +9,115 @@ var validator = require('validator');
  * @param res
  * @param next
  */
-exports.searchTagsByName = function (req, res, next) {
-  var name = validator.trim(req.query.q);
-  var callback = req.query.callback;
+exports.searchTagsByName = function *searchTagsByName() {
+  const name = validator.trim(this.query.q);
   if (!name) {
-    return res.end(callback + '([])');
+    this.jsonp = [];
+    return;
   }
 
-  var pattern = new RegExp("^.*" + name + ".*$", "igm");
-  var options = {limit: 10, sort: '-post_count'};
+  const pattern = new RegExp('^.*' + name + '.*$', 'igm');
+  const options = { limit: 10, sort: '-post_count' };
 
-  Tag
-    .getAllTagsByQuery({name: pattern}, options)
-    .then(function(tags) {
-      //数据库中不存在此tag则返回只当前tag名称
-      if (tags.length === 0) {
-        return res.end(callback + '([{name: "' + name + '"}])');
-      }
-      //如果tags中不存在当前名称tag则加到第一个元素
-      var exists = false;
-      var container = [];
-      tags.forEach(function (tag) {
-        if (tag.name.toLowerCase() == name) {
-          exists = true;
-        }
-        container.push({name: tag.name});
-      });
-      if (!exists) {
-        if (container.length === 10) {
-          container.pop();
-        }
-        container.unshift({name: name});
-      }
-      return res.end(callback + '(' +JSON.stringify(container) + ')');
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  const tags = yield Tag.getAllTagsByQuery({ name: pattern }, options);
+
+  // 数据库中不存在此tag则返回只当前tag名称
+  if (tags.length === 0) {
+    this.jsonp = [{ name }];
+    return;
+  }
+
+  // 如果tags中不存在当前名称tag则加到第一个元素
+  let exists = false;
+  const container = [];
+  tags.forEach(function (tag) {
+    if (tag.name.toLowerCase() === name) {
+      exists = true;
+    }
+    container.push({ name: tag.name });
+  });
+
+  if (!exists) {
+    if (container.length === 10) {
+      container.pop();
+    }
+    container.unshift({ name });
+  }
+
+  this.jsonp = container;
 };
 
 /**
  * 新增一个tag
- * @param req
- * @param res
- * @param next
  */
-exports.addTag = function (req, res, next) {
-  var name = validator.trim(req.body.name);
+exports.addTag = function *addTag() {
+  let name = validator.trim(this.request.body.name);
   name = validator.escape(name);
-  var description = validator.trim(req.body.description);
+  let description = validator.trim(this.request.body.description);
   description = validator.escape(description);
 
   // 验证
-  var editError;
+  let editError;
   if (name === '') {
     editError = '标题不能是空的';
   }
   // END 验证
 
   if (editError) {
-    res.status(422);
-    return res.wrapSend({
+    this.status = 422;
+    this.body = {
       error_msg: editError
-    });
+    };
+    return;
   }
 
-  //查询是否存在这个tag，不存在则添加
-  Tag
-    .getTagByName(name)
-    .then(function(tag) {
-      if (tag) {
-        if (description) {
-          tag.description = description;
-          tag.update_at = new Date();
-          tag.save();
-          return res.wrapSend({
-            success: 1,
-            tag_id: tag._id,
-            msg: '更新成功'
-          });
-        } else {
-          return res.wrapSend({
-            error_msg: 'tag已存在'
-          });
-        }
-      } else {
-        return Tag
-          .newAndSave(name, description)
-          .then(function(tag) {
-            res.wrapSend({success: 1, tag_id: tag._id});
-          });
-      }
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  // 查询是否存在这个tag，不存在则添加
+  const tag = yield Tag.getTagByName(name);
+
+  if (tag) {
+    if (description) {
+      tag.description = description;
+      tag.update_at = new Date();
+      yield tag.save();
+
+      this.body = {
+        success: 1,
+        tag_id: tag._id,
+        msg: '更新成功'
+      };
+      return;
+    }
+
+    this.body = {
+      error_msg: 'tag已存在'
+    };
+    return;
+  }
+
+  const tagSaved = yield Tag.newAndSave(name, description);
+  this.body = { success: 1, tag_id: tagSaved._id };
 };
 
 /**
  * 关注标签
- * @param req
- * @param res
- * @param next
  */
-exports.follow = function (req, res, next) {
-  var user = req.session.user;
-  var tag_id = validator.trim(req.params._id);
+exports.follow = function *follow() {
+  const user = this.session.user;
+  const tagId = validator.trim(this.params._id);
   if (!user) {
-    return res.json({success: 0, msg: '未登录'});
-  } else if (!tag_id) {
-    return res.status(403).json({success: 0, msg: '未知的标签'})
+    this.body = { success: 0, msg: '未登录' };
+    return;
+  } else if (!tagId) {
+    this.status = 403;
+    this.body = { success: 0, msg: '未知的标签' };
   }
 
-  res.json({success: 1, msg: '', data: 1});
+  this.body = { success: 1, msg: '', data: 1 };
 };
 
 /**
  * 取消关注标签
- * @param req
- * @param res
- * @param next
  */
-exports.unFollow = function (req, res, next) {
+exports.unFollow = function *unFollow() {
 
 };

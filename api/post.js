@@ -1,12 +1,10 @@
-/*!
- * post web api
- */
+'use strict';
 
-var validator = require('validator');
-var Post = require('../dao').Post;
-var User = require('../dao').User;
-var Tag = require('../dao').Tag;
-var html2md = require('html2markdown');
+const validator = require('validator');
+const Post = require('../services/post');
+const User = require('../services/user');
+const Tag = require('../services/tag');
+const html2md = require('html2markdown');
 
 /**
  * 通过api接口添加文章
@@ -14,20 +12,20 @@ var html2md = require('html2markdown');
  * @param res
  * @param next
  */
-exports.create = function (req, res, next) {
-  var category = validator.trim(req.body.category);
+exports.create = function *create() {
+  let category = validator.trim(this.request.body.category);
   category = validator.escape(category);
-  var title = validator.trim(req.body.title);
-  title = validator.escape(title);//escape 将html 等特殊符号 标签转义
-  var description = validator.trim(req.body.description);
+  let title = validator.trim(this.request.body.title);
+  title = validator.escape(title); // escape 将html 等特殊符号 标签转义
+  let description = validator.trim(this.request.body.description);
   description = validator.escape(description);
-  var content = validator.trim(req.body.content);
-  var tags = validator.trim(req.body.tags);
-  var isHtml = isNaN(validator.trim(req.body.is_html)) ?
-    1 : parseInt(validator.trim(req.body.is_html));//文章内容是否为html，是则转换为markdown
+  let content = validator.trim(this.request.body.content);
+  const tags = validator.trim(this.request.body.tags);
+  const isHtml = isNaN(validator.trim(this.request.body.is_html)) ?
+    1 : parseInt(validator.trim(this.request.body.is_html), 10); // 文章内容是否为html，是则转换为markdown
 
   // 验证
-  var editError;
+  let editError;
   if (title === '') {
     editError = '标题不能是空的。';
   } else if (title.length < 5 || title.length > 100) {
@@ -42,40 +40,30 @@ exports.create = function (req, res, next) {
   // END 验证
 
   if (editError) {
-    res.status(422);
-    return res.wrapSend({
+    this.status = 422;
+    this.body = {
       error_msg: editError
-    });
+    };
+    return;
   }
 
-  var tagArr = tags ? tags.split(',') : [];
-  content = isHtml === 1 ? html2md(content) : content;//转换html成markdown格式
+  let tagArr = tags ? tags.split(',') : [];
+  content = isHtml === 1 ? html2md(content) : content; // 转换html成markdown格式
 
-  Post
-    .newAndSave(title, description, content, req.user._id, tagArr, category)
-    .then(function(post) {
-      return User
-        .getUserById(req.user.id)
-        .then(function(user) {
-          user.score += 5;
-          user.post_count += 1;
-          user.save();
-          req.user = user;
-        })
-        .then(function() {
-          res.wrapSend({
-            success: 1,
-            post_id: post._id
-          });
-        })
-    })
-    .then(function() {
-      tagArr = tagArr.length > 0 ? tagArr : [];
-      tagArr.forEach(function (tag) {
-        Tag.newAndSave(tag, '');
-      });
-    })
-    .catch(function(err) {
-      next(err);
-    });
+  const post = yield Post.newAndSave(title, description, content, this.user._id, tagArr, category);
+  const user = yield User.getUserById(this.user._id);
+
+  user.score += 5;
+  user.post_count += 1;
+  user.save();
+  this.user = user;
+  this.body = {
+    success: 1,
+    post_id: post._id
+  };
+
+  tagArr = tagArr.length > 0 ? tagArr : [];
+  tagArr.forEach(function (tag) {
+    Tag.newAndSave(tag, '');
+  });
 };

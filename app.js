@@ -4,11 +4,13 @@ const http = require('http');
 const path = require('path');
 const logger = require('koa-logger');
 const json = require('koa-json');
+const jsonp = require('koa-safe-jsonp');
 const koaNunjucks = require('koa-nunjucks-2');
 const session = require('koa-generic-session');
 const compress = require('koa-compress');
 const mount = require('koa-mount');
 const serve = require('koa-static');
+const onerror = require('koa-onerror');
 const clearCookie = require('koa-clear-cookie');
 
 const config = require('./config');
@@ -17,6 +19,10 @@ const filters = require('./common/filters');
 const log = require('./common/logger');
 
 let app = require('koa')();
+
+onerror(app);
+
+jsonp(app);
 
 // global middlewares
 app.context.render = koaNunjucks({
