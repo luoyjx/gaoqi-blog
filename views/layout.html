@@ -1,15 +1,183 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <% if(typeof(title) !== 'undefined') {%>
+    <title> <%= title %> - 搞起博客</title>
+    <% } else { %>
+    <title> <%= config.name %></title>
+    <% } %>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta property="wb:webmaster" content="7f0d2e93ac57e213" />
+    <meta name="referrer" content="always">
+    <meta name="google-site-verification" content="goudg253OBdLjz3o4x1l2dsrQ6gUtVSQ1CvSqm2cLYo" />
+    <meta name="baidu-site-verification" content="Rt6t23bfTZ" />
+    <meta name="shenma-site-verification" content="4ad4d8d16851e7fd3f067ec54eba8c72" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>前台</title>
-    {% block css %}{% endblock %}
-  </head>
-  <body>
-    {% block body %}{% endblock %}
-    
-    {% block script %}{% endblock %}
-  </body>
+    <% if(typeof(description) !== 'undefined') { %>
+    <meta name="description" content="<%= description %>" />
+    <% } else {  %>
+    <meta name="description" content="<%= config.description %>" />
+    <% } %>
+    <% if (config.keywords) { %>
+    <meta name="keywords" content="<%= config.keywords %>" />
+    <% } %>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <%- block('meta').toString() %>
+    <link rel="dns-prefetch" href="http://hm.baidu.com" />
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="/rss"/>
+    <% if (config.site_icon) { %>
+    <link rel="icon" href="<%- staticFile(config.site_icon) %>" type="image/x-icon"/>
+    <% } %>
+    <link rel="stylesheet" type="text/css" href="/public/lib/nprogress/nprogress.css">
+    <link rel="stylesheet" type="text/css" href="<%= config.site_assets_host %>/public/lib/bootstrap/dist/css/bootstrap.min.css">
+    <!-- style -->
+    <%- Loader('/public/css/global.css')
+    .css('/public/css/base.less')
+    .css('/public/css/header.less')
+    .css('/public/css/body.less')
+    .css('/public/css/gotop.css')
+    .css('/public/css/footer.less')
+    .done(assets, config.site_assets_host, config.mini_assets)
+    %>
+
+    <%- block('styles').toString() %>
+
+    <!--[if lt IE 9]>
+    <script src="//o7xo702bw.qnssl.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+    <script src="//o7xo702bw.qnssl.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <meta content="_csrf" name="csrf-param">
+    <meta content="<%= csrf %>" name="csrf-token">
+    <script src="/public/lib/nprogress/nprogress.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        NProgress.configure({ showSpinner: false });
+        NProgress.start();
+    </script>
+    <header class="navbar navbar-inverse navbar-static-top " role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="logo" href="/"><img src="<%= config.site_logo %>" alt="logo" /></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                  <li><a class="menu" href="/" >首页</a></li>
+                  <li><a class="menu" href="/tags" >标签</a></li>
+                  <li><a class="menu" href="/frontEndNavigation" >导航</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <% if (typeof(user) !== 'undefined') { %>
+                    <li>
+                      <a class="menu" href="/messages" >
+                        <% if (user.messages_count) { %>
+                        <span class="badge msg-count"><%= user.messages_count %></span>
+                        <% } %>
+                        消息
+                      </a>
+                    </li>
+                    <li><a class="menu" href="/u/<%= user.login_name %>">主页</a></li>
+                    <li><a class="menu" href="/u/<%= user.login_name %>/setting">设置</a></li>
+                    <li><a class="menu" href="/signout">退出</a></li>
+                    <% } else { %>
+                    <li><a class="menu" href="/signin" >登录</a></li>
+                    <li><a class="menu" href="/signup" >注册</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <% if (typeof user !== 'undefined' && user.is_admin) { %>
+    <div class="nav-admin">
+        <div class="container">
+            <ul class="list-unstyled admin-menus">
+                <li><a href="/console">仪表盘</a></li>
+                <li><a href="/console/users">用户</a></li>
+                <li><a href="/console/posts">文章</a></li>
+                <li><a href="/console/categories">分类</a></li>
+                <li><a href="/console/tags">标签</a></li>
+            </ul>
+        </div>
+    </div>
+    <% } %>
+    <%- body %>
+    <div id="page"><div id="gotoTop"><span class="glyphicon glyphicon-menu-up"></span></div></div>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <ul class="list-info col-xs-12 col-md-2 hidden-xs">
+                    <li class="li-header">常用链接</li>
+                    <li><a href="/tools" target="_blank">在线工具</a></li>
+                    <li><a href="/api" target="_blank">API接口</a></li>
+                    <li><a href="/rss" target="_blank">RSS订阅</a></li>
+                </ul>
+                <ul class="list-unstyled col-xs-12 col-md-4">
+                    <li class="li-header">关于本站</li>
+                    <li>
+                        <p class="text-muted env-info">
+                            本站由&nbsp;<strong><a href="https://github.com/luoyjx/gaoqi-blog"><%= config.project_name %>@<%= config.project_version %></a></strong>&nbsp;强力驱动
+                        </p>
+                        <p class="text-muted env-info">
+                            服务器搭建在<a  href="http://s.click.taobao.com/t?e=m%3D2%26s%3DmkGL%2FSVe5MscQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAoB1A%2B0piUXP84HoUefOMV8iWCUEgcPaQsk%2F4%2B4oykvhWjImVPGQiTmvDUgKUgjviedn1BbglxZYxUhy8exlzcq9AmARIwX9K%2BnbtOD3UdznPV1H2z0iQv9eY%2By0blbhscYl7w3%2FA2kb" target="_blank">阿里云</a><br/>
+                            性能监控由<a href="http://alinode.aliyun.com/">alinode</a>提供<br/>
+                            存储由<a href="https://portal.qiniu.com/signup?code=3l9nuugzositu" target="_blank">七牛云存储</a>提供<br/>
+                        </p>
+                        <p class="text-muted env-info">
+                            <a href="http://www.miibeian.gov.cn/" rel="nofollow" target="_blank">鄂ICP备14001576号-1</a>
+                            <% if (config.cnzz_tracker_id && !config.debug) { %>
+                        <div style="display: none;"><script src="//s13.cnzz.com/z_stat.php?id=1253178185&web_id=1253178185" language="JavaScript"></script></div>
+                        <script type="text/javascript">
+                            var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+                            document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F59acccd43801ac1b47f47fd07d7a479a' type='text/javascript'%3E%3C/script%3E"));
+                        </script>
+                        <% } %>
+                        </p>
+                    </li>
+                </ul>
+                <ul class="list-info list-inline col-xs-12 col-md-6 hidden-xs">
+                    <li class="li-header">友情链接</li>
+                    <li><a href="https://cnodejs.org/" title="CNode中文社区" target="_blank">Cnode中文社区</a></li>
+                    <li><a href="http://www.v2ex.com/?r=luoyjx" title="V2EX" target="_blank">V2EX</a></li>
+                    <li><a href="http://lusongsong.com" title="卢松松博客" target="_blank">卢松松博客</a></li>
+                    <li><a href="http://www.html-js.cn/" title="前端开发俱乐部" target="_blank">前端开发俱乐部</a></li>
+                    <li><a href="http://yanjixiong.com" title="演技熊的梦话" target="_blank">演技熊的梦话</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <!-- scripts -->
+    <%- Loader('/public/js/global.js')
+    .js('/public/lib/jquery/dist/jquery.js')
+    .js('/public/lib/lodash.compat.js')
+    .js('/public/lib/jquery-ujs.js')
+    .js('/public/lib/bootstrap/dist/js/bootstrap.js')
+    .js('/public/lib/jquery.caret.js')
+    .js('/public/lib/jquery.atwho.js')
+    .js('/public/lib/jquery.scrolltofixed.js')
+    .js('/public/lib/markdownit.js')
+    .js('/public/lib/code-prettify/prettify.js')
+    .js('/public/js/common.js')
+    .done(assets, config.site_assets_host, config.mini_assets)
+    %>
+    <%- block('script').toString() %>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-55458404-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+</body>
 </html>

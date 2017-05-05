@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+  <div class="panel-heading">最近加入</div>
+  <div class="panel-body">
+    <% if(users && users.length > 0){ %>
+    <ul class="list-inline avatars">
+      <%  users.forEach(function(user, index){%>
+      <li class="">
+          <a href="/u/<%= user.login_name %>" >
+            <img class="avatar-sm" alt="<%= user.login_name %>" src="<%= user.avatar %>" data-toggle="tooltip"
+                 data-placement="bottom" title="<%= user.login_name %>"/>
+          </a>
+      </li>
+      <% }); %>
+    </ul>
+    <% }else{ %>
+    <ul class="list-unstyled list-overhidden">
+      <li class="font-14"><div>还没有小伙伴加入</div></li>
+    </ul>
+    <% } %>
+  </div>
+</div>

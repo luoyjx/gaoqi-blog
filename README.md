@@ -13,7 +13,7 @@ gaoqi-blog
 [coverage-url]: https://coveralls.io/r/luoyjx/gaoqi-blog?branch=master
 [david-image]: https://img.shields.io/david/luoyjx/gaoqi-blog.svg?style=flat-square
 [david-url]: https://david-dm.org/luoyjx/gaoqi-blog
-[node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
+[node-image]: https://img.shields.io/badge/node.js-%3E=_6.0.0-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 
 
@@ -23,7 +23,7 @@ gaoqi-blog
 * mongodb v3.x(已经迁移到3.0版本的 wiredTiger 引擎，可使用2.6，不影响)
   迁移过程看这里
   http://blog.gaoqixhb.com/p/55cb5fc17c68e69a01af69aa
-* redis v2.6.13
+* redis v3.x
 
 # 安装运行
 
@@ -45,6 +45,9 @@ gaoqi-blog
 * `npm run test-cov`
 
 # changelog
+
+## 2.0.0
+* controller 层使用 koa@1.x 进行重构
 
 ## 1.0.6  / 2017-02-06
 * twitter发送新帖

@@ -1,0 +1,139 @@
+<!-- style -->
+<% block('styles', Loader('/public/css/post.edit.css')
+.css('/public/lib/editor/editor.css')
+.css('/public/lib/webuploader/webuploader.css')
+.css('/public/lib/code-prettify/prettify.css')
+.css('/public/css/page/post.edit.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <div class="col-xs-12 col-lg-9 pr-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                            <li><a href="/">首页</a></li>
+                            <li>发布文章</li>
+                        </ol>
+                    </div>
+                    <div class="panel-body">
+                        <% if(typeof(edit_error) !== 'undefined' && edit_error){ %>
+                        <div class="alert alert-danger">
+                            <a class="close" data-dismiss="alert" href="#">&times;</a>
+                            <strong><%= edit_error %></strong>
+                        </div>
+                        <% } %>
+                        <% if(typeof(error) !== 'undefined' && error){ %>
+                        <div class="alert alert-danger">
+                            <strong><%= error %></strong>
+                        </div>
+                        <% }else{ %>
+                        <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
+                        <form id='create_topic_form' action='/post/<%= post_id %>/edit' method='post' role="form">
+                        <% } else { %>
+                        <form id='create_topic_form' action='/post/create' method='post' role="form">
+                        <% } %>
+                        <fieldset>
+                            <span id="topic_create_warn"></span>
+
+                            <div>
+                                <span class="tab-selector">选择分类：</span>
+                                <select class="" name="category" id="tab-value" autofocus>
+                                    <option >请选择</option>
+                                    <%
+                                    config.tabs.forEach(function (pair) {
+                                    var value = pair[0];
+                                    var text = pair[1];
+                                    %>
+                                    <option value="<%=value%>"
+                                    <%= (typeof(category) !== 'undefined' && category === value) ? 'selected': '' %>><%=text%></option>
+
+                                    <%});%>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <!--[if lte IE 9]>
+                                <label for="exampleInputPassword1">Password</label>
+                                <![endif]-->
+                                <input class='span9 form-control input-sm' id='title' name='title' 
+                                      placeholder="标题   字数10 字以上"
+                                    value="<%= typeof(post_title) !== 'undefined' && post_title || '' %>" />
+                            </div>
+                            <!--[if lte IE 9]>
+                            <!--<span>摘要</span>-->
+                            <![endif]-->
+                            <!--[if lte IE 9]>
+                            <span>标签</span>
+                            <![endif]-->
+                            <div>
+                                <div class="input-tags">
+                                    <input id="tag_autocomplete" type="text"
+                                           class="tagText empty form-control input-sm" placeholder="标签，如：javascript"
+                                           style="text-transform: lowercase;"/>
+                                    <% if(typeof(tags) !== 'undefined') {
+                                    tags.forEach(function (tag){
+                                    if(tag) {
+                                    %>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control select-tag input-sm"
+                                                   id="exampleInputAmount" placeholder="" disabled="disabled"
+                                                   value="<%= tag %>">
+                                            <a class="input-group-addon tagClose"
+                                               href="javascript:void(0);">&times;</a>
+                                        </div>
+                                    </div>
+                                    <%
+                                    }
+                                    });
+                                    } %>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="tags" name="tags" value=""/>
+
+                            <!--[if lte IE 9]>
+                            <span>正文</span>
+                            <![endif]-->
+                            <div class='markdown_editor in_editor'>
+                                <div class='markdown_in_editor'>
+                                    <textarea class='editor' name='content' rows='20'
+                                              placeholder='文章支持 Markdown 语法, 请注意标记代码'
+                                            ><%= typeof(content) !== 'undefined' && content || '' %></textarea>
+                                </div>
+                                <div class='editor_buttons'>
+                                    <input type="submit" class='btn btn-primary' data-loading-text="提交中"
+                                           value="提交">
+                                </div>
+                            </div>
+
+                            <input type='hidden' name='_csrf' value='<%= csrf %>'>
+                        </fieldset>
+                        </form>
+                    </div>
+                    <% } %>    
+                </div>
+            </div>
+            <aside class="hidden-xs col-lg-3">
+                <div class="box widget-side">
+                    <%- partial('sidebar') %>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+<!-- markdown editor -->
+<% block('script', Loader('/public/editor.edit.js')
+.js('/public/lib/editor/editor.js')
+.js('/public/lib/webuploader/webuploader.withoutimage.js')
+.js('/public/lib/editor/ext.js')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+<% block('script', Loader('/public/js/edit.js')
+.js('/public/lib/jquery.autocomplete.js')
+.js('/public/js/post.js')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+

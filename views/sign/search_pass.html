@@ -1,0 +1,50 @@
+<div class="wrap">
+  <div class='container'>
+    <div class='row'>
+      <div class="col-xs-12 col-lg-9 pr-5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <ol class="breadcrumb" >
+              <li><a href="/">首页</a></li>
+              <li class="active">找回密码</li>
+            </ol>
+          </div>
+          <div class='panel-body'>
+            <% if(typeof(error) !== 'undefined' && error){ %>
+            <div class="alert alert-danger">
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              <strong><%= error %></strong>
+            </div>
+            <% } %>
+            <form class='form-horizontal' action='/search_pass' method='post'>
+              <div class='form-group'>
+                <label class='control-label col-lg-2 col-lg-offset-1' for='email'>邮箱</label>
+
+                <div class='col-lg-5'>
+                  <% if (typeof(email) !== 'undefined') { %>
+                  <input class='form-control' id='email' name='email' size='30' type='text'
+                         value='<%= email %>' placeholder="注册的电子邮箱"/>
+                  <% } else { %>
+                  <input class='form-control' id='email' name='email' size='30' type='text'
+                         placeholder="注册的电子邮箱"/>
+                  <% } %>
+                </div>
+              </div>
+              <br/>
+              <input type='hidden' name='_csrf' value='<%= csrf %>'/>
+
+              <div class='form-group'>
+                <div class="col-lg-offset-3 col-lg-8">
+                  <input type='submit' class='btn btn-primary ' value='提交'/>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <aside class="col-xs-12 col-lg-3">
+          <%- partial('sidebar') %>    
+      </aside>
+    </div>
+  </div>
+</div>

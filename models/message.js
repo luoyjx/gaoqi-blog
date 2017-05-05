@@ -1,10 +1,11 @@
-/*!
+'use strict';
+/**
  * 消息 model
  */
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
 /*
  * type:
@@ -14,9 +15,9 @@ var ObjectId = Schema.ObjectId;
  * at: xx ＠了你
  */
 
-var MessageSchema = new Schema({
-  type: {type: String},
-  master_id: { type: ObjectId},
+const MessageSchema = new Schema({
+  type: { type: String },
+  master_id: { type: ObjectId },
   author_id: { type: ObjectId },
   post_id: { type: ObjectId },
   reply_id: { type: ObjectId },
@@ -24,6 +25,6 @@ var MessageSchema = new Schema({
   create_at: { type: Date, default: Date.now }
 });
 
-MessageSchema.index({master_id: 1, has_read: -1, create_at: -1});
+MessageSchema.index({ master_id: 1, has_read: -1, create_at: -1 });
 
 mongoose.model('Message', MessageSchema);

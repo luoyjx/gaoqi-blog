@@ -1,131 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>汉阳造广告渲染云平台</title>
-  <link rel="stylesheet" href="/libs/bootstrap2/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/index.css" />
-</head>
-<body>
-<!--	header-->
-{% include "./inc/header.html" %}
-<!--bannner-->
-<div class="bxslider">
-  <img src="/images/img/banner.jpg" />
-</div>
-<!--平台简介-->
-<div class="platintro">
-  <div class="container pgate">
-    <h3 style="text-align: center;font-size: 30px;font-family: '黑体'; letter-spacing: 2px;padding-top: 130px; font-weight: 500;">平台介绍</h3>
-    <div style="width: 40px;height: 2px;background: #000000;margin: 20px auto;margin-bottom: 60px;"></div>
-    <p style="font-size: 14px;line-height: 25px;color: #777777;margin-bottom: 130px;letter-spacing: 1px;">汉阳造广告云计算中心提供的是一种能够通过网络随时随地获取高可用计算资源的产业服务模式。<br>
-      汉阳造广告云计算中心的运营服务商通过对软硬件资源的虚拟化，将基础资源变成了可以自由调度的“池子”，从而实现资源的按需配<br>给，并做到向客户提供按使用付费的服务。<br>
-      客户可以根据业务的需要动态调整所需的资源，而运营服务商也可以提高自己的资源使用效率，降低服务成本，通过多种不同类型的服<br>
-      务方式为用户提供计算、存储和数据业务的云服务支持。</p>
-  </div>
-</div>
-<!--产品特色-->
-<div style="background: url(/images/img/cpbanner.jpg) no-repeat;">
-  <div class="container pgate" style=" padding-top: 28px; text-align: center;background: url(/images/img/01_2.png) no-repeat center 200px;">
-    <div style="width: 1px;height: 90px; margin: 0 auto; margin-bottom: 50px;"><div class="ysDiv" style="width: 1px;height: 90px;background: #000000;margin: 0px auto; display: none;"></div></div>
-    <p style="font-size: 26px;color: #FFFFFF; letter-spacing:5px;font-family: '黑体';">产品特色</p>
-    <div style="width: 40px;height: 2px;background: #FFFFFF;margin: 20px auto;margin-bottom: 60px;"></div>
-    <div style="width: 980px;height: 500px; margin-bottom: 30px;">
-      <ul class="ysUl">
-        <li>
-          <div class="Imgdiv"><img src="/images/img/02.png"/></div>
-          <p class="StrengthsP">极速渲染</p>
-          <p class="StrengthsP2">超带宽传输引擎，可充分利用用户本地带宽资源， 实现文件秒速上传</p>
-        </li>
-        <li>
-          <div class="Imgdiv"><img src="/images/img/03.png"/></div>
-          <p class="StrengthsP">超低价格</p>
-          <p class="StrengthsP2">农场配置至强处理器E5-2680，32线程，保证高速低价</p>
-        </li>
-        <li>
-          <div class="Imgdiv"><img src="/images/img/04.png"/></div>
-          <p class="StrengthsP">一键完成</p>
-          <p class="StrengthsP2">7×24服务，无缝集成到三维设计软件中，一键提交、自动上传、渲染和下载结果。还可以“截屏”看渲染过程</p>
-        </li>
-        <li>
-          <div class="Imgdiv"><img src="/images/img/05.png"/></div>
-          <p class="StrengthsP">实时预览</p>
-          <p class="StrengthsP2">渲染过程中可随时预览渲染画面，及时发现问题所在</p>
-        </li>
-        <li>
-          <div class="Imgdiv"><img src="/images/img/06.png"/></div>
-          <p class="StrengthsP">云存储</p>
-          <p class="StrengthsP2">渲染结果可下载本地亦可云端存储</p>
-        </li>
-        <li>
-          <div class="Imgdiv"><img src="/images/img/07.png" style="margin-top: 12px;"/></div>
-          <p class="StrengthsP">7×24服务</p>
-          <p class="StrengthsP2">全天候随时提供服务</p>
-        </li>
-      </ul>
+<div class="wrap">
+  <div class="container">
+    <div class="row">
+      <article class="col-sm-12 col-lg-9 pr-5">
+        <div class="box">
+          <div class="tabs">
+            <a class="tab <%= typeof(tab) === 'undefined' || tab == '' ? 'active' : '' %>" href="/">全部</a>
+            <% config.tabs.forEach(function (pair) {
+            var value = pair[0];
+            var text = pair[1];
+            %>
+            <a class="tab <%= (typeof(tab) !== 'undefined' && value === tab) ? 'active' : '' %>" href="/?tab=<%= value %>"><%= text %></a>
+            <% }) %>
+          </div>
+          <%- partial('post/list', {
+          posts: posts,
+          pages: pages,
+          current_page: current_page,
+          base: '/',
+          tab: tab
+          }) %>
+        </div>
+      </article>
+      <aside class="col-sm-12 col-lg-3">
+
+        <!-- 用户卡片 -->
+        <%- partial('./user/card') %>
+        
+        <!-- 阿里云推荐码 -->
+        <!-- <%- partial('ads/side_aliyun_code') %> -->
+
+        <!-- 热门标签 -->
+        <%- partial('tag/hot', {
+        tags: tags
+        }) %>
+
+        <!-- 热门文章 -->
+        <%- partial('post/hot', {
+        hots: hots
+        }) %>
+
+        <!-- 最近加入用户 -->
+        <%- partial('user/user_sidebar_widget', {
+        users: recent_reg,
+        }) %>
+
+        <!-- 最新评论 -->
+        <%- partial('reply/side_list', {
+        replies: replies,
+        }) %>
+
+        
+      </aside>
     </div>
   </div>
 </div>
-<!--新闻公告-->
-<div>
-  <div class="container pgate" style=" padding-top: 28px; text-align: center;background: url(/images/img/01_3.png) no-repeat center 200px;">
-    <div style="width: 1px;height: 90px; margin: 0 auto; margin-bottom: 50px;"><div class="ysDiv" style="width: 1px;height: 90px;background: #000000;margin: 0px auto; display: none;"></div></div>
-    <p style="font-size: 26px;color: #323232; letter-spacing:5px;font-family: '黑体';">新闻公告</p>
-    <div style="width: 40px;height: 2px;background: #323232;margin: 20px auto;margin-bottom: 60px;"></div>
-    <ul class="newsUl">
-    </ul>
-  </div>
-</div>
-<!--支持软件-->
-<div style="margin-bottom: 80px;">
-  <div class="container pgate" style=" padding-top: 28px; text-align: center;background: url(/images/img/01_4.png) no-repeat center 200px;">
-    <div style="width: 1px;height: 90px; margin: 0 auto; margin-bottom: 50px;"><div class="ysDiv" style="width: 1px;height: 90px;background: #000000;margin: 0px auto; display: none;"></div></div>
-    <p style="font-size: 26px;color: #323232; letter-spacing:5px;font-family: '黑体';">支持软件</p>
-    <div style="width: 40px;height: 2px;background: #323232;margin: 20px auto;margin-bottom: 80px;"></div>
-    <ul class="rjUl">
-      <li>
-        <a href="#"><img src="/images/img/001.jpg"></a>
-      </li>
-      <li>
-        <a href="#"><img src="/images/img/002.jpg"></a>
-      </li>
-      <li>
-        <a href="#"><img src="/images/img/003.jpg"></a>
-      </li>
-      <li>
-        <a href="#"><img src="/images/img/004.jpg"></a>
-      </li>
-      <li>
-        <a href="#"><img src="/images/img/005.jpg"></a>
-      </li>
-    </ul>
-  </div>
-</div>
-<!--关注我们-->
-<div style="background: #313131;">
-  <div class="container pgate" style=" padding-top: 28px; text-align: center;background: url(/images/img/01_5.png) no-repeat center 200px;">
-    <div style="width: 1px;height: 90px; margin: 0 auto; margin-bottom: 50px;"><div class="ysDiv" style="width: 1px;height: 90px;background: #000000;margin: 0px auto; display: none;"></div></div>
-    <p style="font-size: 26px;color: #FFFFFF; letter-spacing:5px;font-family: '黑体';">关注我们</p>
-    <div style="width: 40px;height: 2px;background: #FFFFFF;margin: 20px auto;margin-bottom: 80px;"></div>
-    <div class="footBox">
-      <p class="footP1"><span class="footSpan"></span>企业QQ：123456789</p>
-      <p class="footP1"><span class="footSpan2"></span>企业客服1：123456789</p>
-      <p class="footP1"><span class="footSpan3"></span>企业客服2：123456789</p>
-      <p class="footP1"><span class="footSpan3"></span>企业客服3：123456789</p>
-      <div class="gzwx">
-        <div class="img01"></div>
-        <p style="color: #BEBEBE;margin-top: 10px;">关注微信</p>
-      </div>
-      <div class="gzwb">
-        <div class="img01"></div>
-        <p style="color: #BEBEBE;margin-top: 10px;">关注微博</p>
-      </div>
-    </div>
-  </div>
-</div>
-<!--   footer-->
-{% include "./inc/footer.html"%}
-<script type="text/javascript" src="/libs/jquery-2.1.1.min.js" ></script>
-<script type="text/javascript" src="/js/index.js"></script>
-</body>
-</html>
+
+<% block('styles', Loader('/public/css/index.css')
+.css('/public/css/tabs.less')
+.css('/public/css/widget/post.list.less')
+.css('/public/css/page/site.index.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>

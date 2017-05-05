@@ -1,0 +1,51 @@
+<div class="wrap">
+    <div class='container'>
+        <div class='row'>
+            <div class="col-xs-12 col-lg-9 pr-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ol class="breadcrumb">
+                            <li><a href="/">首页</a></li>
+                            <li><a href="/u/<%= author.login_name %>">个人主页</a></li>
+                            <li class="active"><%= author.login_name %>的热门文章</li>
+                        </ol>
+                    </div>
+                    <div class="panel-body">
+                        <div role="tabpanel">
+                            <ul class="nav nav-tabs mt-20" >
+                                <li>
+                                    <a href="/u/<%= author.login_name %>" >最新文章</a>
+                                </li>
+                                <li class="active">
+                                    <a href="/u/<%= author.login_name %>/top" >最热文章</a>
+                                </li>
+                                <li>
+                                    <a href="/u/<%= author.login_name %>/replies" >参与话题</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane  active">
+                                    <%- partial('../post/list', {
+                                    posts: top,
+                                    pages: pages,
+                                    current_page: current_page,
+                                    base: '/u/' + author.login_name + '/top',
+                                    tab: ''
+                                    }) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <aside class="col-xs-12 col-lg-3">
+                <%- partial('./card') %>
+            </aside>
+        </div>
+    </div>
+</div>
+
+<% block('styles', Loader('/public/css/user.top.css')
+.css('/public/css/widget/post.list.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>

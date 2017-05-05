@@ -1,0 +1,89 @@
+<div class="wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-lg-9 pr-5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <ol class="breadcrumb">
+                <li><a href="/console">控制台</a></li>
+                <li><a href="/console/posts">文章</a></li>
+            </ol>
+          </div>
+          <div class="panel-body">
+            <form class="form-inline mb-10" role="form" method="post" action="">
+              <div class="form-group">
+                <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail2" placeholder="文章标题">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" autocomplete="off" id="exampleInputPassword2" placeholder="作者">
+              </div>
+              <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>搜索</button>
+            </form>
+
+            <table class="table table-data">
+              <thead class="table-heading">
+                <tr class="table-row text-center">
+                  <td width="50%">标题</td>
+                  <td width="10%">作者</td>
+                  <td width="10%">浏览/回复</td>
+                  <td width="10%">创建时间</td>
+                  <td width="10%">修改时间</td>
+                  <td>操作</td>
+                </tr>
+              </thead>
+              <tbody class="table-body text-center">
+                <% if(typeof posts !== 'undefined' && posts.length > 0){ %>
+                <% for (var i = 0, len = posts.length; i < len; i++) { %>
+                <tr>
+                  <td class="text-left"><a href="#"><%= posts[i].title %></a></td>
+                  <td><%= posts[i].author.login_name %></td>
+                  <td><%= posts[i].pv %>/<%= posts[i].reply_count %></td>
+                  <td><%= posts[i].friendly_create_at %></td>
+                  <td><%= posts[i].friendly_update_at %></td>
+                  <td>
+                    <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-good" >
+                      <span class="glyphicon glyphicon-star" title="精华"></span>
+                    </a>
+                    <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-top <%= posts[i].top == true ? 'active' : '' %>">
+                      <span class="glyphicon glyphicon-pushpin" title="顶置"></span>
+                    </a>
+                    <a href="javascript:;" data-id="<%= posts[i]._id %>" class="action-delete">
+                      <span class="glyphicon glyphicon-trash" title="删除"></span>
+                    </a>
+                  </td>
+                </tr>
+                <% } %>
+                <% } else { %>
+                <tr>
+                  <td colspan="6">还没有文章</td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <div>
+                <%- partial('../../paging', {
+                pages: pages,
+                current_page: current_page,
+                base: base,
+                }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-12">
+      
+    </div>
+  </div>
+</div>
+
+<% block('styles', Loader('/public/css/console.post.css')
+.css('/public/css/page/console.post.less')
+.css('/public/css/widget/table.less')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
+
+<% block('script', Loader('/public/js/console.post.js')
+.js('/public/js/console.post.js')
+.done(assets, config.site_assets_host, config.mini_assets))
+%>
