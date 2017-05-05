@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * user follow dao
  * @authors yanjixiong ()
@@ -5,9 +7,8 @@
  * @version $Id$
  */
 
-var Promise = require('bluebird');
-var UserFollow = require('../models').UserFollow;
-
+const Promise = require('bluebird');
+const UserFollow = require('../models').UserFollow;
 
 module.exports = {
   /**
@@ -16,7 +17,7 @@ module.exports = {
    * @return {[type]}            [description]
    */
   getByFollower: function getByFollower(followerId) {
-    return UserFollow.find({follower_id: followerId});
+    return UserFollow.find({ follower_id: followerId });
   },
 
   /**
@@ -36,7 +37,7 @@ module.exports = {
    * @return {[type]}           [description]
    */
   follow: function follow(following, follower) {
-    var userFollow = new UserFollow();
+    const userFollow = new UserFollow();
     userFollow.following_id = following;
     userFollow.follower_id = follower;
     return userFollow.save();
@@ -52,7 +53,7 @@ module.exports = {
     return UserFollow.remove({
       following_id: following,
       follower_id: follower
-    })
+    });
   },
 
   /**
@@ -63,11 +64,9 @@ module.exports = {
    */
   hasFollow: function hasFollow(following, follower) {
     return UserFollow
-      .findOne({following_id: following, follower_id: follower})
-      .then(function(userFollowFind) {
+      .findOne({ following_id: following, follower_id: follower })
+      .then(function (userFollowFind) {
         return Promise.resolve(!!userFollowFind);
-      })
+      });
   }
-
-
 };

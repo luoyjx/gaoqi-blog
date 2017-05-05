@@ -7,6 +7,7 @@ const json = require('koa-json');
 const jsonp = require('koa-safe-jsonp');
 const koaNunjucks = require('koa-nunjucks-2');
 const session = require('koa-generic-session');
+const redisStore = require('koa-redis');
 const compress = require('koa-compress');
 const mount = require('koa-mount');
 const serve = require('koa-static');
@@ -42,7 +43,7 @@ Object
     env.addFilter(filterName, filters[filterName]);
   });
 
-app.keys = ['gaoqi-blog', 'secret'];
+app.keys = ['gaoqi-blog', config.session_secret];
 app.use(compress({
   threshold: 2048,
   flush: require('zlib').Z_SYNC_FLUSH
@@ -58,6 +59,11 @@ app.use(json());
 app.use(logger());
 
 app.use(session({
+  store: redisStore({
+    host: config.redis_host,
+    port: config.redis_port,
+    db: config.redis_db
+  }),
   cookie: {
     maxAge: null // 浏览器关闭session失效
   }

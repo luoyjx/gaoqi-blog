@@ -1,23 +1,24 @@
-/*!
+'use strict';
+
+/**
  * user dao
  */
-var url = require('url');
-var qn = require('qn');
-var gravatar = require('gravatar');
-var request = require('request');
-var Promise = require('bluebird');
-var models = require('../models');
-var User = models.User;
-var utility = require('utility');
-var uuid = require('node-uuid');
-var config = require('../config');
 
-var qnClient = null;
+const url = require('url');
+const qn = require('qn');
+const gravatar = require('gravatar');
+const request = require('request');
+const Promise = require('bluebird');
+const models = require('../models');
+const User = models.User;
+const uuid = require('uuid');
+const config = require('../config');
+
+let qnClient = null;
 
 if (config.qn_avatar_access.secretKey !== 'your secret key') {
-  qnClient = qn.create(config.qn_avatar_access)
+  qnClient = qn.create(config.qn_avatar_access);
 }
-
 
 /**
  * 根据多个用户名查询多个用户信息
@@ -26,9 +27,12 @@ if (config.qn_avatar_access.secretKey !== 'your secret key') {
  * - users, 多个用户信息
  * @param {Array} names 多个用户名
  */
-exports.getUsersByNames = function (names) {
-    if (names.length === 0) return Promise.resolve([]);
-    return User.find({'login_name': {$in: names}}).exec();
+exports.getUsersByNames = function getUsersByNames(names) {
+  if (names.length === 0) {
+    return Promise.resolve([]);
+  }
+
+  return User.find({ 'login_name': { $in: names } }).exec();
 };
 
 /**
@@ -38,8 +42,8 @@ exports.getUsersByNames = function (names) {
  * - user, 用户信息
  * @param {String} id 用户id
  */
-exports.getUserById = function (id) {
-  return User.findOne({_id: id}).exec();
+exports.getUserById = function getUserById(id) {
+  return User.findOne({ _id: id }).exec();
 };
 
 /**
@@ -49,8 +53,8 @@ exports.getUserById = function (id) {
  * - user, 用户信息
  * @param {String} loginName 登录名
  */
-exports.getUserByLoginName = function (loginName) {
-  return User.findOne({'login_name': loginName}).exec();
+exports.getUserByLoginName = function getUserByLoginName(loginName) {
+  return User.findOne({ 'login_name': loginName }).exec();
 
 };
 
@@ -61,8 +65,8 @@ exports.getUserByLoginName = function (loginName) {
  * - user, 用户信息
  * @param {String} email 邮箱
  */
-exports.getUserByEmail = function (email) {
-  return User.findOne({'email': email});
+exports.getUserByEmail = function getUserByEmail(email) {
+  return User.findOne({ email });
 };
 
 /**
@@ -73,8 +77,8 @@ exports.getUserByEmail = function (email) {
  * @param {String} login_name 用户名
  * @param {String} key 激活码
  */
-exports.getUserByNameAndKey = function (login_name, key) {
-  return User.findOne({login_name: login_name, retrieve_key: key}).exec();
+exports.getUserByNameAndKey = function getUserByNameAndKey(login_name, key) {
+  return User.findOne({ login_name, retrieve_key: key }).exec();
 };
 
 /**
@@ -85,7 +89,7 @@ exports.getUserByNameAndKey = function (login_name, key) {
  * @param {String|object} query 关键字
  * @param {Object} opt 选项
  */
-exports.getUsersByQuery = function (query, opt) {
+exports.getUsersByQuery = function getUsersByQuery(query, opt) {
   return User.find(query, '', opt).exec();
 };
 
@@ -95,7 +99,7 @@ exports.getUsersByQuery = function (query, opt) {
  * @param {Object} update 更新属性
  * @returns {Promise}
  */
-exports.findOneAndUpdate = function(query, update) {
+exports.findOneAndUpdate = function findOneAndUpdate(query, update) {
   return User.findOneAndUpdate(query, update).exec();
 };
 
@@ -105,8 +109,8 @@ exports.findOneAndUpdate = function(query, update) {
  * @return {[type]}        [description]
  */
 exports.incFollowingCount = function incFollowingCount(userId) {
-  return User.update({_id: userId}, { $inc: { following_count: 1 }}).exec();
-}
+  return User.update({ _id: userId }, { $inc: { following_count: 1 } }).exec();
+};
 
 /**
  * 关注数减少
@@ -114,8 +118,8 @@ exports.incFollowingCount = function incFollowingCount(userId) {
  * @return {[type]}        [description]
  */
 exports.decFollowingCount = function decFollowingCount(userId) {
-  return User.update({_id: userId}, { $inc: { following_count: -1 }}).exec();
-}
+  return User.update({ _id: userId }, { $inc: { following_count: -1 } }).exec();
+};
 
 /**
  * 增加文章收藏数
@@ -123,8 +127,8 @@ exports.decFollowingCount = function decFollowingCount(userId) {
  * @return {[type]}        [description]
  */
 exports.incCollectCount = function incCollectCount(userId) {
-  return User.update({_id: userId}, { $inc: { collect_post_count: 1 }}).exec();
-}
+  return User.update({ _id: userId }, { $inc: { collect_post_count: 1 } }).exec();
+};
 
 /**
  * 减少文章收藏数
@@ -132,8 +136,8 @@ exports.incCollectCount = function incCollectCount(userId) {
  * @return {[type]}        [description]
  */
 exports.decCollectCount = function decCollectCount(userId) {
-  return User.update({_id: userId}, { $inc: { collect_post_count: -1 }}).exec();
-}
+  return User.update({ _id: userId }, { $inc: { collect_post_count: -1 } }).exec();
+};
 
 /**
  * 创建并保存用户信息
@@ -145,7 +149,7 @@ exports.decCollectCount = function decCollectCount(userId) {
  * @param {Boolean} active 是否激活
  */
 exports.newAndSave = function (name, login_name, pass, email, avatar_url, active) {
-  var user = new User();
+  const user = new User();
   user.name = login_name;
   user.login_name = login_name;
   user.pwd = pass;
@@ -163,18 +167,20 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
  * @returns {string} avatar地址
  */
 exports.makeGravatar = function (email) {
-  var urlObj = url.parse(gravatar.url(email, {d: 'retro'}))
-  var avatarUrl = urlObj.path;
-  var avatarPath = avatarUrl.replace('//www.gravatar.com', '');
-  var avatarKey = avatarPath.split('?')[0];
-  console.log(avatarUrl)
-  console.log(avatarKey)
+  const urlObj = url.parse(gravatar.url(email, { d: 'retro' }));
+  const avatarUrl = urlObj.path;
+  const avatarPath = avatarUrl.replace('//www.gravatar.com', '');
+  const avatarKey = avatarPath.split('?')[0];
+  console.log(avatarUrl);
+  console.log(avatarKey);
 
   if (qnClient) {
-    qnClient.upload(request('http:' + avatarUrl), {key: avatarKey}, function(err, result) {
-      if (err) return console.error(err);
+    qnClient.upload(request('http:' + avatarUrl), { key: avatarKey }, function (err, result) {
+      if (err) {
+        return console.error(err);
+      }
       console.log(result);
-    })
+    });
   }
 
   return config.avatar_static_host + avatarKey;

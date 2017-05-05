@@ -1,25 +1,26 @@
-/*!
+'use strict';
+
+/**
  * reply dao
  */
 
-var Promise = require('bluebird');
-var validator = require('validator');
-var models = require('../models');
-var Reply = models.Reply;
-
-var tools = require('../common/tools');
-var at = require('../common/at');
-var User = require('./user');
-var Post = require('./post');
+const Promise = require('bluebird');
+const Reply = models.Reply;
+const models = require('../models');
+const tools = require('../common/tools');
+const at = require('../common/at');
+const User = require('./user');
 
 /**
  * 获取一条回复信息
  * @param {String} id 回复ID
  */
-exports.getReply = function (id) {
-  return new Promise(function(resolve, reject) {
-    Reply.findOne({_id: id}, function(err, reply) {
-      if (err) return reject(err);
+exports.getReply = function getReply(id) {
+  return new Promise(function (resolve, reject) {
+    Reply.findOne({ _id: id }, function (err, reply) {
+      if (err) {
+        return reject(err);
+      }
       resolve(reply);
     });
   });
@@ -32,17 +33,19 @@ exports.getReply = function (id) {
  * - reply, 回复内容
  * @param {String} id 回复ID
  */
-exports.getReplyById = function (id) {
-  var _reply;
+exports.getReplyById = function getReplyById(id) {
+  let _reply;
 
   return Reply
-    .findOne({_id: id})
-    .then(function(replyFind) {
-      if (!replyFind) return Promise.resolve();
+    .findOne({ _id: id })
+    .then(function (replyFind) {
+      if (!replyFind) {
+        return Promise.resolve();
+      }
 
       _reply = replyFind;
 
-      var author_id = replyFind.author_id;
+      const author_id = replyFind.author_id;
 
       return Promise
         .all([
@@ -50,7 +53,7 @@ exports.getReplyById = function (id) {
           at.linkUsers(_reply.content)
         ]);
     })
-    .spread(function(userFind, replyContent) {
+    .spread(function (userFind, replyContent) {
       _reply.author = userFind;
       _reply.friendly_create_at = tools.formatDate(_reply.create_at, true);
       _reply.content = replyContent;
@@ -63,7 +66,7 @@ exports.getReplyById = function (id) {
  * @param query
  * @param option
  */
-exports.getRepliesByQuery = function(query, option) {
+exports.getRepliesByQuery = function getRepliesByQuery(query, option) {
   return Reply
     .find(query, {}, option)
     .populate('post_id')
@@ -78,25 +81,25 @@ exports.getRepliesByQuery = function(query, option) {
  * - replies, 回复列表
  * @param {String} id 文章ID
  */
-exports.getRepliesByPostId = function (id) {
+exports.getRepliesByPostId = function getRepliesByPostId(id) {
   return Reply
-    .find({post_id: id}, '', {sort: 'create_at'})
+    .find({ post_id: id }, '', { sort: 'create_at' })
     .exec()
-    .then(function(replies) {
+    .then(function (replies) {
       if (replies.length === 0) {
         return Promise.resolve([]);
       }
-      return Promise.map(replies, function(reply) {
+      return Promise.map(replies, function (reply) {
         return User
           .getUserById(reply.author_id)
-          .then(function(author) {
+          .then(function (author) {
             reply.author = author || { _id: '' };
             reply.friendly_create_at = tools.formatDate(reply.create_at, true);
             reply.content = at.linkUsers(reply.content);
             return reply;
           });
       });
-    })
+    });
 };
 
 /**
@@ -107,7 +110,7 @@ exports.getRepliesByPostId = function (id) {
  * @param {String} [replyId] 回复ID，当二级回复时设定该值
  */
 exports.newAndSave = function (content, postId, authorId, replyId) {
-  var reply = new Reply();
+  const reply = new Reply();
   reply.content = content;
   reply.post_id = postId;
   reply.author_id = authorId;
@@ -125,22 +128,22 @@ exports.newAndSave = function (content, postId, authorId, replyId) {
  */
 exports.getRepliesByAuthorId = function (authorId, opt) {
   return Reply
-    .find({author_id: authorId}, {}, opt)
+    .find({ author_id: authorId }, {}, opt)
     .exec()
-    .then(function(replies) {
+    .then(function (replies) {
       if (replies.length === 0) {
         return Promise.resolve([]);
       }
-      return Promise.map(replies, function(reply) {
+      return Promise.map(replies, function (reply) {
         return User
           .getUserById(reply.author_id)
-          .then(function(author) {
+          .then(function (author) {
             reply.author = author || { _id: '' };
             reply.friendly_create_at = tools.formatDate(reply.create_at, true);
             return reply;
           });
       });
-    })
+    });
 };
 
 /**
@@ -148,5 +151,5 @@ exports.getRepliesByAuthorId = function (authorId, opt) {
  * @param authorId 作者ID
  */
 exports.getCountByAuthorId = function (authorId) {
-  return Reply.count({author_id: authorId}).exec();
+  return Reply.count({ author_id: authorId }).exec();
 };

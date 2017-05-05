@@ -1,9 +1,12 @@
-/*!
+'use strict';
+
+/**
  * tag dao
  */
-var Promise = require('bluebird');
-var models = require('../models');
-var Tag = models.Tag;
+
+const Promise = require('bluebird');
+const models = require('../models');
+const Tag = models.Tag;
 
 /**
  * 获得热门标签
@@ -13,7 +16,7 @@ var Tag = models.Tag;
  * @param {Object} options 查询选项
  */
 exports.getHotTagsByQuery = function (options) {
-  return Tag.find({}, {name: 1, _id: 0}, options).exec();
+  return Tag.find({}, { name: 1, _id: 0 }, options).exec();
 };
 
 /**
@@ -24,7 +27,7 @@ exports.getHotTagsByQuery = function (options) {
  * @param {String} name 标签名称
  */
 exports.getTagByName = function (name) {
-  return Tag.findOne({name: name}).exec();
+  return Tag.findOne({ name }).exec();
 
 };
 
@@ -57,7 +60,7 @@ exports.getCountByQuery = function (query) {
  * @param {String} description tag描述信息
  */
 exports.newAndSave = function (name, description) {
-  var tag = new Tag();
+  const tag = new Tag();
   tag.name = name;
   tag.description = description;
   tag.save();
