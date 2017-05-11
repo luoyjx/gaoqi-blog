@@ -1,15 +1,15 @@
-<% if (typeof(user) !== 'undefined') { %>
+{% if user %}
 <div class="box mb-20 user-card">
   <div class="cell user-desc">
     <div class='pull-right' data-toggle="tooltip" data-placement="left" title="积分">
         <span class="glyphicon glyphicon-asterisk"></span>
-        <span class='big' > <%= user.score %> </span>
+        <span class='big' > {{ user.score }} </span>
     </div>
     <div class="pull-left">
-        <a class="mr-5" href="/u/<%= user.login_name %>">
-            <img class="avatar" src="<%= user.avatar %>" title="<%= user.login_name %>" />
+        <a class="mr-5" href="/u/{{ user.login_name }}">
+            <img class="avatar" src="{{ user.avatar }}" title="{{ user.login_name }}" />
         </a>
-        <span class='user-name f-16'><a class='dark' href="/u/<%= user.login_name %>"><%= user.login_name %></a></span>
+        <span class='user-name f-16'><a class='dark' href="/u/{{ user.login_name }}">{{ user.login_name }}</a></span>
     </div>
     <div class="clearfix mb-10"></div>
     <span class="signature">
@@ -24,17 +24,17 @@
   </div>
   <div class="cell clearfix">
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center b-r">
-      <a class="f-16" href="/my/following"><%= user.following_count %></a>
+      <a class="f-16" href="/my/following">{{ user.following_count }}</a>
       <div class="mb-5"></div>
       <span class="addtion">关注</span>
     </div>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center b-r">
-      <a class="f-16" href="/my/post_collection"><%= user.collect_post_count %></a>
+      <a class="f-16" href="/my/post_collection">{{ user.collect_post_count }}</a>
       <div class="mb-5"></div>
       <span class="addtion">文章收藏</span>
     </div>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
-      <a class="f-16"><%= user.collect_tag_count %></a>
+      <a class="f-16">{{ user.collect_tag_count }}</a>
       <div class="mb-5"></div>
       <span class="addtion">节点收藏</span>
     </div>
@@ -46,9 +46,8 @@
     </a>
   </div>
 </div>
-<% } %>
+{% endif %}
 
-<% block('styles', Loader('/public/css/user.card.css')
-.css('/public/css/widget/user.card.less')
-.done(assets, config.site_assets_host, config.mini_assets))
-%>
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="/public/css/widget/user.card.less">
+{% endblock %}

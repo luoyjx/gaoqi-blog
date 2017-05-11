@@ -9,7 +9,7 @@
 
 var config = require('../config');
 var render = require('./render');
-var cutter = require('./cutter');
+var filters = require('./filters');
 
 /**
  * 生成twitter的head meta信息
@@ -29,7 +29,7 @@ exports.getTwitterMeta = function getTwitterMeta(category, author, post) {
 
   var meta = [
     '<meta name="twitter:card" content="summary" />',
-    '<meta name="twitter:description" content="' + categoryName + ' - @' + author.login_name + ' - ' + cutter.shorter(render.cleanMarkdown(post.content), 70) + '" />',
+    '<meta name="twitter:description" content="' + categoryName + ' - @' + author.login_name + ' - ' + filters.shorter(render.cleanMarkdown(post.content), 70) + '" />',
     '<meta name="twitter:title" content=" ' + post.title + ' - ' + config.name + '" />',
     '<meta name="twitter:image" content="' + author.avatar + '" />',
     '<meta name="twitter:site" content="@gaoqi-blog" />',

@@ -1,29 +1,29 @@
 <div class="panel panel-default">
   <div class="panel-heading">最新评论</div>
   <div class="panel-body">
-    <% if(replies && replies.length > 0){ %>
+    {% if replies and replies.length > 0 %}
     <ul class="list-unstyled list-overhidden">
-        <% replies.forEach(function(reply, index){%>
-        <% if (reply.post_id && reply.post_id.title) { %>
+        {% for reply in replies %}
+        {% if reply.post_id and reply.post_id.title %}
         <li class="mb-10 clearfix">
-          <a class="pull-left mr-5" href="/u/<%= reply.author_id.login_name %>" target="_blank">
-            <img class="avatar-sm" alt="<%= reply.author_id.login_name %>" src="<%= reply.author_id.avatar %>" />
+          <a class="pull-left mr-5" href="/u/{{ reply.author_id.login_name }}" target="_blank">
+            <img class="avatar-sm" alt="{{ reply.author_id.login_name }}" src="{{ reply.author_id.avatar }}" />
           </a>
           Re:
-          <a class="font-bold" href="/p/<%= reply.post_id._id %>#<%= reply._id %>"
-              title="<%= reply.post_id.title %>">
-              <%- shorter(reply.post_id.title, 13) %>
+          <a class="font-bold" href="/p/{{ reply.post_id._id }}#{{ reply._id }}"
+              title="{{ reply.post_id.title }}">
+              {{ reply.post_id.title | shorter(13) }}
           </a>
           <br/>
-          <div class="addtion"><%= shorter(cleanMarkdown(reply.content), 100) %></div>
+          <div class="addtion">{{ reply.content | cleanMarkdown | shorter(100) }}</div>
         </li>
-        <% } %>
-        <% }); %>
+        {% endif %}
+        {% endfor %}
     </ul>
-    <% } else { %>
+    {% else %}
     <ul class="list-unstyled list-overhidden">
         <li class="font-12 clearfix">暂无评论</li>
     </ul>
-    <% } %>
+    {% endif %}
   </div>
 </div>

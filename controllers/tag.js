@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 const Tag = require('../services/tag');
 const Post = require('../services/post');
 const validator = require('validator');
-const cutter = require('../common/cutter');
+const filters = require('../common/filters');
 const config = require('../config');
 
 /**
@@ -22,7 +22,7 @@ exports.index = function *index() {
     Tag.getAllTagsByQuery({}, options)
       .then(function (tags) {
         return Promise.map(tags, function (tag) {
-          tag.description = cutter.shorter(tag.description, 200);
+          tag.description = filters.shorter(tag.description, 200);
           return tag;
         });
       }),
@@ -77,7 +77,7 @@ exports.getTagByName = function *getTagByName() {
     return yield this.render('notify/notify', { error: '该标签可能已经去了火星' });
   }
 
-  tag.short_desc = cutter.shorter(tag.description, 200);
+  tag.short_desc = filters.shorter(tag.description, 200);
 
   yield this.render('tag/index', {
     title: name + ' 第' + page + '页',

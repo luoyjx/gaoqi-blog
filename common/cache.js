@@ -1,14 +1,15 @@
-/*!
+'use strict';
+/**
  * cache
  */
-var Promise = require('bluebird');
-var redis = require('./redis');
+const Promise = require('bluebird');
+const redis = require('./redis');
 
 /**
  * 从cache中取出缓存
  * @param key 键
  */
-var get = function (key) {
+const get = function (key) {
   return redis
       .get(key)
       .then(function (data) {
@@ -18,7 +19,6 @@ var get = function (key) {
 
 exports.get = get;
 
-
 /**
  * 将键值对数据缓存起来
  *
@@ -26,14 +26,13 @@ exports.get = get;
  * @param value 值
  * @param time 参数可选，秒为单位
  */
-var set = function (key, value, time) {
+const set = function (key, value, time) {
   value = JSON.stringify(value);
   if (!time) {
     return redis.set(key, value);
-  } else {
-    //将毫秒单位转为秒
-    return redis.setex(key, parseInt(time), value);
   }
+  // 将毫秒单位转为秒
+  return redis.setex(key, parseInt(time, 10), value);
 };
 
 exports.set = set;

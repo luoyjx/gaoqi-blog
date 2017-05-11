@@ -92,7 +92,7 @@ exports.index = function *index() {
     pages,
     hots: hotPostsSorted,
     tags: hotTags,
-    recent_reg: recentReg,
+    users: recentReg,
     replies,
     title: tabName
   });

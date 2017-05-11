@@ -10,7 +10,7 @@ const tools = require('../common/tools');
 const at = require('../common/at');
 const config = require('../config');
 const uploader = require('../common/upload');
-const cutter = require('../common/cutter');
+const filters = require('../common/filters');
 const render = require('../common/render');
 const meta = require('../common/meta');
 const twitter = require('../common/twitter');
@@ -58,7 +58,7 @@ exports.index = function *index() {
 
   yield this.render('post/index', {
     title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
-    description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
+    description: filters.shorter(filters.clearHtml(render.markdown(post.linkedContent)), 100),
     tags: post.tags.join(','),
     post,
     recent: recentPosts,
@@ -151,7 +151,7 @@ exports.create = function *create() {
   status.push(postSaved.title + ':\n');
   status.push(render.cleanMarkdown(postSaved.content));
   // 截取50个字
-  status = cutter.shorter(status.join(''), 70);
+  status = filters.shorter(status.join(''), 70);
   status += 'https://' + config.host + '/p/' + postSaved._id + '?from=post_twitter';
 
   twitter.postStatus(status);
