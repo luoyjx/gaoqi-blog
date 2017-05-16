@@ -7,7 +7,9 @@
     "dev": "cross-env DEBUG=admin:* node app.js",
     "start": "cross-env NODE_ENV=production pm2 start app.js --name gaoqi-blog",
     "restart": "cross-env NODE_ENV=production pm2 restart gaoqi-blog",
-    "stop": "cross-env NODE_ENV=production pm2 stop gaoqi-blog"
+    "stop": "cross-env NODE_ENV=production pm2 stop gaoqi-blog",
+    "test": "echo 'test script'",
+    "test-cov": "echo 'test coverage'"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
