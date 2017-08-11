@@ -60,7 +60,7 @@
     "nodejieba": "^2.2.4",
     "nodemailer": "^2.5.0",
     "nodemailer-smtp-transport": "^2.7.3",
-    "passport": "^0.3.2",
+    "passport": "^0.4.0",
     "passport-github": "^1.1.0",
     "pm2": "^2.4.2",
     "qn": "^1.3.0",
