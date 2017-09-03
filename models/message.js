@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 /**
  * 消息 model
  */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
 /*
  * type:
@@ -23,8 +23,8 @@ const MessageSchema = new Schema({
   reply_id: { type: ObjectId },
   has_read: { type: Boolean, default: false },
   create_at: { type: Date, default: Date.now }
-});
+})
 
-MessageSchema.index({ master_id: 1, has_read: -1, create_at: -1 });
+MessageSchema.index({ master_id: 1, has_read: -1, create_at: -1 })
 
-mongoose.model('Message', MessageSchema);
+mongoose.model('Message', MessageSchema)

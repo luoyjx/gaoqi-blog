@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 /**
  * user model
  */
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const UserSchema = new Schema({
   name: { type: String },
@@ -37,14 +37,14 @@ const UserSchema = new Schema({
   retrieve_key: { type: String },
 
   accessToken: { type: String }
-});
+})
 
-UserSchema.index({ login_name: 1 }, { unique: true });
-UserSchema.index({ email: 1 }, { unique: true });
-UserSchema.index({ score: -1 });
-UserSchema.index({ post_count: -1 });
-UserSchema.index({ reply_count: -1 });
-UserSchema.index({ github_id: 1 });
-UserSchema.index({ accessToken: 1 });
+UserSchema.index({ login_name: 1 }, { unique: true })
+UserSchema.index({ email: 1 }, { unique: true })
+UserSchema.index({ score: -1 })
+UserSchema.index({ post_count: -1 })
+UserSchema.index({ reply_count: -1 })
+UserSchema.index({ github_id: 1 })
+UserSchema.index({ accessToken: 1 })
 
-mongoose.model('User', UserSchema);
+mongoose.model('User', UserSchema)

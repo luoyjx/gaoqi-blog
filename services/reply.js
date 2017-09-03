@@ -1,30 +1,30 @@
-'use strict';
+'use strict'
 
 /**
  * reply dao
  */
 
-const Promise = require('bluebird');
-const models = require('../models');
-const Reply = models.Reply;
-const tools = require('../common/tools');
-const at = require('../common/at');
-const User = require('./user');
+const Promise = require('bluebird')
+const models = require('../models')
+const Reply = models.Reply
+const tools = require('../common/tools')
+const at = require('../common/at')
+const User = require('./user')
 
 /**
  * 获取一条回复信息
  * @param {String} id 回复ID
  */
-exports.getReply = function getReply(id) {
+exports.getReply = function getReply (id) {
   return new Promise(function (resolve, reject) {
     Reply.findOne({ _id: id }, function (err, reply) {
       if (err) {
-        return reject(err);
+        return reject(err)
       }
-      resolve(reply);
-    });
-  });
-};
+      resolve(reply)
+    })
+  })
+}
 
 /**
  * 根据回复ID，获取回复
@@ -33,46 +33,46 @@ exports.getReply = function getReply(id) {
  * - reply, 回复内容
  * @param {String} id 回复ID
  */
-exports.getReplyById = function getReplyById(id) {
-  let _reply;
+exports.getReplyById = function getReplyById (id) {
+  let _reply
 
   return Reply
     .findOne({ _id: id })
     .then(function (replyFind) {
       if (!replyFind) {
-        return Promise.resolve();
+        return Promise.resolve()
       }
 
-      _reply = replyFind;
+      _reply = replyFind
 
-      const author_id = replyFind.author_id;
+      const author_id = replyFind.author_id
 
       return Promise
         .all([
           User.getUserById(author_id),
           at.linkUsers(_reply.content)
-        ]);
+        ])
     })
     .spread(function (userFind, replyContent) {
-      _reply.author = userFind;
-      _reply.friendly_create_at = tools.formatDate(_reply.create_at, true);
-      _reply.content = replyContent;
-      return Promise.resolve(_reply);
-    });
-};
+      _reply.author = userFind
+      _reply.friendly_create_at = tools.formatDate(_reply.create_at, true)
+      _reply.content = replyContent
+      return Promise.resolve(_reply)
+    })
+}
 
 /**
  * 根据条件查询回复
  * @param query
  * @param option
  */
-exports.getRepliesByQuery = function getRepliesByQuery(query, option) {
+exports.getRepliesByQuery = function getRepliesByQuery (query, option) {
   return Reply
     .find(query, {}, option)
     .populate('post_id')
     .populate('author_id')
-    .exec();
-};
+    .exec()
+}
 
 /**
  * 根据主题ID，获取回复列表
@@ -81,26 +81,26 @@ exports.getRepliesByQuery = function getRepliesByQuery(query, option) {
  * - replies, 回复列表
  * @param {String} id 文章ID
  */
-exports.getRepliesByPostId = function getRepliesByPostId(id) {
+exports.getRepliesByPostId = function getRepliesByPostId (id) {
   return Reply
     .find({ post_id: id }, '', { sort: 'create_at' })
     .exec()
     .then(function (replies) {
       if (replies.length === 0) {
-        return Promise.resolve([]);
+        return Promise.resolve([])
       }
       return Promise.map(replies, function (reply) {
         return User
           .getUserById(reply.author_id)
           .then(function (author) {
-            reply.author = author || { _id: '' };
-            reply.friendly_create_at = tools.formatDate(reply.create_at, true);
-            reply.content = at.linkUsers(reply.content);
-            return reply;
-          });
-      });
-    });
-};
+            reply.author = author || { _id: '' }
+            reply.friendly_create_at = tools.formatDate(reply.create_at, true)
+            reply.content = at.linkUsers(reply.content)
+            return reply
+          })
+      })
+    })
+}
 
 /**
  * 创建并保存一条回复信息
@@ -110,16 +110,16 @@ exports.getRepliesByPostId = function getRepliesByPostId(id) {
  * @param {String} [replyId] 回复ID，当二级回复时设定该值
  */
 exports.newAndSave = function (content, postId, authorId, replyId) {
-  const reply = new Reply();
-  reply.content = content;
-  reply.post_id = postId;
-  reply.author_id = authorId;
+  const reply = new Reply()
+  reply.content = content
+  reply.post_id = postId
+  reply.author_id = authorId
   if (replyId) {
-    reply.reply_id = replyId;
+    reply.reply_id = replyId
   }
-  reply.save();
-  return Promise.resolve(reply);
-};
+  reply.save()
+  return Promise.resolve(reply)
+}
 
 /**
  * 根据作者id查询回复
@@ -132,24 +132,24 @@ exports.getRepliesByAuthorId = function (authorId, opt) {
     .exec()
     .then(function (replies) {
       if (replies.length === 0) {
-        return Promise.resolve([]);
+        return Promise.resolve([])
       }
       return Promise.map(replies, function (reply) {
         return User
           .getUserById(reply.author_id)
           .then(function (author) {
-            reply.author = author || { _id: '' };
-            reply.friendly_create_at = tools.formatDate(reply.create_at, true);
-            return reply;
-          });
-      });
-    });
-};
+            reply.author = author || { _id: '' }
+            reply.friendly_create_at = tools.formatDate(reply.create_at, true)
+            return reply
+          })
+      })
+    })
+}
 
 /**
  * 通过 author_id 获取回复总数
  * @param authorId 作者ID
  */
 exports.getCountByAuthorId = function (authorId) {
-  return Reply.count({ author_id: authorId }).exec();
-};
+  return Reply.count({ author_id: authorId }).exec()
+}

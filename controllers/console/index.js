@@ -1,5 +1,5 @@
-'use strict';
+'use strict'
 
-exports.index = function *index() {
-  yield this.render('console/index');
-};
+exports.index = function * index () {
+  yield this.render('console/index')
+}

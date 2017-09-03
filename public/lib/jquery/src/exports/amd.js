@@ -1,7 +1,6 @@
 define([
-	"../core"
-], function( jQuery ) {
-
+  '../core'
+], function (jQuery) {
 // Register as a named AMD module, since jQuery can be concatenated with other
 // files that may use define, but not via a proper concatenation script that
 // understands anonymous AMD modules. A named AMD is safest and most robust
@@ -15,10 +14,9 @@ define([
 // AMD loader is present. jQuery is a special case. For more information, see
 // https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
 
-if ( typeof define === "function" && define.amd ) {
-	define( "jquery", [], function() {
-		return jQuery;
-	});
-}
-
-});
+  if (typeof define === 'function' && define.amd) {
+    define('jquery', [], function () {
+      return jQuery
+    })
+  }
+})

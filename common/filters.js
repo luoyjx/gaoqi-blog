@@ -1,34 +1,34 @@
-'use strict';
+'use strict'
 /**
  * nunjucks 模板引擎 自定义filters
  * @authors yanjixiong
  * @date    2017-02-21 15:08:46
  */
 
-const validator = require('validator');
-const moment = require('moment');
-moment.locale('zh-cn'); // 使用中文
+const validator = require('validator')
+const moment = require('moment')
+moment.locale('zh-cn') // 使用中文
 
 /**
  * 格式化时间
  * @param  {[type]} date [description]
  * @return {[type]}      [description]
  */
-exports.datetime = function datetime(date, friendly) {
+exports.datetime = function datetime (date, friendly) {
   if (friendly) {
-    return moment(date).fromNow();
+    return moment(date).fromNow()
   }
-  return moment(date).format('YYYY-MM-DD HH:mm:ss');
-};
+  return moment(date).format('YYYY-MM-DD HH:mm:ss')
+}
 
 /**
  * 格式化日期
  * @param  {[type]} date [description]
  * @return {[type]}      [description]
  */
-exports.date = function date(date) {
-  return moment(date).format('YYYY-MM-DD');
-};
+exports.date = function date (date) {
+  return moment(date).format('YYYY-MM-DD')
+}
 
 /**
  * 截短内容
@@ -37,45 +37,45 @@ exports.date = function date(date) {
  */
 exports.shorter = function (content, length) {
   if (!content) {
-    return '';
+    return ''
   }
-  content = validator.trim(content) || '';
-  const len = content.length;
-  const cache = content.substring(0, len);
-  let t = 0;
+  content = validator.trim(content) || ''
+  const len = content.length
+  const cache = content.substring(0, len)
+  let t = 0
   for (let i = 0; i < length; i++) {
     if (cache.substr(i, 1).match('[\u4e00-\u9fa5]')) {
       if (t + 2 > length) {
-        break;
+        break
       }
-      t = t + 2; // 汉字
+      t = t + 2 // 汉字
     } else {
       if (t + 1 > length) {
-        break;
+        break
       }
-      t = t + 1; // 英文
+      t = t + 1 // 英文
     }
   }
-  let result = cache.substring(0, t);
+  let result = cache.substring(0, t)
   if (len > length) {
-    result = result + '...';
+    result = result + '...'
   }
-  return result;
-};
+  return result
+}
 
 /**
  * 清除html标签
  * @param {String} content 需要被清除的内容
  */
 exports.clearHtml = function (content) {
-  return content;
-};
+  return content
+}
 
 /**
  * 清除markdown标记
  * @param markdownStr
  */
-exports.cleanMarkdown = function cleanMarkdown(markdownStr) {
+exports.cleanMarkdown = function cleanMarkdown (markdownStr) {
   return markdownStr
     .replace(/^([\s\t]*)([\*\-\+]|\d\.)\s+/gm, '$1')
     // Remove HTML tags
@@ -97,5 +97,5 @@ exports.cleanMarkdown = function cleanMarkdown(markdownStr) {
     .replace(/(`{3,})(.*?)\1/gm, '$2')
     .replace(/^-{3,}\s*$/g, '')
     .replace(/`(.+?)`/g, '$1')
-    .replace(/\n{2,}/g, '\n\n');
-};
+    .replace(/\n{2,}/g, '\n\n')
+}

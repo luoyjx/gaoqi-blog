@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 /**
  * 分类
  * @authors yanjixiong
  * @date    2016-11-08 09:42:47
  */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
 const CategorySchema = new Schema({
   name: { type: String },
@@ -19,12 +19,12 @@ const CategorySchema = new Schema({
   avatar: { type: String }, // 分类头像地址
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now }
-});
+})
 
-CategorySchema.index({ create_at: -1 });
-CategorySchema.index({ update_at: -1 });
-CategorySchema.index({ name: 1 });
-CategorySchema.index({ show_name: 1 });
-CategorySchema.index({ parent_id: 1 });
+CategorySchema.index({ create_at: -1 })
+CategorySchema.index({ update_at: -1 })
+CategorySchema.index({ name: 1 })
+CategorySchema.index({ show_name: 1 })
+CategorySchema.index({ parent_id: 1 })
 
-mongoose.model('Category', CategorySchema);
+mongoose.model('Category', CategorySchema)

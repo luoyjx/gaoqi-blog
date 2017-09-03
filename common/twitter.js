@@ -1,16 +1,16 @@
 /**
  * twitter helper
- * @authors yanjixiong 
+ * @authors yanjixiong
  * @date    2017-02-06 20:46:19
  */
 
-var Promise = require('bluebird');
-var Twit = require('twit');
-var config = require('../config');
+var Promise = require('bluebird')
+var Twit = require('twit')
+var config = require('../config')
 
-var twitterClient = null;
+var twitterClient = null
 if (config.twitter && config.twitter.consumer_key !== 'your consumer key') {
-  twitterClient = new Twit(config.twitter);
+  twitterClient = new Twit(config.twitter)
 }
 
 /**
@@ -18,17 +18,16 @@ if (config.twitter && config.twitter.consumer_key !== 'your consumer key') {
  * @param  {[type]} content [description]
  * @return {[type]}         [description]
  */
-exports.postStatus = function postStatus(content) {
-  if (!twitterClient) return Promise.resolve();
+exports.postStatus = function postStatus (content) {
+  if (!twitterClient) return Promise.resolve()
 
   return new Promise(function (resolve, reject) {
-    twitterClient.post('statuses/update', { status: content }, function(err, data, response) {
+    twitterClient.post('statuses/update', { status: content }, function (err, data, response) {
       if (err) {
-        console.log(err);
-        return resolve();
+        console.log(err)
+        return resolve()
       }
-      resolve(data);
+      resolve(data)
     })
   })
 }
-

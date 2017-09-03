@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const config = require('../config');
-const cache = require('../common/cache');
-const convert = require('data2xml')();
-const Post = require('../services/post');
-const render = require('../common/render');
+const config = require('../config')
+const cache = require('../common/cache')
+const convert = require('data2xml')()
+const Post = require('../services/post')
+const render = require('../common/render')
 
 /**
  * rss输出
@@ -12,24 +12,24 @@ const render = require('../common/render');
  * @param res
  * @param next
  */
-exports.index = function *index() {
+exports.index = function * index () {
   if (!config.rss) {
-    this.status = 404;
-    this.body = 'Please set `rss` in configuration';
-    return;
+    this.status = 404
+    this.body = 'Please set `rss` in configuration'
+    return
   }
 
-  this.type = 'application/xml';
+  this.type = 'application/xml'
 
-  const rssCache = cache.get('rss');
+  const rssCache = cache.get('rss')
 
   if (rssCache) {
-    this.body = rssCache;
-    return;
+    this.body = rssCache
+    return
   }
 
-  const query_opt = { limit: config.rss.max_rss_items, sort: '-create_at' };
-  const posts = yield Post.getPostsByQuery({}, query_opt);
+  const query_opt = { limit: config.rss.max_rss_items, sort: '-create_at' }
+  const posts = yield Post.getPostsByQuery({}, query_opt)
 
   const rss_obj = {
     _attr: { version: '2.0' },
@@ -40,7 +40,7 @@ exports.index = function *index() {
       description: config.rss.description,
       item: []
     }
-  };
+  }
 
   if (posts) {
     posts.forEach(function (post) {
@@ -51,13 +51,13 @@ exports.index = function *index() {
         description: render.markdown(post.content),
         author: post.author.login_name,
         pubDate: post.create_at.toUTCString()
-      });
-    });
+      })
+    })
   }
 
-  const rssContent = convert('rss', rss_obj);
+  const rssContent = convert('rss', rss_obj)
 
-  yield cache.set('rss', rssContent, 60 * 5); // 五分钟
+  yield cache.set('rss', rssContent, 60 * 5) // 五分钟
 
-  this.body = rssContent;
-};
+  this.body = rssContent
+}

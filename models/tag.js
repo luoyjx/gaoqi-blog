@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 /**
  * tag model
  */
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const TagSchema = new Schema({
   name: { type: String },
@@ -14,13 +14,13 @@ const TagSchema = new Schema({
   update_at: { type: Date, default: Date.now },
   last_post: { type: Date },
   tag_category: { type: String } // 若将标签分为几个大类时用到
-});
+})
 
-TagSchema.index({ name: 1 });
-TagSchema.index({ create_at: -1 });
-TagSchema.index({ update_at: -1 });
-TagSchema.index({ post_count: -1 });
-TagSchema.index({ last_post: -1 });
-TagSchema.index({ follow_count: -1 });
+TagSchema.index({ name: 1 })
+TagSchema.index({ create_at: -1 })
+TagSchema.index({ update_at: -1 })
+TagSchema.index({ post_count: -1 })
+TagSchema.index({ last_post: -1 })
+TagSchema.index({ follow_count: -1 })
 
-mongoose.model('Tag', TagSchema);
+mongoose.model('Tag', TagSchema)

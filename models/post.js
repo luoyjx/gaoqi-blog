@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 /**
  * post model
  */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
-const config = require('../config');
-const _ = require('lodash');
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
+const config = require('../config')
+const _ = require('lodash')
 
 const PostSchema = new Schema({
   title: { type: String },
@@ -27,26 +27,26 @@ const PostSchema = new Schema({
   pv: { type: Number, default: 0 }, // 浏览数
   lock: { type: Boolean, default: false }, // 违规文章锁定
   enable: { type: Boolean, default: true } // 文章软删除时用到
-});
+})
 
-PostSchema.index({ author: 1, create_at: -1 });
-PostSchema.index({ top: -1, update_at: -1 });
-PostSchema.index({ pv: -1 });
-PostSchema.index({ recommend_count: -1 });
-PostSchema.index({ reply_count: -1 });
-PostSchema.index({ category: 1 });
+PostSchema.index({ author: 1, create_at: -1 })
+PostSchema.index({ top: -1, update_at: -1 })
+PostSchema.index({ pv: -1 })
+PostSchema.index({ recommend_count: -1 })
+PostSchema.index({ reply_count: -1 })
+PostSchema.index({ category: 1 })
 
 PostSchema.virtual('categoryName').get(function () {
-  const tab = this.category;
+  const tab = this.category
   const pair = _.find(config.tabs, function (_pair) {
-    return _pair[0] === tab;
-  });
+    return _pair[0] === tab
+  })
 
   if (pair) {
-    return pair[1];
+    return pair[1]
   }
 
-  return '';
-});
+  return ''
+})
 
-mongoose.model('Post', PostSchema);
+mongoose.model('Post', PostSchema)

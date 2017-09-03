@@ -1,14 +1,14 @@
-'use strict';
+'use strict'
 /**
  * at common
  */
 
-const Promise = require('bluebird');
-const User = require('../services/user');
-const Message = require('./message');
-const _ = require('lodash');
-const online = require('../middlewares/online');
-const mail = require('./mail');
+const Promise = require('bluebird')
+const User = require('../services/user')
+const Message = require('./message')
+const _ = require('lodash')
+const online = require('../middlewares/online')
+const mail = require('./mail')
 
 /**
  * 从文本中提取出@username 标记的用户名数组
@@ -24,26 +24,26 @@ const fetchUsers = function (text) {
     /^    .*/gm, // eslint-disable-line no-regex-spaces
     /\b\S*?@[^\s]*?\..+?\b/g, // somebody@gmail.com 会被去除
     /\[@.+?\]\(\/.+?\)/g // 已经被 link 的 username
-  ];
+  ]
 
   ignoreRegexs.forEach(function (ignore_regex) {
-    text = text.replace(ignore_regex, '');
-  });
+    text = text.replace(ignore_regex, '')
+  })
 
-  const results = text.match(/@[a-z0-9\-_]+\b/igm);
-  let names = [];
+  const results = text.match(/@[a-z0-9\-_]+\b/igm)
+  let names = []
   if (results) {
     for (let i = 0, l = results.length; i < l; i++) {
-      let s = results[i];
+      let s = results[i]
       // remove leading char @
-      s = s.slice(1);
-      names.push(s);
+      s = s.slice(1)
+      names.push(s)
     }
   }
-  names = _.uniq(names);
-  return names;
-};
-exports.fetchUsers = fetchUsers;
+  names = _.uniq(names)
+  return names
+}
+exports.fetchUsers = fetchUsers
 
 /**
  * 根据文本内容中读取用户，并发送消息给提到的用户
@@ -61,21 +61,21 @@ exports.sendMessageToMentionUsers = function (text, postId, authorId, reply_id, 
     .getUsersByNames(fetchUsers(text))
     .then(function (users) {
       users = users.filter(function (user) {
-        return !user._id.equals(authorId);
-      });
+        return !user._id.equals(authorId)
+      })
       return Promise
         .map(users, function (user) {
-          Message.sendAtMessage(user._id, authorId, postId, reply_id);
+          Message.sendAtMessage(user._id, authorId, postId, reply_id)
           online
             .isOnline(user._id)
             .then(function (flag) {
               if (!flag) {
-                mail.sendNotificationMail(user.email, user.login_name, author, post_title, postId, reply_id);
+                mail.sendNotificationMail(user.email, user.login_name, author, post_title, postId, reply_id)
               }
-            });
-        });
-    });
-};
+            })
+        })
+    })
+}
 
 /**
  * 根据文本内容，替换为数据库中的数据
@@ -85,10 +85,10 @@ exports.sendMessageToMentionUsers = function (text, postId, authorId, reply_id, 
  * @param {String} text 文本内容
  */
 exports.linkUsers = function (text) {
-  const users = fetchUsers(text);
+  const users = fetchUsers(text)
   for (let i = 0, l = users.length; i < l; i++) {
-    const name = users[i];
-    text = text.replace(new RegExp('@' + name + '\\b(?!\\])', 'g'), '[@' + name + '](/u/' + name + ')');
+    const name = users[i]
+    text = text.replace(new RegExp('@' + name + '\\b(?!\\])', 'g'), '[@' + name + '](/u/' + name + ')')
   }
-  return text;
-};
+  return text
+}
