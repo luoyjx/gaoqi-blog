@@ -32,10 +32,10 @@ router.get('/signup', sign.showSignup) // 跳到注册页面
 router.post('/signup', sign.signup) // 注册
 router.get('/active_account', sign.activeUser) // 帐号激活
 router.get('/signout', sign.signout) // 退出
-router.get('/search_pass', sign.showSearchPass)  // 找回密码页面
-router.post('/search_pass', sign.updateSearchPass)  // 更新密码
-router.get('/reset_pass', sign.resetPass)  // 进入重置密码页面
-router.post('/reset_pass', sign.updatePass)  // 更新密码
+router.get('/search_pass', sign.showSearchPass) // 找回密码页面
+router.post('/search_pass', sign.updateSearchPass) // 更新密码
+router.get('/reset_pass', sign.resetPass) // 进入重置密码页面
+router.post('/reset_pass', sign.updatePass) // 更新密码
 router.get('/post/create', auth.userRequired, post.showCreate) // 创建文章页面
 router.get('/post/:_id/edit', auth.userRequired, post.edit)
 router.get('/p/:_id', post.index) // 文章内容页

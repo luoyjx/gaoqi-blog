@@ -1,12 +1,12 @@
 'use strict'
 
 const Promise = require('bluebird')
+const config = require('config')
 const _ = require('lodash')
 const validator = require('validator')
 const User = require('../services/user')
 const UserFollow = require('../services/user_follow')
 const Post = require('../services/post')
-const config = require('../config')
 
 /**
  * 关注用户的文章

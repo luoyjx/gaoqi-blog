@@ -2,10 +2,10 @@
  * app test
  * Copyright(c) 2016 yanjixiong <yjk99@qq.com>
  */
-var request = require('supertest')
-var should = require('should')
-var app = require('../app')
-var config = require('../config')
+const config = require('config')
+const request = require('supertest')
+const should = require('should')
+const app = require('../app')
 
 describe('test/app.test.js', function () {
   it('should / status 200', function (done) {

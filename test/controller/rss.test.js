@@ -11,11 +11,11 @@ var should = require('should')
 describe('test/controller/rss.test.js', function () {
   it('should /rss 200', function () {
     request
-			.get('/rss')
-			.expect(200)
-			.end(function (err, res) {
-  res.text.should.containEql('<channel>')
-  done(err)
-})
+      .get('/rss')
+      .expect(200)
+      .end(function (err, res) {
+        res.text.should.containEql('<channel>')
+        done(err)
+      })
   })
 })

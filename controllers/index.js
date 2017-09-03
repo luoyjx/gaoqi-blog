@@ -1,6 +1,7 @@
 'use strict'
 
 const Promise = require('bluebird')
+const config = require('config')
 const xmlbuilder = require('xmlbuilder')
 const validator = require('validator')
 const _ = require('lodash')
@@ -8,7 +9,6 @@ const Post = require('../services/post')
 const Tag = require('../services/tag')
 const Reply = require('../services/reply')
 const User = require('../services/user')
-const config = require('../config')
 const cache = require('../common/cache')
 
 // 站点首页

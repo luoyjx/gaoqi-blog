@@ -1,8 +1,8 @@
 'use strict'
 
-require('./models')
 const http = require('http')
 const path = require('path')
+const config = require('config')
 const logger = require('koa-logger')
 const json = require('koa-json')
 const jsonp = require('koa-safe-jsonp')
@@ -15,10 +15,10 @@ const serve = require('koa-static')
 const onerror = require('koa-onerror')
 const clearCookie = require('koa-clear-cookie')
 
-const config = require('./config')
 const router = require('./router')
 const filters = require('./common/filters')
 const log = require('./common/logger')
+const redis = require('./common/redis')
 
 let app = require('koa')()
 
@@ -63,7 +63,8 @@ app.use(session({
   store: redisStore({
     host: config.redis_host,
     port: config.redis_port,
-    db: config.redis_db
+    db: config.redis_db,
+    client: redis
   }),
   cookie: {
     maxAge: null // 浏览器关闭session失效

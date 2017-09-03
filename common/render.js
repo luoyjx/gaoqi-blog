@@ -7,7 +7,7 @@
 
 const MarkdownIt = require('markdown-it')
 const _ = require('lodash')
-const config = require('../config')
+const config = require('config')
 const validator = require('validator')
 const multiline = require('multiline')
 const jsxss = require('xss')
@@ -15,11 +15,11 @@ const jsxss = require('xss')
 // markdown 默认设置
 const md = new MarkdownIt()
 md.set({
-  html: true,        // Enable HTML tags in source
-  xhtmlOut: false,        // Use '/' to close single tags (<br />)
-  breaks: false,        // Convert '\n' in paragraphs into <br>
-  linkify: true,        // Autoconvert URL-like text to links
-  typographer: true        // Enable smartypants and other sweet transforms
+  html: true, // Enable HTML tags in source
+  xhtmlOut: false, // Use '/' to close single tags (<br />)
+  breaks: false, // Convert '\n' in paragraphs into <br>
+  linkify: true, // Autoconvert URL-like text to links
+  typographer: true // Enable smartypants and other sweet transforms
 })
 
 md.renderer.rules.fence = function (tokens, idx) {

@@ -1,6 +1,6 @@
 'use strict'
 
-const config = require('../config')
+const config = require('config')
 
 // 发帖时间间隔，为毫秒
 let POST_INTERVAL = config.post_interval

@@ -1,11 +1,11 @@
 'use strict'
 
 const Promise = require('bluebird')
+const config = require('config')
 const Tag = require('../services/tag')
 const Post = require('../services/post')
 const validator = require('validator')
 const filters = require('../common/filters')
-const config = require('../config')
 
 /**
  * 查询所有标签信息

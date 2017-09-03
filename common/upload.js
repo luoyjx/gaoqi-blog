@@ -5,7 +5,7 @@
 'use strict'
 
 var Promise = require('bluebird')
-var config = require('../config')
+var config = require('config')
 var utility = require('utility')
 var path = require('path')
 var fs = require('fs')

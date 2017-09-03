@@ -1,6 +1,6 @@
 'use strict'
 
-const config = require('../config')
+const config = require('config')
 const PostCollection = require('../services/post_collection')
 const User = require('../services/user')
 

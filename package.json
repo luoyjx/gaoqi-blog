@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production pm2 start app.js --name gaoqi-blog",
     "restart": "cross-env NODE_ENV=production pm2 restart gaoqi-blog",
     "stop": "cross-env NODE_ENV=production pm2 stop gaoqi-blog",
-    "lint": "eslint .",
+    "lint": "eslint --fix .",
     "test": "echo 'test script'",
     "test-cov": "echo 'test coverage'"
   },
@@ -19,6 +19,7 @@
     "co": "^4.6.0",
     "co-busboy": "^1.3.1",
     "colors": "^1.1.2",
+    "config": "1.26.2",
     "cross-env": "^3.1.4",
     "data2xml": "^1.2.5",
     "debug": "^2.2.0",

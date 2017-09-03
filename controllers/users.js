@@ -1,12 +1,12 @@
 'use strict'
 
 const Promise = require('bluebird')
+const config = require('config')
 const Post = require('../services/post')
 const User = require('../services/user')
 const Reply = require('../services/reply')
 const UserFollow = require('../services/user_follow')
 const validator = require('validator')
-const config = require('../config')
 const tools = require('../common/tools')
 
 /**

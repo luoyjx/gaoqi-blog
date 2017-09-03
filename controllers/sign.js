@@ -5,7 +5,7 @@ const tools = require('../common/tools')
 const User = require('../services/user')
 const mail = require('../common/mail')
 const utility = require('utility')
-const config = require('../config')
+const config = require('config')
 const authFilter = require('../middlewares/auth')
 const uuid = require('uuid')
 
@@ -25,9 +25,9 @@ exports.showLogin = function * showLogin () {
  */
 const notJump = [
   '/active_account', // active page
-  '/reset_pass',     // reset password page, avoid to reset twice
-  '/signup',         // regist page
-  '/search_pass'    // serch pass page
+  '/reset_pass', // reset password page, avoid to reset twice
+  '/signup', // regist page
+  '/search_pass' // serch pass page
 ]
 
 /**

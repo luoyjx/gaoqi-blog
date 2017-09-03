@@ -1,6 +1,6 @@
 'use strict'
 
-const config = require('../config')
+const config = require('config')
 const cache = require('../common/cache')
 const convert = require('data2xml')()
 const Post = require('../services/post')

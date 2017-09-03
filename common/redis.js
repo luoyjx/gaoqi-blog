@@ -3,7 +3,7 @@
  */
 'use strict'
 
-const config = require('../config')
+const config = require('config')
 const Redis = require('ioredis')
 
 const client = new Redis({

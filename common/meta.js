@@ -7,7 +7,7 @@
  * @date    2017-02-05 15:01:39
  */
 
-var config = require('../config')
+var config = require('config')
 var render = require('./render')
 var filters = require('./filters')
 

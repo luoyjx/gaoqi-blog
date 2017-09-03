@@ -2,7 +2,7 @@
 
 const Promise = require('bluebird')
 const Post = require('../../services/post')
-const config = require('../../config')
+const config = require('config')
 
 module.exports = {
   /**

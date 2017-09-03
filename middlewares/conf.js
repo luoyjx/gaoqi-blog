@@ -1,6 +1,6 @@
 'use strict'
 
-const config = require('../config')
+const config = require('config')
 
 exports.github = function * github (next) {
   if (config.GITHUB_OAUTH.clientID === 'your GITHUB_CLIENT_ID') {

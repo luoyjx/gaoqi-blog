@@ -6,7 +6,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
-const config = require('../config')
+const config = require('config')
 const _ = require('lodash')
 
 const PostSchema = new Schema({

@@ -6,7 +6,7 @@
 
 var Promise = require('bluebird')
 var Twit = require('twit')
-var config = require('../config')
+var config = require('config')
 
 var twitterClient = null
 if (config.twitter && config.twitter.consumer_key !== 'your consumer key') {

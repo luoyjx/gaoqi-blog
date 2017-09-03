@@ -1,8 +1,8 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const config = require('config')
 const UserModel = mongoose.model('User')
-const config = require('../config')
 const UserProxy = require('../services/user')
 const Message = require('../services/message')
 
