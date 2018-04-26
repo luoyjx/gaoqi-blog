@@ -70,7 +70,7 @@
     "twit": "^2.2.5",
     "utility": "^1.8.0",
     "validator": "^7.0.0",
-    "xmlbuilder": "^9.0.0",
+    "xmlbuilder": "^10.0.0",
     "xss": "*"
   },
   "devDependencies": {
