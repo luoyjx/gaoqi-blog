@@ -106,38 +106,35 @@ exports.index = async (req, res, next) => {
 };
 
 //站点地图
-exports.sitemap = function (req, res, next) {
+exports.sitemap = async (req, res, next) => {
   var urlset = xmlbuilder.create('urlset', {version: '1.0', encoding: 'UTF-8'});
   urlset.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
-  cache
-    .get('sitemap')
-    .then(function(sitemapData) {
-      if (sitemapData) return res.type('xml').send(sitemapData);
+  try {
+    const sitemapData = await cache.get('sitemap')
 
-      return Promise
-        .all([
-          Post.getLimit5w(),
-          Tag.getAllTagsByQuery({}, {sort: '-post_count'})
-        ]);
-    })
-    .spread(function(posts, tags) {
-      if (!res.headersSent) {
-        posts.forEach(function (post) {
-          urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
-        });
-        tags.forEach(function(tag) {
-          urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
-        });
-        var sitemapData = urlset.end();
-        // 缓存
-        cache.set('sitemap', sitemapData, 3600 * 2);
-        res.type('xml').send(sitemapData);
-      }
-    })
-    .catch(function(err) {
-      return next(err);
-    });
+    if (sitemapData) return res.type('xml').send(sitemapData);
+
+    const [posts, tags] = await Promise.all([
+      Post.getLimit5w(),
+      Tag.getAllTagsByQuery({}, {sort: '-post_count'})
+    ]);
+
+    if (!res.headersSent) {
+      posts.forEach(function (post) {
+        urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
+      });
+      tags.forEach(function(tag) {
+        urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
+      });
+      var sitemapData = urlset.end();
+      // 缓存
+      cache.set('sitemap', sitemapData, 3600 * 2);
+      res.type('xml').send(sitemapData);
+    }
+  } catch (error) {
+    return next(err);
+  }
 };
 
 exports.robots = function (req, res, next) {
