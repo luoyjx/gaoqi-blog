@@ -4,7 +4,6 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var ObjectId = Schema.ObjectId
-var config = require('../config')
 
 var ReplySchema = new Schema({
   content: { type: String },
