@@ -104,15 +104,6 @@ module.exports = {
     timeout_ms: 60 * 1000
   },
 
-  // twitter app keys
-  twitter: {
-    consumer_key: 'your consumer key',
-    consumer_secret: '',
-    access_token: '',
-    access_token_secret: '',
-    timeout_ms: 60 * 1000
-  },
-
   // 7牛的access信息，用于文件上传
   qn_access: {
     accessKey: '',

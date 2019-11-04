@@ -33,8 +33,8 @@ exports.index = function (req, res, next) {
           })
         }),
       Tag.getCountByQuery({})
-        .then(function (all_count) {
-          return Promise.resolve(Math.ceil(all_count / limit))
+        .then(function (allCount) {
+          return Promise.resolve(Math.ceil(allCount / limit))
         })
     ])
     .spread(function (tags, pages) {
@@ -81,8 +81,8 @@ exports.getTagByName = function (req, res, next) {
       Tag.getTagByName(name),
       Post.getPostsByQuery({ tags: name }, options),
       Post.getCountByQuery({ tags: name })
-        .then(function (all_count) {
-          return Promise.resolve(Math.ceil(all_count / limit))
+        .then(function (allCount) {
+          return Promise.resolve(Math.ceil(allCount / limit))
         })
     ])
     .spread(function (tag, posts, pages) {

@@ -6,15 +6,15 @@ var Promise = require('bluebird')
 var Message = require('../dao').Message
 
 exports.index = function (req, res, next) {
-  var user_id = req.session.user._id
+  var userId = req.session.user._id
 
   Promise
     .all([
-      Message.getReadMessagesByUserId(user_id),
-      Message.getUnreadMessageByUserId(user_id)
+      Message.getReadMessagesByUserId(userId),
+      Message.getUnreadMessageByUserId(userId)
     ])
     .spread(function (hasRead, hasNotRead) {
-      Message.updateMessagesToRead(user_id, hasNotRead)
+      Message.updateMessagesToRead(userId, hasNotRead)
       return Promise
         .all([
           Promise.map(hasRead, function (doc) { return Message.getMessageRelations(doc) }),

@@ -2,15 +2,15 @@
  * sign controller
  */
 
-var Promise = require('bluebird')
-var validator = require('validator')
-var tools = require('../common/tools')
-var User = require('../dao').User
-var mail = require('../common/mail')
-var utility = require('utility')
-var config = require('../config')
-var authFilter = require('../middleware/auth')
-var uuid = require('node-uuid')
+const validator = require('validator')
+const uuid = require('node-uuid')
+
+const tools = require('../common/tools')
+const User = require('../dao').User
+const mail = require('../common/mail')
+const utility = require('utility')
+const config = require('../config')
+const authFilter = require('../middleware/auth')
 
 /**
  * 跳转到登录页面
@@ -75,9 +75,9 @@ exports.signIn = function (req, res, next) {
 
       // 验证是否激活，未激活再次发送激活邮件
       if (!_user.is_active) {
-        mail.sendActiveMail(_user.email, utility.md5(_user.email + _user.pwd + config.session_secret), user.login_name)
+        mail.sendActiveMail(_user.email, utility.md5(_user.email + _user.pwd + config.session_secret), _user.login_name)
         res.status(403)
-        return res.wrapRender('sign/signin', { error: '账号未激活，已重新发送激活邮件到' + user.email })
+        return res.wrapRender('sign/signin', { error: '账号未激活，已重新发送激活邮件到' + _user.email })
       }
 
       // 验证成功，存储session cookie，跳转到首页
@@ -119,11 +119,11 @@ exports.signup = function (req, res, next) {
   var loginname = validator.trim(req.body.loginname).toLowerCase()
   var email = validator.trim(req.body.email).toLowerCase()
   var pass = validator.trim(req.body.pass)
-  var re_pass = validator.trim(req.body.re_pass)
+  var rePass = validator.trim(req.body.re_pass)
 
   var errInfo = ''
 
-  var hasEmpty = [loginname, pass, re_pass, email].some(function (item) {
+  var hasEmpty = [loginname, pass, rePass, email].some(function (item) {
     return item === ''
   })
 
@@ -131,7 +131,7 @@ exports.signup = function (req, res, next) {
   errInfo = loginname.length < 5 ? '用户名不能少于5个字符' : ''
   errInfo = !tools.validateId(loginname) ? '用户名不合法' : ''
   errInfo = !validator.isEmail(email) ? '邮箱填写不正确' : ''
-  errInfo = pass !== re_pass ? '两次密码填写不一致' : ''
+  errInfo = pass !== rePass ? '两次密码填写不一致' : ''
 
   if (errInfo) {
     return res.status(422).wrapRender('sign/signup', { error: errInfo, loginname: loginname, email: email })

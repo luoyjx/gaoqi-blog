@@ -2,22 +2,19 @@
  * controller post
  */
 
-var Promise = require('bluebird')
-var validator = require('validator')
-var Post = require('../dao').Post
-var User = require('../dao').User
-var Tag = require('../dao').Tag
-var Reply = require('../dao').Reply
-var PostCollection = require('../dao').PostCollection
-var tools = require('../common/tools')
-var at = require('../common/at')
-var config = require('../config')
-var uploader = require('../common/upload')
-var cache = require('../common/cache')
-var cutter = require('../common/cutter')
-var render = require('../common/render')
-var meta = require('../common/meta')
-var twitter = require('../common/twitter')
+const Promise = require('bluebird')
+const validator = require('validator')
+
+const { Post, User, Tag } = require('../dao')
+const PostCollection = require('../dao').PostCollection
+const tools = require('../common/tools')
+const at = require('../common/at')
+const config = require('../config')
+const uploader = require('../common/upload')
+const cutter = require('../common/cutter')
+const render = require('../common/render')
+const meta = require('../common/meta')
+const twitter = require('../common/twitter')
 
 /**
  * 文章页
@@ -26,17 +23,17 @@ var twitter = require('../common/twitter')
  * @param  next
  */
 exports.index = function (req, res, next) {
-  var post_id = req.params._id
+  var postId = req.params._id
   var twitterMeta = ''
 
-  if (post_id.length !== 24) {
+  if (postId.length !== 24) {
     return res.wrapRender('notify/notify', {
       error: '这篇文章好像不在这个星球上了'
     })
   }
 
   Post
-    .getCompletePost(post_id)
+    .getCompletePost(postId)
     .spread(function (post, author, replies) {
       post.pv += 1
       post.save()
@@ -49,11 +46,11 @@ exports.index = function (req, res, next) {
 
       twitterMeta = meta.getTwitterMeta(post.category, author, post)
 
-      var hot_options = {
+      var hotOptions = {
         limit: 6,
         sort: '-pv'
       }
-      var recent_options = {
+      var recentOptions = {
         limit: 6,
         sort: '-create_at'
       }
@@ -61,9 +58,9 @@ exports.index = function (req, res, next) {
       return Promise
         .all([
           Promise.resolve(post),
-          Post.getSimplePosts(hot_options),
-          Post.getSimplePosts(recent_options),
-          eq.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
+          Post.getSimplePosts(hotOptions),
+          Post.getSimplePosts(recentOptions),
+          req.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
         ])
     })
     .spread(function (post, hotPosts, recentPosts, hasCollect) {
@@ -199,10 +196,10 @@ exports.create = function (req, res, next) {
  * @param next
  */
 exports.edit = function (req, res, next) {
-  var post_id = req.params._id
+  var postId = req.params._id
 
   Post
-    .getPostById(post_id)
+    .getPostById(postId)
     .spread(function (post, author) {
       if (!post) {
         return res.wrapRender('notify/notify', {
@@ -235,7 +232,7 @@ exports.edit = function (req, res, next) {
  * @param next
  */
 exports.update = function (req, res, next) {
-  var post_id = req.params._id
+  var postId = req.params._id
   // escape 将html 等特殊符号 标签转义
   var category = validator.trim(req.body.category)
   category = validator.escape(category)
@@ -261,13 +258,13 @@ exports.update = function (req, res, next) {
     return res.wrapRender('post/edit', {
       action: 'edit',
       edit_error: editError,
-      post_id: post_id,
+      post_id: postId,
       content: content
     })
   }
 
   Post
-    .getPostById(post_id)
+    .getPostById(postId)
     .spread(function (post, author) {
       if (!post) {
         return res.wrapRender('notify/notify', {
@@ -311,10 +308,10 @@ exports.update = function (req, res, next) {
  * @param next
  */
 exports.delete = function (req, res, next) {
-  var post_id = req.params._id
+  var postId = req.params._id
 
   Post
-    .getPostById(post_id)
+    .getPostById(postId)
     .spread(function (postFind) {
       console.log(postFind)
       console.log(req.session.user._id)
@@ -369,7 +366,6 @@ exports.delete = function (req, res, next) {
  */
 exports.top = function (req, res, next) {
   var id = req.params._id
-  var user = req.session.user
   Post
     .setTop(id)
     .then(function (updated) {
@@ -395,7 +391,6 @@ exports.top = function (req, res, next) {
  */
 exports.unTop = function unTop (req, res, next) {
   var id = req.params._id
-  var user = req.session.user
   Post
     .cancelTop(id)
     .then(function (updated) {
@@ -419,7 +414,7 @@ exports.unTop = function unTop (req, res, next) {
  * @param next
  */
 exports.recommend = function (req, res, next) {
-  var post_id = validator.trim(req.params._id)
+  // var post_id = validator.trim(req.params._id)
 }
 
 /**
@@ -429,7 +424,7 @@ exports.recommend = function (req, res, next) {
  * @param next
  */
 exports.unRecommend = function unRecommend (req, res, next) {
-  var post_id = validator.trim(req.params._id)
+  // var post_id = validator.trim(req.params._id)
 }
 
 /**

@@ -40,15 +40,15 @@ exports.index = async (req, res, next) => {
   const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' }
 
   // 取热门标签
-  const tag_options = { limit: config.list_hot_tag_count, sort: '-post_count' }
+  const tagOptions = { limit: config.list_hot_tag_count, sort: '-post_count' }
 
   // 取最新评论
-  const reply_query = {}
-  const reply_options = { limit: config.list_latest_replies_count, sort: '-create_at' }
+  const replyQuery = {}
+  const replyOptions = { limit: config.list_latest_replies_count, sort: '-create_at' }
 
   // 最近注册用户
-  const users_query = { is_active: true }
-  const recent_reg_options = { limit: 10, sort: '-create_at' }
+  const usersQuery = { is_active: true }
+  const recentRegOptions = { limit: 10, sort: '-create_at' }
 
   try {
     const { hotPosts, hotTags } = await Bluebird.props({
@@ -59,10 +59,10 @@ exports.index = async (req, res, next) => {
     let { posts, count, replies, recentReg, hots, hotsTag } = await Bluebird.props({
       posts: Post.getPostsByQuery(query, options),
       count: Post.getCountByQuery(query),
-      replies: Reply.getRepliesByQuery(reply_query, reply_options),
-      recentReg: User.getUsersByQuery(users_query, recent_reg_options),
+      replies: Reply.getRepliesByQuery(replyQuery, replyOptions),
+      recentReg: User.getUsersByQuery(usersQuery, recentRegOptions),
       hots: hotPosts || Post.getNewHot(query),
-      hotsTag: hotTags || Tag.getHotTagsByQuery(tag_options)
+      hotsTag: hotTags || Tag.getHotTagsByQuery(tagOptions)
     })
 
     // 总页数
@@ -123,7 +123,7 @@ exports.sitemap = async (req, res, next) => {
       res.type('xml').send(finalData)
     }
   } catch (error) {
-    return next(err)
+    return next(error)
   }
 }
 

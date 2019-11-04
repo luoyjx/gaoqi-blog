@@ -18,10 +18,10 @@ var tools = require('../common/tools')
  * @param next
  */
 exports.index = function (req, res, next) {
-  var user_name = validator.trim(req.params.name)
+  var userNname = validator.trim(req.params.name)
 
   User
-    .getUserByLoginName(user_name)
+    .getUserByLoginName(userNname)
     .then(function (user) {
       if (!user) {
         return res.wrapRender('notify/notify', {
@@ -29,16 +29,16 @@ exports.index = function (req, res, next) {
         })
       }
 
-      var post_query = { author_id: user._id }
+      var postQuery = { author_id: user._id }
 
-      var latest_options = { limit: 10, sort: '-create_at' }
-      var top_options = { limit: 10, sort: '-pv' }
-      var reply_options = { limit: 10, sort: '-create_at' }
+      var latestOptions = { limit: 10, sort: '-create_at' }
+      var topOptions = { limit: 10, sort: '-pv' }
+      var replyOptions = { limit: 10, sort: '-create_at' }
       return Promise
         .all([
-          Post.getPostsByQuery(post_query, latest_options),
-          Post.getPostsByQuery(post_query, top_options),
-          Reply.getRepliesByAuthorId(user._id, reply_options),
+          Post.getPostsByQuery(postQuery, latestOptions),
+          Post.getPostsByQuery(postQuery, topOptions),
+          Reply.getRepliesByAuthorId(user._id, replyOptions),
           Promise.resolve(user),
           req.session.user
             ? UserFollow.hasFollow(user._id, req.session.user._id)
@@ -69,12 +69,12 @@ exports.index = function (req, res, next) {
  * @param next
  */
 exports.top = function (req, res, next) {
-  var user_name = validator.trim(req.params.name)
+  var userName = validator.trim(req.params.name)
   var page = req.query.page ? parseInt(req.query.page, 10) : 1
   page = page > 0 ? page : 1
 
   User
-    .getUserByLoginName(user_name)
+    .getUserByLoginName(userName)
     .then(function (user) {
       if (!user) {
         return res.wrapRender('notify/notify', {
@@ -82,16 +82,16 @@ exports.top = function (req, res, next) {
         })
       }
 
-      var post_query = { author_id: user._id }
+      var postQuery = { author_id: user._id }
       var limit = config.list_topic_count
 
-      var top_options = { skip: (page - 1) * limit, limit: limit, sort: '-pv' }
+      var topOptions = { skip: (page - 1) * limit, limit: limit, sort: '-pv' }
       return Promise
         .all([
-          Post.getPostsByQuery(post_query, top_options),
-          Post.getCountByQuery(post_query)
-            .then(function (all_count) {
-              return Promise.resolve(Math.ceil(all_count / limit))
+          Post.getPostsByQuery(postQuery, topOptions),
+          Post.getCountByQuery(postQuery)
+            .then(function (allCount) {
+              return Promise.resolve(Math.ceil(allCount / limit))
             }),
           Promise.resolve(user)
         ])
@@ -117,14 +117,14 @@ exports.top = function (req, res, next) {
  * @param next
  */
 exports.replies = function (req, res, next) {
-  var user_name = validator.trim(req.params.name)
+  var userName = validator.trim(req.params.name)
   var page = req.query.page ? parseInt(req.query.page, 10) : 1
   page = page > 0 ? page : 1
 
   var _user
 
   User
-    .getUserByLoginName(user_name)
+    .getUserByLoginName(userName)
     .then(function (user) {
       if (!user) {
         return res.wrapRender('notify/notify', {
@@ -136,13 +136,13 @@ exports.replies = function (req, res, next) {
 
       var limit = config.list_topic_count
 
-      var reply_option = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
-      return Reply.getRepliesByAuthorId(user._id, reply_option)
+      var replyOption = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
+      return Reply.getRepliesByAuthorId(user._id, replyOption)
     })
-    .then(function (from_author) {
+    .then(function (fromAuthor) {
       res.wrapRender('user/replies', {
         author: _user,
-        from_author: from_author,
+        from_author: fromAuthor,
         title: _user.login_name + '最近的评论'
       })
     })
@@ -158,16 +158,16 @@ exports.replies = function (req, res, next) {
  * @param next
  */
 exports.setting = function (req, res, next) {
-  var login_name = validator.trim(req.params.name)
+  var loginName = validator.trim(req.params.name)
 
-  if (!req.session.user || login_name != req.session.user.login_name) {
+  if (!req.session.user || loginName !== req.session.user.login_name) {
     return res.render('notify/notify', {
       error: '你没有权限访问此页面'
     })
   }
 
   User
-    .getUserByLoginName(login_name)
+    .getUserByLoginName(loginName)
     .then(function (user) {
       if (!user) {
         return res.wrapRender('notify/notify', {
@@ -225,9 +225,9 @@ exports.updateSetting = function updateSetting (req, res, next) {
  * @param next
  */
 exports.updatePassword = function updatePassword (req, res, next) {
-  var old_pass = validator.trim(req.body.old_pass)
-  var new_pass = validator.trim(req.body.new_pass)
-  if (!old_pass || !new_pass) {
+  var oldPass = validator.trim(req.body.old_pass)
+  var newPass = validator.trim(req.body.new_pass)
+  if (!oldPass || !newPass) {
     return res.wrapRender('user/setting', {
       error: '旧密码或新密码不得为空'
     })
@@ -240,7 +240,7 @@ exports.updatePassword = function updatePassword (req, res, next) {
     .then(function (user) {
       _user = user
 
-      return tools.bcompare(old_pass, user.pwd)
+      return tools.bcompare(oldPass, user.pwd)
     })
     .then(function (bool) {
       if (!bool) {
@@ -249,7 +249,7 @@ exports.updatePassword = function updatePassword (req, res, next) {
         })
       }
 
-      return tools.bhash(new_pass)
+      return tools.bhash(newPass)
     })
     .then(function (passhash) {
       if (_user) {

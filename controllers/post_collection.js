@@ -5,7 +5,6 @@
  * @version $Id$
  */
 
-var _ = require('lodash')
 var config = require('../config')
 var PostCollection = require('../dao').PostCollection
 var User = require('../dao').User

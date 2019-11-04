@@ -2,24 +2,20 @@
  * reply controller
  */
 
-var Promise = require('bluebird')
-var validator = require('validator')
-var _ = require('lodash')
+const Promise = require('bluebird')
+const validator = require('validator')
 
-var at = require('../common/at')
-var message = require('../common/message')
-var User = require('../dao').User
-var Post = require('../dao').Post
-var Reply = require('../dao').Reply
-var config = require('../config')
+const at = require('../common/at')
+const message = require('../common/message')
+const { User, Post, Reply } = require('../dao')
 
 /**
  * 添加回复
  */
 exports.add = function (req, res, next) {
   var content = req.body.r_content
-  var post_id = req.params._id
-  var reply_id = req.body.reply_id
+  var postId = req.params._id
+  var replyId = req.body.reply_id
 
   var str = validator.trim(content)
   if (str === '') {
@@ -30,7 +26,7 @@ exports.add = function (req, res, next) {
   var _post
 
   Post
-    .getPost(post_id)
+    .getPost(postId)
     .then(function (postFind) {
       if (postFind.lock) {
         return res.status(403).wrapSend('此主题已锁定。')
@@ -44,11 +40,11 @@ exports.add = function (req, res, next) {
       return Promise
         .all([
           Reply
-            .newAndSave(content, post_id, req.session.user._id, reply_id)
+            .newAndSave(content, postId, req.session.user._id, replyId)
             .then(function (reply) {
               // 发送at消息，并防止重复 at 作者
               var newContent = content.replace('@' + userFind.login_name + ' ', '')
-              at.sendMessageToMentionUsers(newContent, post_id, req.session.user._id, reply._id, userFind.login_name, _post.title)
+              at.sendMessageToMentionUsers(newContent, postId, req.session.user._id, reply._id, userFind.login_name, _post.title)
               _post.reply_count += 1
               _post.update_at = new Date()
               _post.last_reply_at = new Date()
@@ -73,7 +69,7 @@ exports.add = function (req, res, next) {
         ])
     })
     .spread(function (reply) {
-      res.redirect('/p/' + post_id + '#' + reply._id)
+      res.redirect('/p/' + postId + '#' + reply._id)
     })
     .catch(function (err) {
       next(err)

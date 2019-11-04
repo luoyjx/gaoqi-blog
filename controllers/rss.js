@@ -30,10 +30,10 @@ exports.index = async (req, res, next) => {
       return next()
     }
 
-    const query_opt = { limit: config.rss.max_rss_items, sort: '-create_at' }
-    const posts = (await Post.getPostsByQuery({}, query_opt)) || []
+    const queryOpt = { limit: config.rss.max_rss_items, sort: '-create_at' }
+    const posts = (await Post.getPostsByQuery({}, queryOpt)) || []
 
-    const rss_obj = {
+    const rssObj = {
       _attr: { version: '2.0' },
       channel: {
         title: config.rss.title,
@@ -45,7 +45,7 @@ exports.index = async (req, res, next) => {
     }
 
     posts.forEach(function (post) {
-      rss_obj.channel.item.push({
+      rssObj.channel.item.push({
         title: post.title,
         link: config.rss.link + '/p/' + post._id,
         guid: config.rss.link + '/p/' + post._id,
@@ -54,7 +54,7 @@ exports.index = async (req, res, next) => {
         pubDate: post.create_at.toUTCString()
       })
     })
-    var rssContent = convert('rss', rss_obj)
+    var rssContent = convert('rss', rssObj)
     cache.set('rss', rssContent, 60 * 5) // 五分钟
     res.wrapSend(rssContent)
   } catch (error) {

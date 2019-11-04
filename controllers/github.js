@@ -5,7 +5,6 @@ var Models = require('../models')
 var User = Models.User
 var authMiddleWare = require('../middleware/auth')
 var tools = require('../common/tools')
-var config = require('../config')
 
 exports.callback = function (req, res, next) {
   var profile = req.user
