@@ -3,7 +3,7 @@
  */
 
 const _ = require('lodash');
-const Promise = require('bluebird');
+const Bluebird = require('bluebird');
 const xmlbuilder = require('xmlbuilder');
 const multiline = require('multiline');
 const validator = require('validator');
@@ -13,95 +13,96 @@ const config = require('../config');
 const cache = require('../common/cache');
 
 //站点首页
-exports.index = function (req, res, next) {
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1;
+exports.index = async (req, res, next) => {
+  let page = req.query.page ? parseInt(req.query.page, 10) : 1;
   page = page > 0 ? page : 1;
-  var tab = validator.trim(req.query.tab || '');
-  var tabName;//分类名
+  const tab = validator.trim(req.query.tab || '');
+  let tabName; // 分类名
 
-  var query = {};
+  const query = {};
   if (tab) {
     query.category = tab;
-    var kv = _.find(config.tabs, function(kv) {
+
+    const kv = _.find(config.tabs, function(kv) {
       return kv[0] === tab;
     });
+
     tabName = kv ? kv[1] + '版块' : '';
   } else {
     tabName = '首页';
   }
+
   tabName += page > 1
     ? ' 第' + page + '页'
     : '';
 
-  var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at'};
+  const limit = config.list_topic_count;
+  const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' };
 
   //取热门标签
-  var tag_options = {limit: config.list_hot_tag_count, sort: '-post_count'};
+  const tag_options = { limit: config.list_hot_tag_count, sort: '-post_count' };
 
   //取最新评论
-  var reply_query = {};
-  var reply_options = {limit: config.list_latest_replies_count, sort: '-create_at'};
+  const reply_query = {};
+  const reply_options = { limit: config.list_latest_replies_count, sort: '-create_at' };
 
   //最近注册用户
-  var users_query = {is_active: true};
-  var recent_reg_options = {limit: 10, sort: '-create_at'};
+  const users_query = { is_active: true };
+  const recent_reg_options = { limit: 10, sort: '-create_at' };
 
-  Promise
-    .all([
+  try {
+    const [hotPosts, hotTags] = await Promise.all([
       cache.get('hots' + tab),
       cache.get('hot_tags')
     ])
-    .spread(function(hotPosts, hotTags) {
-      var arr = [
-        Post.getPostsByQuery(query, options),
-        Post.getCountByQuery(query),
-        Reply.getRepliesByQuery(reply_query, reply_options),
-        User.getUsersByQuery(users_query, recent_reg_options),
-      ];
-      if (hotPosts) {
-        arr.push(Promise.resolve(hotPosts));
-      } else {
-        arr.push(Post.getNewHot(query));
-      }
-      if (hotTags) {
-        arr.push(Promise.resolve(hotTags));
-      } else {
-        arr.push(Tag.getHotTagsByQuery(tag_options));
-      }
 
-      return Promise.all(arr);
-    })
-    .spread(function(posts, count, replies, recentReg, hotPosts, hotTags) {
-      //总页数
-      var pages = Math.ceil(count / limit);
-      //热门文章
-      hotPosts = hotPosts.sort(function sortFn(a, b) {
-        //pv排序
-        return b.pv - a.pv;
-      });
-      //取前10条
-      hotPosts = Array.prototype.slice.call(hotPosts, 0, 10);
-      cache.set('hots' + tab, hotPosts, 60 * 5);//5分钟
-      //热门标签
-      cache.set('hot_tags', hotTags, 60 * 5);//5分钟
+    const arr = [
+      Post.getPostsByQuery(query, options),
+      Post.getCountByQuery(query),
+      Reply.getRepliesByQuery(reply_query, reply_options),
+      User.getUsersByQuery(users_query, recent_reg_options),
+    ];
+    if (hotPosts) {
+      arr.push(Promise.resolve(hotPosts));
+    } else {
+      arr.push(Post.getNewHot(query));
+    }
+    if (hotTags) {
+      arr.push(Promise.resolve(hotTags));
+    } else {
+      arr.push(Tag.getHotTagsByQuery(tag_options));
+    }
 
-      res.wrapRender('index', {
-        posts: posts,
-        tab: tab,
-        base: '/',
-        current_page: page,
-        pages: pages,
-        hots: hotPosts,
-        tags: hotTags,
-        recent_reg: recentReg,
-        replies: replies,
-        title: tabName
-      });
-    })
-    .catch(function(err) {
-      return next(err);
+    const [posts, count, replies, recentReg, hotPosts, hotTags] = Promise.all(arr);
+
+    //总页数
+    const pages = Math.ceil(count / limit);
+    //热门文章
+    hotPosts = hotPosts.sort(function sortFn(a, b) {
+      //pv排序
+      return b.pv - a.pv;
     });
+    //取前10条
+    hotPosts = Array.prototype.slice.call(hotPosts, 0, 10);
+    cache.set('hots' + tab, hotPosts, 60 * 5);//5分钟
+    //热门标签
+    cache.set('hot_tags', hotTags, 60 * 5);//5分钟
+
+    res.wrapRender('index', {
+      posts: posts,
+      tab: tab,
+      base: '/',
+      current_page: page,
+      pages: pages,
+      hots: hotPosts,
+      tags: hotTags,
+      recent_reg: recentReg,
+      replies: replies,
+      title: tabName
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 //站点地图
@@ -113,11 +114,12 @@ exports.sitemap = function (req, res, next) {
     .get('sitemap')
     .then(function(sitemapData) {
       if (sitemapData) return res.type('xml').send(sitemapData);
+
       return Promise
-      .all([
-        Post.getLimit5w(),
-        Tag.getAllTagsByQuery({}, {sort: '-post_count'})
-      ]);
+        .all([
+          Post.getLimit5w(),
+          Tag.getAllTagsByQuery({}, {sort: '-post_count'})
+        ]);
     })
     .spread(function(posts, tags) {
       if (!res.headersSent) {
