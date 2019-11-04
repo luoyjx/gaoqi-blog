@@ -73,20 +73,20 @@ exports.index = async (req, res, next) => {
       arr.push(Tag.getHotTagsByQuery(tag_options));
     }
 
-    const [posts, count, replies, recentReg, hotPosts, hotTags] = Promise.all(arr);
+    const [posts, count, replies, recentReg, hots, hotsTag] = Promise.all(arr);
 
     //总页数
     const pages = Math.ceil(count / limit);
     //热门文章
-    hotPosts = hotPosts.sort(function sortFn(a, b) {
+    hots = hots.sort(function sortFn(a, b) {
       //pv排序
       return b.pv - a.pv;
     });
     //取前10条
-    hotPosts = Array.prototype.slice.call(hotPosts, 0, 10);
-    cache.set('hots' + tab, hotPosts, 60 * 5);//5分钟
+    hots = Array.prototype.slice.call(hots, 0, 10);
+    cache.set('hots' + tab, hots, 60 * 5);//5分钟
     //热门标签
-    cache.set('hot_tags', hotTags, 60 * 5);//5分钟
+    cache.set('hot_tags', hotsTag, 60 * 5);//5分钟
 
     res.wrapRender('index', {
       posts: posts,
@@ -94,8 +94,8 @@ exports.index = async (req, res, next) => {
       base: '/',
       current_page: page,
       pages: pages,
-      hots: hotPosts,
-      tags: hotTags,
+      hots: hots,
+      tags: hotsTag,
       recent_reg: recentReg,
       replies: replies,
       title: tabName
