@@ -9,7 +9,7 @@ var request = require('supertest')(app);
 var should = require('should');
 
 describe('test/controller/rss.test.js', function() {
-	it('should /rss 200', function() {
+	it('should /rss 200', function(done) {
 		request
 			.get('/rss')
 			.expect(200)

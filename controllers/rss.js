@@ -15,7 +15,7 @@ const cache = require('../common/cache');
  * @param res
  * @param next
  */
-exports.index = async function (req, res, next) {
+exports.index = async (req, res, next) => {
   if (!config.rss) {
     res.statusCode = 404;
     return res.send('Please set `rss` in configuration');

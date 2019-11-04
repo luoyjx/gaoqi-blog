@@ -6,7 +6,7 @@
 
 var should = require('should');
 var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.ObjectId;
+var ObjectId = mongoose.Types.ObjectId;
 var message = require('../../common/message');
 
 describe('test/common/message.test.js', function() {

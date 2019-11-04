@@ -21,9 +21,8 @@
     "restart": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
     "reboot": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
     "pretest": "npm install",
-    "test": "mocha --reporter spec -r should -r test/env --timeout 10000 ./test/**/*.test.js",
-    "pretest-cov": "npm install",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- -r should -r test/env --timeout 10000 ./test/**/*.test.js -R spec"
+    "test": "mocha --reporter spec -r should -r test/env --timeout 10000 --exit ./test/**/*.test.js",
+    "test-cov": "nyc -r text-summary npm run test"
   },
   "engines": {
     "node": ">=10"
@@ -74,13 +73,13 @@
     "xss": "*"
   },
   "devDependencies": {
-    "coveralls": "*",
+    "coveralls": "^3.0.7",
     "errorhandler": "*",
-    "istanbul": "*",
     "loader-connect": "*",
     "mm": "*",
-    "mocha": "3.4.1",
+    "mocha": "^6.2.2",
     "nock": "*",
+    "nyc": "^14.1.1",
     "pedding": "*",
     "should": "*",
     "supertest": "*"
