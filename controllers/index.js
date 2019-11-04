@@ -51,29 +51,19 @@ exports.index = async (req, res, next) => {
   const recent_reg_options = { limit: 10, sort: '-create_at' };
 
   try {
-    const [hotPosts, hotTags] = await Promise.all([
-      cache.get('hots' + tab),
-      cache.get('hot_tags')
-    ])
+    const { hotPosts, hotTags } = await Bluebird.props({
+      hotPostsCache: cache.get('hots' + tab),
+      hotTagsCache: cache.get('hot_tags')
+    })
 
-    const arr = [
-      Post.getPostsByQuery(query, options),
-      Post.getCountByQuery(query),
-      Reply.getRepliesByQuery(reply_query, reply_options),
-      User.getUsersByQuery(users_query, recent_reg_options),
-    ];
-    if (hotPosts) {
-      arr.push(Promise.resolve(hotPosts));
-    } else {
-      arr.push(Post.getNewHot(query));
-    }
-    if (hotTags) {
-      arr.push(Promise.resolve(hotTags));
-    } else {
-      arr.push(Tag.getHotTagsByQuery(tag_options));
-    }
-
-    const [posts, count, replies, recentReg, hots, hotsTag] = Promise.all(arr);
+    const { posts, count, replies, recentReg, hots, hotsTag } = await Bluebird.props({
+      posts: Post.getPostsByQuery(query, options),
+      count: Post.getCountByQuery(query),
+      replies: Reply.getRepliesByQuery(reply_query, reply_options),
+      recentReg: User.getUsersByQuery(users_query, recent_reg_options),
+      hots: hotPosts ? hotPosts : Post.getNewHot(query),
+      hotsTag: hotTags ? hotTags : Tag.getHotTagsByQuery(tag_options)
+    });
 
     //总页数
     const pages = Math.ceil(count / limit);
