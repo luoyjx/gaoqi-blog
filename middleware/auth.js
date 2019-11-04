@@ -40,13 +40,21 @@ exports.blockUser = function () {
   }
 }
 
-function gen_session (user, res) {
-  var auth_token = user._id + '$$$$' // 以后可能会存储更多信息，用 $$$$ 来分隔
-  res.cookie(config.auth_cookie_name, auth_token,
-    { path: '/', maxAge: 1000 * 60 * 60 * 24 * 30, signed: true, httpOnly: true }) // cookie 有效期30天
+function genSession (user, res) {
+  var authToken = user._id + '$$$$' // 以后可能会存储更多信息，用 $$$$ 来分隔
+  res.cookie(
+    config.auth_cookie_name,
+    authToken,
+    {
+      path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      signed: true,
+      httpOnly: true
+    }
+  ) // cookie 有效期30天
 }
 
-exports.gen_session = gen_session
+exports.gen_session = genSession
 
 // 验证用户是否登录
 exports.authUser = function (req, res, next) {
@@ -63,14 +71,14 @@ exports.authUser = function (req, res, next) {
   if (req.session.user) {
     userPromise = Promise.resolve(req.session.user)
   } else {
-    var auth_token = req.signedCookies[config.auth_cookie_name]
-    if (!auth_token) {
+    var authToken = req.signedCookies[config.auth_cookie_name]
+    if (!authToken) {
       return next()
     }
 
-    var auth = auth_token.split('$$$$')
-    var user_id = auth[0]
-    userPromise = UserProxy.getUserById(user_id)
+    var auth = authToken.split('$$$$')
+    var userId = auth[0]
+    userPromise = UserProxy.getUserById(userId)
   }
 
   userPromise
@@ -81,9 +89,10 @@ exports.authUser = function (req, res, next) {
 
       user = res.locals.user = req.session.user = new UserModel(user)
 
-      if (config.admins.hasOwnProperty(user.login_name)) {
+      if (config.admins[user.login_name]) {
         user.is_admin = true
       }
+
       Message.getMessagesCount(user._id)
         .then(function (count) {
           user.messages_count = count
