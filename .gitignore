@@ -15,3 +15,5 @@ public/**/*.min.css
 public/**/*.debug.js
 public/**/*.min.js
 config/**/*.js
+
+.nyc_output
