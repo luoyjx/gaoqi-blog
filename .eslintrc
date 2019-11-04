@@ -3,7 +3,7 @@
     "node": true,
     "es6": true
   },
-  globals: {
+  "globals": {
     "DisabledUserError": true
   },
   "rules": {
@@ -95,7 +95,7 @@
     "no-undef-init": 2,
     "no-undef": 2,
     "no-unused-vars": [2, { "vars": "local", "args": "after-used" }],
-    no-use-before-define: [2, "nofunc"],
+    "no-use-before-define": [2, "nofunc"],
 
     "handle-callback-err": 2,
     "no-mixed-requires": 2,
@@ -159,6 +159,6 @@
     "max-len": [2, 140, 2],
     "max-params": 0,
     "max-statements": 0,
-    "no-bitwise": 2,
+    "no-bitwise": 2
   }
 }
