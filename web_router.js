@@ -22,7 +22,6 @@ var consolePost = require('./controllers/console/post')
 var configMiddleware = require('./middleware/conf')
 var passport = require('passport')
 
-var config = require('./config')
 var router = express.Router()
 
 router.get('/', index.index)// 首页
