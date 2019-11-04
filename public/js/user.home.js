@@ -5,23 +5,23 @@
  * @version $Id$
  */
 
-$(function() {
-  $('#btnFollow').click(function() {
-    var $this = $(this);
-    var hasFollow = $this.hasClass('btn-cancel');
-    var id = $this.data('id');
+$(function () {
+  $('#btnFollow').click(function () {
+    var $this = $(this)
+    var hasFollow = $this.hasClass('btn-cancel')
+    var id = $this.data('id')
 
     if (!id) {
-      return alert('此用户无效');
+      return alert('此用户无效')
     }
 
-    $this.addClass('disabled');
+    $this.addClass('disabled')
 
-    var url = hasFollow 
+    var url = hasFollow
       ? '/u/' + id + '/unfollow'
-      : '/u/' + id + '/follow?';
-    url = url + '?t=' + new Date().getTime();
+      : '/u/' + id + '/follow?'
+    url = url + '?t=' + new Date().getTime()
 
-    location.href = url;
+    location.href = url
   })
 })

@@ -1,9 +1,9 @@
 /*!
  * tag dao
  */
-var Promise = require('bluebird');
-var models = require('../models');
-var Tag = models.Tag;
+var Promise = require('bluebird')
+var models = require('../models')
+var Tag = models.Tag
 
 /**
  * 获得热门标签
@@ -13,8 +13,8 @@ var Tag = models.Tag;
  * @param {Object} options 查询选项
  */
 exports.getHotTagsByQuery = function (options) {
-  return Tag.find({}, {name: 1, _id: 0}, options).exec();
-};
+  return Tag.find({}, { name: 1, _id: 0 }, options).exec()
+}
 
 /**
  * 根据名称查询一个tag
@@ -24,9 +24,8 @@ exports.getHotTagsByQuery = function (options) {
  * @param {String} name 标签名称
  */
 exports.getTagByName = function (name) {
-  return Tag.findOne({name: name}).exec();
-
-};
+  return Tag.findOne({ name: name }).exec()
+}
 
 /**
  * 根据条件查询所有的标签
@@ -37,8 +36,8 @@ exports.getTagByName = function (name) {
  * @param {Object} opt 查询选项
  */
 exports.getAllTagsByQuery = function (query, opt) {
-  return Tag.find(query, {}, opt).exec();
-};
+  return Tag.find(query, {}, opt).exec()
+}
 
 /**
  * 查询Tag的总数
@@ -48,8 +47,8 @@ exports.getAllTagsByQuery = function (query, opt) {
  * @param {String} query 查询参数
  */
 exports.getCountByQuery = function (query) {
-  return Tag.count(query).exec();
-};
+  return Tag.count(query).exec()
+}
 
 /**
  * 新增一条tag信息
@@ -57,12 +56,12 @@ exports.getCountByQuery = function (query) {
  * @param {String} description tag描述信息
  */
 exports.newAndSave = function (name, description) {
-  var tag = new Tag();
-  tag.name = name;
-  tag.description = description;
-  tag.save();
-  return Promise.resolve(tag);
-};
+  var tag = new Tag()
+  tag.name = name
+  tag.description = description
+  tag.save()
+  return Promise.resolve(tag)
+}
 
 /**
  * 更新或新增tag信息
@@ -71,6 +70,5 @@ exports.newAndSave = function (name, description) {
  * @param {Object} opts 选项，如 {upsert: true}
  */
 exports.upsert = function (query, update, opts) {
-  return Tag.update(query, update, opts).exec();
-};
-
+  return Tag.update(query, update, opts).exec()
+}

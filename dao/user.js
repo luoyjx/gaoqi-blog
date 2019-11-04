@@ -1,23 +1,22 @@
 /*!
  * user dao
  */
-var url = require('url');
-var qn = require('qn');
-var gravatar = require('gravatar');
-var request = require('request');
-var Promise = require('bluebird');
-var models = require('../models');
-var User = models.User;
-var utility = require('utility');
-var uuid = require('node-uuid');
-var config = require('../config');
+var url = require('url')
+var qn = require('qn')
+var gravatar = require('gravatar')
+var request = require('request')
+var Promise = require('bluebird')
+var models = require('../models')
+var User = models.User
+var utility = require('utility')
+var uuid = require('node-uuid')
+var config = require('../config')
 
-var qnClient = null;
+var qnClient = null
 
 if (config.qn_avatar_access.secretKey !== 'your secret key') {
   qnClient = qn.create(config.qn_avatar_access)
 }
-
 
 /**
  * 根据多个用户名查询多个用户信息
@@ -27,9 +26,9 @@ if (config.qn_avatar_access.secretKey !== 'your secret key') {
  * @param {Array} names 多个用户名
  */
 exports.getUsersByNames = function (names) {
-    if (names.length === 0) return Promise.resolve([]);
-    return User.find({'login_name': {$in: names}}).exec();
-};
+  if (names.length === 0) return Promise.resolve([])
+  return User.find({ login_name: { $in: names } }).exec()
+}
 
 /**
  * 根据id查询用户
@@ -39,8 +38,8 @@ exports.getUsersByNames = function (names) {
  * @param {String} id 用户id
  */
 exports.getUserById = function (id) {
-  return User.findOne({_id: id}).exec();
-};
+  return User.findOne({ _id: id }).exec()
+}
 
 /**
  * 通过登录名查询用户
@@ -50,9 +49,8 @@ exports.getUserById = function (id) {
  * @param {String} loginName 登录名
  */
 exports.getUserByLoginName = function (loginName) {
-  return User.findOne({'login_name': loginName}).exec();
-
-};
+  return User.findOne({ login_name: loginName }).exec()
+}
 
 /**
  * 根据邮箱查询用户
@@ -62,8 +60,8 @@ exports.getUserByLoginName = function (loginName) {
  * @param {String} email 邮箱
  */
 exports.getUserByEmail = function (email) {
-  return User.findOne({'email': email});
-};
+  return User.findOne({ email: email })
+}
 
 /**
  * 根据查询条件，获取一个用户
@@ -74,8 +72,8 @@ exports.getUserByEmail = function (email) {
  * @param {String} key 激活码
  */
 exports.getUserByNameAndKey = function (login_name, key) {
-  return User.findOne({login_name: login_name, retrieve_key: key}).exec();
-};
+  return User.findOne({ login_name: login_name, retrieve_key: key }).exec()
+}
 
 /**
  * 根据关键字，获取一组用户
@@ -86,8 +84,8 @@ exports.getUserByNameAndKey = function (login_name, key) {
  * @param {Object} opt 选项
  */
 exports.getUsersByQuery = function (query, opt) {
-  return User.find(query, '', opt).exec();
-};
+  return User.find(query, '', opt).exec()
+}
 
 /**
  * 查询一个并更新
@@ -95,17 +93,17 @@ exports.getUsersByQuery = function (query, opt) {
  * @param {Object} update 更新属性
  * @returns {Promise}
  */
-exports.findOneAndUpdate = function(query, update) {
-  return User.findOneAndUpdate(query, update).exec();
-};
+exports.findOneAndUpdate = function (query, update) {
+  return User.findOneAndUpdate(query, update).exec()
+}
 
 /**
  * 关注数增加
  * @param  {[type]} userId [description]
  * @return {[type]}        [description]
  */
-exports.incFollowingCount = function incFollowingCount(userId) {
-  return User.update({_id: userId}, { $inc: { following_count: 1 }}).exec();
+exports.incFollowingCount = function incFollowingCount (userId) {
+  return User.update({ _id: userId }, { $inc: { following_count: 1 } }).exec()
 }
 
 /**
@@ -113,8 +111,8 @@ exports.incFollowingCount = function incFollowingCount(userId) {
  * @param  {[type]} userId [description]
  * @return {[type]}        [description]
  */
-exports.decFollowingCount = function decFollowingCount(userId) {
-  return User.update({_id: userId}, { $inc: { following_count: -1 }}).exec();
+exports.decFollowingCount = function decFollowingCount (userId) {
+  return User.update({ _id: userId }, { $inc: { following_count: -1 } }).exec()
 }
 
 /**
@@ -122,8 +120,8 @@ exports.decFollowingCount = function decFollowingCount(userId) {
  * @param  {[type]} userId 用户id
  * @return {[type]}        [description]
  */
-exports.incCollectCount = function incCollectCount(userId) {
-  return User.update({_id: userId}, { $inc: { collect_post_count: 1 }}).exec();
+exports.incCollectCount = function incCollectCount (userId) {
+  return User.update({ _id: userId }, { $inc: { collect_post_count: 1 } }).exec()
 }
 
 /**
@@ -131,8 +129,8 @@ exports.incCollectCount = function incCollectCount(userId) {
  * @param  {[type]} userId [description]
  * @return {[type]}        [description]
  */
-exports.decCollectCount = function decCollectCount(userId) {
-  return User.update({_id: userId}, { $inc: { collect_post_count: -1 }}).exec();
+exports.decCollectCount = function decCollectCount (userId) {
+  return User.update({ _id: userId }, { $inc: { collect_post_count: -1 } }).exec()
 }
 
 /**
@@ -145,17 +143,17 @@ exports.decCollectCount = function decCollectCount(userId) {
  * @param {Boolean} active 是否激活
  */
 exports.newAndSave = function (name, login_name, pass, email, avatar_url, active) {
-  var user = new User();
-  user.name = login_name;
-  user.login_name = login_name;
-  user.pwd = pass;
-  user.email = email;
-  user.is_active = active || false;
-  user.avatar = avatar_url;
-  user.accessToken = uuid.v4();
-  user.save();
-  return Promise.resolve(user);
-};
+  var user = new User()
+  user.name = login_name
+  user.login_name = login_name
+  user.pwd = pass
+  user.email = email
+  user.is_active = active || false
+  user.avatar = avatar_url
+  user.accessToken = uuid.v4()
+  user.save()
+  return Promise.resolve(user)
+}
 
 /**
  * 根据邮箱生成头像地址
@@ -163,19 +161,19 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
  * @returns {string} avatar地址
  */
 exports.makeGravatar = function (email) {
-  var urlObj = url.parse(gravatar.url(email, {d: 'retro'}))
-  var avatarUrl = urlObj.path;
-  var avatarPath = avatarUrl.replace('//www.gravatar.com', '');
-  var avatarKey = avatarPath.split('?')[0];
+  var urlObj = url.parse(gravatar.url(email, { d: 'retro' }))
+  var avatarUrl = urlObj.path
+  var avatarPath = avatarUrl.replace('//www.gravatar.com', '')
+  var avatarKey = avatarPath.split('?')[0]
   console.log(avatarUrl)
   console.log(avatarKey)
 
   if (qnClient) {
-    qnClient.upload(request('http:' + avatarUrl), {key: avatarKey}, function(err, result) {
-      if (err) return console.error(err);
-      console.log(result);
+    qnClient.upload(request('http:' + avatarUrl), { key: avatarKey }, function (err, result) {
+      if (err) return console.error(err)
+      console.log(result)
     })
   }
 
-  return config.avatar_static_host + avatarKey;
-};
+  return config.avatar_static_host + avatarKey
+}

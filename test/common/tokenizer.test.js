@@ -5,15 +5,15 @@
  * @version $Id$
  */
 
-var should = require('should');
-var tokenizer = require('../../common/tokenizer');
+var should = require('should')
+var tokenizer = require('../../common/tokenizer')
 
-describe('test/common/tokenizer.test.js', function() {
-  describe('tokenize()', function() {
-    it('should return a keywords array', function(done) {
-      var result = tokenizer.tokenize('这是一个测试的分词程序');
-      result.should.be.Array;
-      done();
+describe('test/common/tokenizer.test.js', function () {
+  describe('tokenize()', function () {
+    it('should return a keywords array', function (done) {
+      var result = tokenizer.tokenize('这是一个测试的分词程序')
+      result.should.be.Array
+      done()
     })
   })
 })

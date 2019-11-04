@@ -4,20 +4,19 @@
  */
 
 exports = module.exports = {
-  render: function(req, res, next) {
-    res.wrapRender = function wrap(view, options) {
-      if (res.headersSent) return;
-      res.render(view, options);
-    };
+  render: function (req, res, next) {
+    res.wrapRender = function wrap (view, options) {
+      if (res.headersSent) return
+      res.render(view, options)
+    }
     next()
   },
 
-  send: function(req, res, next) {
-    res.wrapSend = function wrap(data) {
-      if (res.headersSent) return;
-      res.send(data);
-    };
+  send: function (req, res, next) {
+    res.wrapSend = function wrap (data) {
+      if (res.headersSent) return
+      res.send(data)
+    }
     next()
   }
-};
-
+}

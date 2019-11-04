@@ -1,161 +1,156 @@
 define([
-	"../core",
-	"./support",
-	"../core/init"
-], function( jQuery, support ) {
+  '../core',
+  './support',
+  '../core/init'
+], function (jQuery, support) {
+  var rreturn = /\r/g
 
-var rreturn = /\r/g;
+  jQuery.fn.extend({
+    val: function (value) {
+      var hooks; var ret; var isFunction
+      var elem = this[0]
 
-jQuery.fn.extend({
-	val: function( value ) {
-		var hooks, ret, isFunction,
-			elem = this[0];
+      if (!arguments.length) {
+        if (elem) {
+          hooks = jQuery.valHooks[elem.type] || jQuery.valHooks[elem.nodeName.toLowerCase()]
 
-		if ( !arguments.length ) {
-			if ( elem ) {
-				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
+          if (hooks && 'get' in hooks && (ret = hooks.get(elem, 'value')) !== undefined) {
+            return ret
+          }
 
-				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
-					return ret;
-				}
+          ret = elem.value
 
-				ret = elem.value;
+          return typeof ret === 'string'
+          // Handle most common string cases
+            ? ret.replace(rreturn, '')
+          // Handle cases where value is null/undef or number
+            : ret == null ? '' : ret
+        }
 
-				return typeof ret === "string" ?
-					// Handle most common string cases
-					ret.replace(rreturn, "") :
-					// Handle cases where value is null/undef or number
-					ret == null ? "" : ret;
-			}
+        return
+      }
 
-			return;
-		}
+      isFunction = jQuery.isFunction(value)
 
-		isFunction = jQuery.isFunction( value );
+      return this.each(function (i) {
+        var val
 
-		return this.each(function( i ) {
-			var val;
+        if (this.nodeType !== 1) {
+          return
+        }
 
-			if ( this.nodeType !== 1 ) {
-				return;
-			}
+        if (isFunction) {
+          val = value.call(this, i, jQuery(this).val())
+        } else {
+          val = value
+        }
 
-			if ( isFunction ) {
-				val = value.call( this, i, jQuery( this ).val() );
-			} else {
-				val = value;
-			}
+        // Treat null/undefined as ""; convert numbers to string
+        if (val == null) {
+          val = ''
+        } else if (typeof val === 'number') {
+          val += ''
+        } else if (jQuery.isArray(val)) {
+          val = jQuery.map(val, function (value) {
+            return value == null ? '' : value + ''
+          })
+        }
 
-			// Treat null/undefined as ""; convert numbers to string
-			if ( val == null ) {
-				val = "";
+        hooks = jQuery.valHooks[this.type] || jQuery.valHooks[this.nodeName.toLowerCase()]
 
-			} else if ( typeof val === "number" ) {
-				val += "";
+        // If set returns undefined, fall back to normal setting
+        if (!hooks || !('set' in hooks) || hooks.set(this, val, 'value') === undefined) {
+          this.value = val
+        }
+      })
+    }
+  })
 
-			} else if ( jQuery.isArray( val ) ) {
-				val = jQuery.map( val, function( value ) {
-					return value == null ? "" : value + "";
-				});
-			}
+  jQuery.extend({
+    valHooks: {
+      option: {
+        get: function (elem) {
+          var val = jQuery.find.attr(elem, 'value')
+          return val != null
+            ? val
+          // Support: IE10-11+
+          // option.text throws exceptions (#14686, #14858)
+            : jQuery.trim(jQuery.text(elem))
+        }
+      },
+      select: {
+        get: function (elem) {
+          var value; var option
+          var options = elem.options
+          var index = elem.selectedIndex
+          var one = elem.type === 'select-one' || index < 0
+          var values = one ? null : []
+          var max = one ? index + 1 : options.length
+          var i = index < 0
+            ? max
+            : one ? index : 0
 
-			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
+          // Loop through all the selected options
+          for (; i < max; i++) {
+            option = options[i]
 
-			// If set returns undefined, fall back to normal setting
-			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
-				this.value = val;
-			}
-		});
-	}
-});
-
-jQuery.extend({
-	valHooks: {
-		option: {
-			get: function( elem ) {
-				var val = jQuery.find.attr( elem, "value" );
-				return val != null ?
-					val :
-					// Support: IE10-11+
-					// option.text throws exceptions (#14686, #14858)
-					jQuery.trim( jQuery.text( elem ) );
-			}
-		},
-		select: {
-			get: function( elem ) {
-				var value, option,
-					options = elem.options,
-					index = elem.selectedIndex,
-					one = elem.type === "select-one" || index < 0,
-					values = one ? null : [],
-					max = one ? index + 1 : options.length,
-					i = index < 0 ?
-						max :
-						one ? index : 0;
-
-				// Loop through all the selected options
-				for ( ; i < max; i++ ) {
-					option = options[ i ];
-
-					// IE6-9 doesn't update selected after form reset (#2551)
-					if ( ( option.selected || i === index ) &&
+            // IE6-9 doesn't update selected after form reset (#2551)
+            if ((option.selected || i === index) &&
 							// Don't return options that are disabled or in a disabled optgroup
-							( support.optDisabled ? !option.disabled : option.getAttribute( "disabled" ) === null ) &&
-							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
+							(support.optDisabled ? !option.disabled : option.getAttribute('disabled') === null) &&
+							(!option.parentNode.disabled || !jQuery.nodeName(option.parentNode, 'optgroup'))) {
+              // Get the specific value for the option
+              value = jQuery(option).val()
 
-						// Get the specific value for the option
-						value = jQuery( option ).val();
+              // We don't need an array for one selects
+              if (one) {
+                return value
+              }
 
-						// We don't need an array for one selects
-						if ( one ) {
-							return value;
-						}
+              // Multi-Selects return an array
+              values.push(value)
+            }
+          }
 
-						// Multi-Selects return an array
-						values.push( value );
-					}
-				}
+          return values
+        },
 
-				return values;
-			},
+        set: function (elem, value) {
+          var optionSet; var option
+          var options = elem.options
+          var values = jQuery.makeArray(value)
+          var i = options.length
 
-			set: function( elem, value ) {
-				var optionSet, option,
-					options = elem.options,
-					values = jQuery.makeArray( value ),
-					i = options.length;
+          while (i--) {
+            option = options[i]
+            if ((option.selected = jQuery.inArray(option.value, values) >= 0)) {
+              optionSet = true
+            }
+          }
 
-				while ( i-- ) {
-					option = options[ i ];
-					if ( (option.selected = jQuery.inArray( option.value, values ) >= 0) ) {
-						optionSet = true;
-					}
-				}
+          // Force browsers to behave consistently when non-matching value is set
+          if (!optionSet) {
+            elem.selectedIndex = -1
+          }
+          return values
+        }
+      }
+    }
+  })
 
-				// Force browsers to behave consistently when non-matching value is set
-				if ( !optionSet ) {
-					elem.selectedIndex = -1;
-				}
-				return values;
-			}
-		}
-	}
-});
-
-// Radios and checkboxes getter/setter
-jQuery.each([ "radio", "checkbox" ], function() {
-	jQuery.valHooks[ this ] = {
-		set: function( elem, value ) {
-			if ( jQuery.isArray( value ) ) {
-				return ( elem.checked = jQuery.inArray( jQuery(elem).val(), value ) >= 0 );
-			}
-		}
-	};
-	if ( !support.checkOn ) {
-		jQuery.valHooks[ this ].get = function( elem ) {
-			return elem.getAttribute("value") === null ? "on" : elem.value;
-		};
-	}
-});
-
-});
+  // Radios and checkboxes getter/setter
+  jQuery.each(['radio', 'checkbox'], function () {
+    jQuery.valHooks[this] = {
+      set: function (elem, value) {
+        if (jQuery.isArray(value)) {
+          return (elem.checked = jQuery.inArray(jQuery(elem).val(), value) >= 0)
+        }
+      }
+    }
+    if (!support.checkOn) {
+      jQuery.valHooks[this].get = function (elem) {
+        return elem.getAttribute('value') === null ? 'on' : elem.value
+      }
+    }
+  })
+})

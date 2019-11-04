@@ -6,9 +6,8 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
-
-+function ($) {
-  'use strict';
++(function ($) {
+  'use strict'
 
   // TAB CLASS DEFINITION
   // ====================
@@ -22,8 +21,8 @@
   Tab.TRANSITION_DURATION = 150
 
   Tab.prototype.show = function () {
-    var $this    = this.element
-    var $ul      = $this.closest('ul:not(.dropdown-menu)')
+    var $this = this.element
+    var $ul = $this.closest('ul:not(.dropdown-menu)')
     var selector = $this.data('target')
 
     if (!selector) {
@@ -62,24 +61,24 @@
   }
 
   Tab.prototype.activate = function (element, container, callback) {
-    var $active    = container.find('> .active')
-    var transition = callback
-      && $.support.transition
-      && (($active.length && $active.hasClass('fade')) || !!container.find('> .fade').length)
+    var $active = container.find('> .active')
+    var transition = callback &&
+      $.support.transition &&
+      (($active.length && $active.hasClass('fade')) || !!container.find('> .fade').length)
 
-    function next() {
+    function next () {
       $active
         .removeClass('active')
         .find('> .dropdown-menu > .active')
-          .removeClass('active')
+        .removeClass('active')
         .end()
         .find('[data-toggle="tab"]')
-          .attr('aria-expanded', false)
+        .attr('aria-expanded', false)
 
       element
         .addClass('active')
         .find('[data-toggle="tab"]')
-          .attr('aria-expanded', true)
+        .attr('aria-expanded', true)
 
       if (transition) {
         element[0].offsetWidth // reflow for transition
@@ -91,43 +90,41 @@
       if (element.parent('.dropdown-menu').length) {
         element
           .closest('li.dropdown')
-            .addClass('active')
+          .addClass('active')
           .end()
           .find('[data-toggle="tab"]')
-            .attr('aria-expanded', true)
+          .attr('aria-expanded', true)
       }
 
       callback && callback()
     }
 
-    $active.length && transition ?
-      $active
+    $active.length && transition
+      ? $active
         .one('bsTransitionEnd', next)
-        .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
-      next()
+        .emulateTransitionEnd(Tab.TRANSITION_DURATION)
+      : next()
 
     $active.removeClass('in')
   }
 
-
   // TAB PLUGIN DEFINITION
   // =====================
 
-  function Plugin(option) {
+  function Plugin (option) {
     return this.each(function () {
       var $this = $(this)
-      var data  = $this.data('bs.tab')
+      var data = $this.data('bs.tab')
 
       if (!data) $this.data('bs.tab', (data = new Tab(this)))
-      if (typeof option == 'string') data[option]()
+      if (typeof option === 'string') data[option]()
     })
   }
 
   var old = $.fn.tab
 
-  $.fn.tab             = Plugin
+  $.fn.tab = Plugin
   $.fn.tab.Constructor = Tab
-
 
   // TAB NO CONFLICT
   // ===============
@@ -136,7 +133,6 @@
     $.fn.tab = old
     return this
   }
-
 
   // TAB DATA-API
   // ============
@@ -149,5 +145,4 @@
   $(document)
     .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
     .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
-
-}(jQuery);
+}(jQuery))

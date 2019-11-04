@@ -4,14 +4,14 @@
  * @date    2016-10-25 09:24:13
  */
 
-var path = require('path');
+var path = require('path')
 
 module.exports = {
   // debug 为 true 时，用于本地调试
   debug: process.env.NODE_ENV !== 'production',
 
-  get mini_assets() {
-    return !this.debug;
+  get mini_assets () {
+    return !this.debug
   }, // 是否启用静态文件的合并压缩，详见视图中的Loader
 
   title: '首页 - 搞起博客 ',
@@ -23,7 +23,7 @@ module.exports = {
   site_icon: '/public/favicon.ico', // 默认没有 favicon, 这里填写网址
 
   // cdn host，如 http://static.gaoqixhb.com
-  site_static_host: '', // 静态文件存储域名 
+  site_static_host: '', // 静态文件存储域名
   site_assets_host: '', // 静态资源域名
   avatar_static_host: '', // 头像静态文件存储域名
 
@@ -49,11 +49,11 @@ module.exports = {
 
   // 话题列表显示的话题数量
   list_topic_count: 40,
-  //热门文章显示数量
+  // 热门文章显示数量
   list_hot_topic_count: 10,
-  //热门标签显示的数量
+  // 热门标签显示的数量
   list_hot_tag_count: 10,
-  //显示最新评论条数
+  // 显示最新评论条数
   list_latest_replies_count: 5,
 
   // 限制发帖时间间隔，单位：毫秒
@@ -65,7 +65,7 @@ module.exports = {
     link: 'http://blog.gaoqixhb.com',
     language: 'zh-cn',
     description: '搞起博客是分享、讨论、交流前后端技术或者个人体会、经验的博客平台。',
-    //最多获取的RSS Item数量
+    // 最多获取的RSS Item数量
     max_rss_items: 30
   },
 
@@ -79,7 +79,7 @@ module.exports = {
     }
   },
 
-  //weibo app key
+  // weibo app key
   weibo_key: 10000000,
   weibo_id: '',
 
@@ -90,19 +90,10 @@ module.exports = {
   GITHUB_OAUTH: {
     clientID: '',
     clientSecret: '',
-    callbackURL: 'http://blog.gaoqixhb.com/login/github/callback' //回调的地址 如 http://blog.gaoqixhb.com/login/github/callback
+    callbackURL: 'http://blog.gaoqixhb.com/login/github/callback' // 回调的地址 如 http://blog.gaoqixhb.com/login/github/callback
   },
   // 是否允许直接注册（否则只能走 github 的方式）
   allow_sign_up: true,
-  
-  // twitter app keys
-  twitter: {
-    consumer_key: 'your consumer key',
-    consumer_secret: '',
-    access_token: '',
-    access_token_secret: '',
-    timeout_ms: 60 * 1000
-  },
 
   // twitter app keys
   twitter: {
@@ -113,23 +104,32 @@ module.exports = {
     timeout_ms: 60 * 1000
   },
 
-  //7牛的access信息，用于文件上传
+  // twitter app keys
+  twitter: {
+    consumer_key: 'your consumer key',
+    consumer_secret: '',
+    access_token: '',
+    access_token_secret: '',
+    timeout_ms: 60 * 1000
+  },
+
+  // 7牛的access信息，用于文件上传
   qn_access: {
     accessKey: '',
     secretKey: 'your secret key',
-    bucket: 'gaoqixhb', //空间名  如  gaoqixhb
-    origin: '' //静态域名 如 gaoqixhb.qiniudn.com
+    bucket: 'gaoqixhb', // 空间名  如  gaoqixhb
+    origin: '' // 静态域名 如 gaoqixhb.qiniudn.com
   },
 
   qn_avatar_access: {
     accessKey: '',
     secretKey: 'your secret key',
-    bucket: 'gaoqi-avatar', //空间名  如  gaoqixhb
-    origin: '' //静态域名 如 gaoqixhb.qiniudn.com
+    bucket: 'gaoqi-avatar', // 空间名  如  gaoqixhb
+    origin: '' // 静态域名 如 gaoqixhb.qiniudn.com
   },
 
-  //文件上传配置
-  //注：如果填写 qn_access，则会上传到 7牛，以下配置无效
+  // 文件上传配置
+  // 注：如果填写 qn_access，则会上传到 7牛，以下配置无效
   upload: {
     path: path.join(__dirname, 'public/upload/'),
     url: '/public/upload/'
@@ -146,4 +146,4 @@ module.exports = {
     ['push', '推送']
   ]
 
-};
+}

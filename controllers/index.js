@@ -2,53 +2,53 @@
  * controller index
  */
 
-const _ = require('lodash');
-const Bluebird = require('bluebird');
-const xmlbuilder = require('xmlbuilder');
-const multiline = require('multiline');
-const validator = require('validator');
+const _ = require('lodash')
+const Bluebird = require('bluebird')
+const xmlbuilder = require('xmlbuilder')
+const multiline = require('multiline')
+const validator = require('validator')
 
-const { Post, Tag, Reply, User } = require('../dao');
-const config = require('../config');
-const cache = require('../common/cache');
+const { Post, Tag, Reply, User } = require('../dao')
+const config = require('../config')
+const cache = require('../common/cache')
 
-//站点首页
+// 站点首页
 exports.index = async (req, res, next) => {
-  let page = req.query.page ? parseInt(req.query.page, 10) : 1;
-  page = page > 0 ? page : 1;
-  const tab = validator.trim(req.query.tab || '');
-  let tabName; // 分类名
+  let page = req.query.page ? parseInt(req.query.page, 10) : 1
+  page = page > 0 ? page : 1
+  const tab = validator.trim(req.query.tab || '')
+  let tabName // 分类名
 
-  const query = {};
+  const query = {}
   if (tab) {
-    query.category = tab;
+    query.category = tab
 
-    const kv = _.find(config.tabs, function(kv) {
-      return kv[0] === tab;
-    });
+    const kv = _.find(config.tabs, function (kv) {
+      return kv[0] === tab
+    })
 
-    tabName = kv ? kv[1] + '版块' : '';
+    tabName = kv ? kv[1] + '版块' : ''
   } else {
-    tabName = '首页';
+    tabName = '首页'
   }
 
   tabName += page > 1
     ? ' 第' + page + '页'
-    : '';
+    : ''
 
-  const limit = config.list_topic_count;
-  const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' };
+  const limit = config.list_topic_count
+  const options = { skip: (page - 1) * limit, limit, sort: '-top -update_at' }
 
-  //取热门标签
-  const tag_options = { limit: config.list_hot_tag_count, sort: '-post_count' };
+  // 取热门标签
+  const tag_options = { limit: config.list_hot_tag_count, sort: '-post_count' }
 
-  //取最新评论
-  const reply_query = {};
-  const reply_options = { limit: config.list_latest_replies_count, sort: '-create_at' };
+  // 取最新评论
+  const reply_query = {}
+  const reply_options = { limit: config.list_latest_replies_count, sort: '-create_at' }
 
-  //最近注册用户
-  const users_query = { is_active: true };
-  const recent_reg_options = { limit: 10, sort: '-create_at' };
+  // 最近注册用户
+  const users_query = { is_active: true }
+  const recent_reg_options = { limit: 10, sort: '-create_at' }
 
   try {
     const { hotPosts, hotTags } = await Bluebird.props({
@@ -56,27 +56,27 @@ exports.index = async (req, res, next) => {
       hotTagsCache: cache.get('hot_tags')
     })
 
-    const { posts, count, replies, recentReg, hots, hotsTag } = await Bluebird.props({
+    let { posts, count, replies, recentReg, hots, hotsTag } = await Bluebird.props({
       posts: Post.getPostsByQuery(query, options),
       count: Post.getCountByQuery(query),
       replies: Reply.getRepliesByQuery(reply_query, reply_options),
       recentReg: User.getUsersByQuery(users_query, recent_reg_options),
-      hots: hotPosts ? hotPosts : Post.getNewHot(query),
-      hotsTag: hotTags ? hotTags : Tag.getHotTagsByQuery(tag_options)
-    });
+      hots: hotPosts || Post.getNewHot(query),
+      hotsTag: hotTags || Tag.getHotTagsByQuery(tag_options)
+    })
 
-    //总页数
-    const pages = Math.ceil(count / limit);
-    //热门文章
-    hots = hots.sort(function sortFn(a, b) {
-      //pv排序
-      return b.pv - a.pv;
-    });
-    //取前10条
-    hots = Array.prototype.slice.call(hots, 0, 10);
-    cache.set('hots' + tab, hots, 60 * 5);//5分钟
-    //热门标签
-    cache.set('hot_tags', hotsTag, 60 * 5);//5分钟
+    // 总页数
+    const pages = Math.ceil(count / limit)
+    // 热门文章
+    hots = hots.sort(function sortFn (a, b) {
+      // pv排序
+      return b.pv - a.pv
+    })
+    // 取前10条
+    hots = Array.prototype.slice.call(hots, 0, 10)
+    cache.set('hots' + tab, hots, 60 * 5)// 5分钟
+    // 热门标签
+    cache.set('hot_tags', hotsTag, 60 * 5)// 5分钟
 
     res.wrapRender('index', {
       posts: posts,
@@ -89,54 +89,54 @@ exports.index = async (req, res, next) => {
       recent_reg: recentReg,
       replies: replies,
       title: tabName
-    });
+    })
   } catch (error) {
-    return next(error);
+    return next(error)
   }
-};
+}
 
-//站点地图
+// 站点地图
 exports.sitemap = async (req, res, next) => {
-  var urlset = xmlbuilder.create('urlset', {version: '1.0', encoding: 'UTF-8'});
-  urlset.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+  var urlset = xmlbuilder.create('urlset', { version: '1.0', encoding: 'UTF-8' })
+  urlset.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9')
 
   try {
     const sitemapData = await cache.get('sitemap')
 
-    if (sitemapData) return res.type('xml').send(sitemapData);
+    if (sitemapData) return res.type('xml').send(sitemapData)
 
     const [posts, tags] = await Promise.all([
       Post.getLimit5w(),
-      Tag.getAllTagsByQuery({}, {sort: '-post_count'})
-    ]);
+      Tag.getAllTagsByQuery({}, { sort: '-post_count' })
+    ])
 
     if (!res.headersSent) {
       posts.forEach(function (post) {
-        urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id);
-      });
-      tags.forEach(function(tag) {
-        urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
-      });
-      var finalData = urlset.end();
+        urlset.ele('url').ele('loc', 'https://' + config.host + '/p/' + post._id)
+      })
+      tags.forEach(function (tag) {
+        urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name)
+      })
+      var finalData = urlset.end()
       // 缓存
-      cache.set('sitemap', finalData, 3600 * 2);
-      res.type('xml').send(finalData);
+      cache.set('sitemap', finalData, 3600 * 2)
+      res.type('xml').send(finalData)
     }
   } catch (error) {
-    return next(err);
+    return next(err)
   }
-};
+}
 
 exports.robots = function (req, res, next) {
-  res.type('text/plain');
-  res.send(multiline(function () {/*
+  res.type('text/plain')
+  res.send(multiline(function () { /*
  # See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
  #
  # To ban all spiders from the entire site uncomment the next two lines:
  # User-Agent: *
  # allow: /
- */}));
-};
+ */ }))
+}
 
 /**
  * 工具
@@ -147,8 +147,8 @@ exports.robots = function (req, res, next) {
 exports.tools = function (req, res, next) {
   res.render('static/tools', {
     title: '常用工具'
-  });
-};
+  })
+}
 
 /**
  * 前端导航
@@ -156,11 +156,11 @@ exports.tools = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.feNav = function(req, res, next) {
+exports.feNav = function (req, res, next) {
   res.render('static/fe_nav', {
     title: '前端导航'
-  });
-};
+  })
+}
 
 /**
  * web api接口说明
@@ -171,5 +171,5 @@ exports.feNav = function(req, res, next) {
 exports.api = function (req, res, next) {
   res.render('static/api', {
     title: 'api接口说明'
-  });
-};
+  })
+}

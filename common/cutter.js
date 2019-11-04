@@ -2,7 +2,7 @@
  * content cutter
  */
 
-var validator = require('validator');
+var validator = require('validator')
 
 /**
  * 截短内容
@@ -10,31 +10,31 @@ var validator = require('validator');
  * @param {Number} length 需要截取的长度
  */
 exports.shorter = function (content, length) {
-  if (!content) return '';
-  content = validator.trim(content) || '';
-  var len = content.length;
-  var cache = content.substring(0, len);
-  var t = 0;
+  if (!content) return ''
+  content = validator.trim(content) || ''
+  var len = content.length
+  var cache = content.substring(0, len)
+  var t = 0
   for (var i = 0; i < length; i++) {
-    if (cache.substr(i, 1).match("[\u4e00-\u9fa5]")) {
-      if (t + 2 > length) break; 
-      t = t + 2;//汉字
+    if (cache.substr(i, 1).match('[\u4e00-\u9fa5]')) {
+      if (t + 2 > length) break
+      t = t + 2// 汉字
     } else {
-      if (t + 1 > length) break;
-      t = t + 1;//英文
+      if (t + 1 > length) break
+      t = t + 1// 英文
     }
   }
-  var result = cache.substring(0, t);
+  var result = cache.substring(0, t)
   if (len > length) {
-    result = result + "...";
+    result = result + '...'
   }
-  return result;
-};
+  return result
+}
 
 /**
  * 清除html标签
  * @param {String} content 需要被清除的内容
  */
 exports.clearHtml = function (content) {
-  return content;
-};
+  return content
+}

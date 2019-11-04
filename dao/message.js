@@ -2,14 +2,14 @@
  * 消息dao
  */
 
-var Promise = require('bluebird');
-var _ = require('lodash');
+var Promise = require('bluebird')
+var _ = require('lodash')
 
-var Message = require('../models').Message;
+var Message = require('../models').Message
 
-var User = require('./user');
-var Post = require('./post');
-var Reply = require('./reply');
+var User = require('./user')
+var Post = require('./post')
+var Reply = require('./reply')
 
 /**
  * 根据用户id获取未读消息的数量
@@ -18,9 +18,9 @@ var Reply = require('./reply');
  * - count, 未读消息数量
  * @param {String} id 用户id
  */
-exports.getMessagesCount = function getMessagesCount(id) {
-  return Message.count({master_id: id, has_read: false}).exec();
-};
+exports.getMessagesCount = function getMessagesCount (id) {
+  return Message.count({ master_id: id, has_read: false }).exec()
+}
 
 /**
  * 根据消息id获取消息
@@ -30,14 +30,14 @@ exports.getMessagesCount = function getMessagesCount(id) {
  * @param {String} id 消息ID
  * @param {Function} callback 回调函数
  */
-exports.getMessageById = function getMessageById(id, callback) {
+exports.getMessageById = function getMessageById (id, callback) {
   return Message
-    .findOne({_id: id})
+    .findOne({ _id: id })
     .exec()
-    .then(function(message) {
-        return getMessageRelations(message)
-    });
-};
+    .then(function (message) {
+      return getMessageRelations(message)
+    })
+}
 
 var getMessageRelations = exports.getMessageRelations = function (message) {
   if (message.type === 'reply' || message.type === 'reply2' || message.type === 'at') {
@@ -47,22 +47,22 @@ var getMessageRelations = exports.getMessageRelations = function (message) {
         Post.getPostById(message.post_id),
         Reply.getReplyById(message.reply_id)
       ])
-      .spread(function(author, post, reply) {
+      .spread(function (author, post, reply) {
         message = _.extend(message.toObject(), {
           author: author,
           post: post[0],
           reply: reply
-        });
+        })
         if (!author || !post[0]) {
-          message.is_invalid = true;
+          message.is_invalid = true
         }
 
-        return Promise.resolve(message);
-      });
+        return Promise.resolve(message)
+      })
   } else {
-    return Promise.resolve({is_invalid: true});
+    return Promise.resolve({ is_invalid: true })
   }
-};
+}
 
 /**
  * 根据用户ID，获取已读消息列表
@@ -74,12 +74,12 @@ var getMessageRelations = exports.getMessageRelations = function (message) {
 exports.getReadMessagesByUserId = function (userId) {
   return Message
     .find(
-      {master_id: userId,has_read: true},
+      { master_id: userId, has_read: true },
       null,
-      {sort: '-create_at', limit: 20}
+      { sort: '-create_at', limit: 20 }
     )
-    .exec();
-};
+    .exec()
+}
 
 /**
  * 根据用户ID，获取未读消息列表
@@ -90,20 +90,19 @@ exports.getReadMessagesByUserId = function (userId) {
  */
 exports.getUnreadMessageByUserId = function (userId) {
   return Message
-    .find({master_id: userId, has_read: false}, null,{sort: '-create_at'})
-    .exec();
-};
-
+    .find({ master_id: userId, has_read: false }, null, { sort: '-create_at' })
+    .exec()
+}
 
 /**
  * 将消息设置成已读
  */
 exports.updateMessagesToRead = function (userId, messages) {
   var ids = messages.map(function (m) {
-    return m.id;
-  });
-  var query = { master_id: userId, _id: { $in: ids } };
+    return m.id
+  })
+  var query = { master_id: userId, _id: { $in: ids } }
   return Message
     .update(query, { $set: { has_read: true } }, { multi: true })
-    .exec();
-};
+    .exec()
+}

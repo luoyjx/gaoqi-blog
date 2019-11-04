@@ -2,8 +2,8 @@
  * filter api
  */
 
-var UserModel = require('../models').User;
-var validator = require('validator');
+var UserModel = require('../models').User
+var validator = require('validator')
 
 /**
  * 通过accesstoken查找用户
@@ -12,20 +12,20 @@ var validator = require('validator');
  * @param next
  */
 var auth = function (req, res, next) {
-  var accessToken = req.body.accesstoken || req.query.accesstoken;
-  accessToken = validator.trim(accessToken);
-  console.log(accessToken);
+  var accessToken = req.body.accesstoken || req.query.accesstoken
+  accessToken = validator.trim(accessToken)
+  console.log(accessToken)
   UserModel
-    .findOne({accessToken: accessToken})
+    .findOne({ accessToken: accessToken })
     .exec()
-    .then(function(user) {
+    .then(function (user) {
       if (!user) {
-        res.status(403);
-        return res.send({error_msg: 'wrong accessToken'});
+        res.status(403)
+        return res.send({ error_msg: 'wrong accessToken' })
       }
-      req.user = user;
-      next();
-    });
-};
+      req.user = user
+      next()
+    })
+}
 
-exports.auth = auth;
+exports.auth = auth

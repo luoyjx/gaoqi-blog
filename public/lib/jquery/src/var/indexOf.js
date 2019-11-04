@@ -1,5 +1,5 @@
 define([
-	"./arr"
-], function( arr ) {
-	return arr.indexOf;
-});
+  './arr'
+], function (arr) {
+  return arr.indexOf
+})

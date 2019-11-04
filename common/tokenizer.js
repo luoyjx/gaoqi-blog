@@ -5,7 +5,7 @@
  * @version $Id$
  */
 
-var nodejieba = require('nodejieba');
+var nodejieba = require('nodejieba')
 
 /**
  * 分词抽取关键字
@@ -13,7 +13,6 @@ var nodejieba = require('nodejieba');
  * @param  {[type]} topCount 按权重排序的关键词个数
  * @return {[type]}          [description]
  */
-exports.tokenize = function tokenize(content, topCount) {
-  return nodejieba.extract(content, topCount || 10);
+exports.tokenize = function tokenize (content, topCount) {
+  return nodejieba.extract(content, topCount || 10)
 }
-

@@ -4,11 +4,11 @@
  * @date    2017-04-28 20:53:52
  */
 
-'use strict';
+'use strict'
 
-const config = require('../config');
-const render = require('./render');
-const cutter = require('./cutter');
+const config = require('../config')
+const render = require('./render')
+const cutter = require('./cutter')
 
 /**
  * 生成twitter的head meta信息
@@ -17,14 +17,14 @@ const cutter = require('./cutter');
  * @param  {[type]} post     文章
  * @return {[type]}          [description]
  */
-exports.getTwitterMeta = function getTwitterMeta(category, author, post) {
-  let categoryName = '';
+exports.getTwitterMeta = function getTwitterMeta (category, author, post) {
+  let categoryName = ''
 
   config.tabs.forEach(function (tab) {
     if (tab[0] === category) {
-      categoryName = tab[1];
+      categoryName = tab[1]
     }
-  });
+  })
 
   const meta = [
     '<meta name="twitter:card" content="summary" />',
@@ -35,7 +35,7 @@ exports.getTwitterMeta = function getTwitterMeta(category, author, post) {
     '<meta name="twitter:image" content="' + author.avatar + '" />',
     '<meta name="twitter:site" content="@gaoqi-blog" />',
     '<meta name="twitter:creator" content="@gaoqi-blog" />'
-  ];
+  ]
 
-  return meta.join('\n');
-};
+  return meta.join('\n')
+}

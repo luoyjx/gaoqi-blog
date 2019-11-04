@@ -20,9 +20,10 @@
     "prerestart": "npm install && npm run build",
     "restart": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
     "reboot": "cross-env NODE_ENV=production ./node_modules/.bin/pm2 restart gaoqiblog",
-    "pretest": "npm install",
+    "pretest": "npm install && npm run lint",
     "test": "mocha --reporter spec -r should -r test/env --timeout 10000 --exit ./test/**/*.test.js",
-    "test-cov": "nyc -r text-summary npm run test"
+    "test-cov": "nyc -r text-summary npm run test",
+    "lint": "npx eslint ."
   },
   "engines": {
     "node": ">=10"
@@ -75,6 +76,12 @@
   "devDependencies": {
     "coveralls": "^3.0.7",
     "errorhandler": "*",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "loader-connect": "*",
     "mm": "*",
     "mocha": "^6.2.2",
