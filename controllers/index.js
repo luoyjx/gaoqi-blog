@@ -2,17 +2,15 @@
  * controller index
  */
 
-var Promise = require('bluebird');
-var xmlbuilder = require('xmlbuilder');
-var multiline = require('multiline');
-var validator = require('validator');
-var _ = require('lodash');
-var Post = require('../dao').Post;
-var Tag = require('../dao').Tag;
-var Reply = require('../dao').Reply;
-var User = require('../dao').User;
-var config = require('../config');
-var cache = require('../common/cache');
+const _ = require('lodash');
+const Promise = require('bluebird');
+const xmlbuilder = require('xmlbuilder');
+const multiline = require('multiline');
+const validator = require('validator');
+
+const { Post, Tag, Reply, User } = require('../dao');
+const config = require('../config');
+const cache = require('../common/cache');
 
 //站点首页
 exports.index = function (req, res, next) {

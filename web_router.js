@@ -12,7 +12,6 @@ var post = require('./controllers/post');
 var tag = require('./controllers/tag');
 var reply = require('./controllers/reply');
 var github = require('./controllers/github');
-var search = require('./controllers/search');
 var message = require('./controllers/message');
 var userFollow = require('./controllers/user_follow');
 var postCollection = require('./controllers/post_collection');
@@ -78,8 +77,6 @@ router.get('/my/post_collection', auth.userRequired, postCollection.getPostColle
 
 router.get('/tags/:name', tag.getTagByName);//某个标签
 router.get('/tags', tag.index);//所有标签
-
-router.get('/search', search.index);//搜索
 
 router.get('/robots.txt', index.robots);
 router.get('/frontEndNavigation', index.feNav);//前端导航

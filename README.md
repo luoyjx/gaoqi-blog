@@ -13,40 +13,39 @@ gaoqi-blog
 [coverage-url]: https://coveralls.io/r/luoyjx/gaoqi-blog?branch=master
 [david-image]: https://img.shields.io/david/luoyjx/gaoqi-blog.svg?style=flat-square
 [david-url]: https://david-dm.org/luoyjx/gaoqi-blog
-[node-image]: https://img.shields.io/badge/node.js-%3E=_4.1.1-green.svg?style=flat-square
+[node-image]: https://img.shields.io/badge/node.js-%3E=_10.13.0-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 
 
 基于Node.js的多人博客
 
-* Node.js 4.1.1
-* mongodb v2.6(已经迁移到3.0版本的 wiredTiger 引擎，可使用2.6，不影响)
-  迁移过程看这里
-  http://blog.gaoqixhb.com/p/55cb5fc17c68e69a01af69aa
-* redis v2.6.13
+## Installation
 
-# 安装运行
+### Prerequire
 
-* 安装上面所需的3个环境
-* 安装依赖 `npm install`
-* js、css压缩合并 `npm run build`
-* 开发环境启动 `npm run dev`
-* 生产环境启动 `npm start`
-* 生产环境重启 `npm restart`
-* 生产环境快速重启 `make reboot`
-* 访问 `http://localhost:3001`
+* Node.js v10.13.0
+* mongodb v3
+* redis v2.6
 
-# test
+### Run
+
+* Install packages `npm install`
+* Build `npm run build`
+* Development start `npm run dev`
+* Start `npm start`
+* Build and restart `npm restart`
+* Restart `make reboot`
+* Open `http://localhost:3001` in browser
+
+## test
 
 * `npm test`
 
-# coverage
+## coverage
 
 * `npm run test-cov`
 
-# changelog
+## [changelog](changelog.md)
 
-[changelog](changelog.md)
-
-# License
+## License
 MIT

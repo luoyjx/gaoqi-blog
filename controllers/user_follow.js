@@ -38,7 +38,7 @@ exports.getFollowUserPost = function getFollowUserPost(req, res, next) {
       return Promise
         .all([
           Post.getPostsByQuery(postQuery, postOptions),
-          Post.getCountByQuery(postQuery)          
+          Post.getCountByQuery(postQuery)
         ]);
     })
     .spread(function(posts, count) {
