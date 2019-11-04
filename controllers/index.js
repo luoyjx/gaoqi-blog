@@ -127,10 +127,10 @@ exports.sitemap = async (req, res, next) => {
       tags.forEach(function(tag) {
         urlset.ele('url').ele('loc', 'https://' + config.host + '/tags/' + tag.name);
       });
-      var sitemapData = urlset.end();
+      var finalData = urlset.end();
       // 缓存
-      cache.set('sitemap', sitemapData, 3600 * 2);
-      res.type('xml').send(sitemapData);
+      cache.set('sitemap', finalData, 3600 * 2);
+      res.type('xml').send(finalData);
     }
   } catch (error) {
     return next(err);
