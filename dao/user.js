@@ -8,7 +8,6 @@ var request = require('request')
 var Promise = require('bluebird')
 var models = require('../models')
 var User = models.User
-var utility = require('utility')
 var uuid = require('node-uuid')
 var config = require('../config')
 
@@ -71,8 +70,8 @@ exports.getUserByEmail = function (email) {
  * @param {String} login_name 用户名
  * @param {String} key 激活码
  */
-exports.getUserByNameAndKey = function (login_name, key) {
-  return User.findOne({ login_name: login_name, retrieve_key: key }).exec()
+exports.getUserByNameAndKey = function (loginName, key) {
+  return User.findOne({ login_name: loginName, retrieve_key: key }).exec()
 }
 
 /**
@@ -142,14 +141,14 @@ exports.decCollectCount = function decCollectCount (userId) {
  * @param {String} avatar_url 头像地址
  * @param {Boolean} active 是否激活
  */
-exports.newAndSave = function (name, login_name, pass, email, avatar_url, active) {
+exports.newAndSave = function (name, loginName, pass, email, avatarUrl, active) {
   var user = new User()
-  user.name = login_name
-  user.login_name = login_name
+  user.name = loginName
+  user.login_name = loginName
   user.pwd = pass
   user.email = email
   user.is_active = active || false
-  user.avatar = avatar_url
+  user.avatar = avatarUrl
   user.accessToken = uuid.v4()
   user.save()
   return Promise.resolve(user)
@@ -161,7 +160,7 @@ exports.newAndSave = function (name, login_name, pass, email, avatar_url, active
  * @returns {string} avatar地址
  */
 exports.makeGravatar = function (email) {
-  var urlObj = url.parse(gravatar.url(email, { d: 'retro' }))
+  var urlObj = url.URL(gravatar.url(email, { d: 'retro' }))
   var avatarUrl = urlObj.path
   var avatarPath = avatarUrl.replace('//www.gravatar.com', '')
   var avatarKey = avatarPath.split('?')[0]

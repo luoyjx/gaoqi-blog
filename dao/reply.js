@@ -3,14 +3,12 @@
  */
 
 var Promise = require('bluebird')
-var validator = require('validator')
 var models = require('../models')
 var Reply = models.Reply
 
 var tools = require('../common/tools')
 var at = require('../common/at')
 var User = require('./user')
-var Post = require('./post')
 
 /**
  * 获取一条回复信息
@@ -42,11 +40,11 @@ exports.getReplyById = function (id) {
 
       _reply = replyFind
 
-      var author_id = replyFind.author_id
+      var authorId = replyFind.author_id
 
       return Promise
         .all([
-          User.getUserById(author_id),
+          User.getUserById(authorId),
           at.linkUsers(_reply.content)
         ])
     })

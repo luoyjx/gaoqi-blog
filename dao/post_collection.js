@@ -24,11 +24,11 @@ exports.getCollectionPostByUser = function getCollectionPostByUser (userId, opti
       var postIds = _.map(postCollections, 'post_id')
 
       var query = { _id: { $in: postIds } }
-      var options = _.assign(options, { sort: '-update_at' })
+      var opts = _.assign(options, { sort: '-update_at' })
 
       return Promise
         .all([
-          Post.getPostsByQuery(query, options),
+          Post.getPostsByQuery(query, opts),
           Post.getCountByQuery(query)
         ])
     })

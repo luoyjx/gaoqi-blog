@@ -116,11 +116,11 @@ exports.getNewHot = function (query) {
  * - post, 文章
  * - author, 作者
  * - replies, 文章回复
- * @param post_id
+ * @param postId
  */
-exports.getCompletePost = function (post_id) {
+exports.getCompletePost = function (postId) {
   return Post
-    .findOne({ _id: post_id })
+    .findOne({ _id: postId })
     .exec()
     .then(function (postFind) {
       postFind.linkedContent = at.linkUsers(postFind.content)
@@ -154,16 +154,16 @@ exports.reduceCount = function (id) {
  * @param {String} title 标题
  * @param {String} description 摘要
  * @param {String} content 内容
- * @param {String} author_id 作者id
+ * @param {String} authorId 作者id
  * @param {Array} tags 标签
  * @param {String} category 文章分类
  */
-exports.newAndSave = function (title, description, content, author_id, tags, category) {
+exports.newAndSave = function (title, description, content, authorId, tags, category) {
   var post = new Post()
   post.title = title
   post.description = description
   post.content = content
-  post.author_id = author_id
+  post.author_id = authorId
   post.tags = tags
   post.category = category
   post.save()
@@ -175,24 +175,24 @@ exports.newAndSave = function (title, description, content, author_id, tags, cat
  * @param {String} title 标题
  * @param {String} description 摘要
  * @param {String} content 内容
- * @param {String} author_id 作者id
+ * @param {String} authorId 作者id
  * @param {Array} tags 标签
  * @param {String} category 文章分类
  * @param {String} id 文章id，在导入时用到
  * @param {Date} create_at 创建时间
  * @param {Number} pv 浏览数
  */
-exports.importNew = function (title, description, content, author_id, tags, category, id, create_at, pv) {
+exports.importNew = function (title, description, content, authorId, tags, category, id, createAt, pv) {
   var post = new Post()
   post._id = id
   post.title = title
   post.description = description
   post.content = content
-  post.author_id = author_id
+  post.author_id = authorId
   post.tags = tags
   post.category = category
-  post.create_at = create_at
-  post.update_at = create_at
+  post.create_at = createAt
+  post.update_at = createAt
   post.pv = pv
   post.save()
   return Promise.resolve(post)
