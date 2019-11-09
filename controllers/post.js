@@ -373,46 +373,6 @@ exports.unTop = async (req, res, next) => {
 }
 
 /**
- * 推荐文章(用户操作)
- * @param req
- * @param res
- * @param next
- */
-exports.recommend = function (req, res, next) {
-  // var post_id = validator.trim(req.params._id)
-}
-
-/**
- * 取消推荐
- * @param req
- * @param res
- * @param next
- */
-exports.unRecommend = function unRecommend (req, res, next) {
-  // var post_id = validator.trim(req.params._id)
-}
-
-/**
- * 加精(管理员等做此操作)
- * @param req
- * @param res
- * @param next
- */
-exports.good = function (req, res, next) {
-
-}
-
-/**
- * 锁定文章
- * @param req
- * @param res
- * @param next
- */
-exports.lock = function (req, res, next) {
-
-}
-
-/**
  * 上传文件
  * @param req
  * @param res

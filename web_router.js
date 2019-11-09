@@ -51,9 +51,6 @@ router.post('/post/:_id/delete', auth.userRequired, post.delete)
 router.post('/post/:_id/lock', auth.adminRequired, post.lock) // 锁定文章
 router.get('/post/:_id/top', auth.adminRequired, post.top)// 顶置
 router.get('/post/:_id/cancel_top', auth.adminRequired, post.unTop)// 取消顶置
-router.post('/post/:_id/good', auth.adminRequired, post.good)// 精华
-router.post('/post/:_id/recommend', auth.userRequired, post.recommend)// 推荐
-router.post('/post/:_id/unrecommend', auth.userRequired, post.unRecommend)// 取消推荐
 router.get('/post/:_id/collect', auth.userRequired, postCollection.create)// 收藏
 router.get('/post/:_id/un_collect', auth.userRequired, postCollection.removeById)// 取消收藏
 router.post('/post/create', auth.userRequired, post.create)// 新增文章
