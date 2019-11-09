@@ -1,7 +1,7 @@
 /*!
  * tag web api
  */
-var Tag = require('../dao').Tag
+var Tag = require('../services').Tag
 var validator = require('validator')
 
 /**
@@ -10,7 +10,7 @@ var validator = require('validator')
  * @param res
  * @param next
  */
-exports.searchTagsByName = function (req, res, next) {
+exports.searchTagsByName = (req, res, next) => {
   var name = validator.trim(req.query.q)
   var callback = req.query.callback
   if (!name) {
@@ -20,9 +20,8 @@ exports.searchTagsByName = function (req, res, next) {
   var pattern = new RegExp('^.*' + name + '.*$', 'igm')
   var options = { limit: 10, sort: '-post_count' }
 
-  Tag
-    .getAllTagsByQuery({ name: pattern }, options)
-    .then(function (tags) {
+  Tag.getAllTagsByQuery({ name: pattern }, options)
+    .then(tags => {
       // 数据库中不存在此tag则返回只当前tag名称
       if (tags.length === 0) {
         return res.end(callback + '([{name: "' + name + '"}])')
@@ -30,7 +29,7 @@ exports.searchTagsByName = function (req, res, next) {
       // 如果tags中不存在当前名称tag则加到第一个元素
       var exists = false
       var container = []
-      tags.forEach(function (tag) {
+      tags.forEach(tag => {
         if (tag.name.toLowerCase() === name) {
           exists = true
         }
@@ -44,7 +43,7 @@ exports.searchTagsByName = function (req, res, next) {
       }
       return res.end(callback + '(' + JSON.stringify(container) + ')')
     })
-    .catch(function (err) {
+    .catch(err => {
       next(err)
     })
 }
@@ -55,7 +54,7 @@ exports.searchTagsByName = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.addTag = function (req, res, next) {
+exports.addTag = (req, res, next) => {
   var name = validator.trim(req.body.name)
   name = validator.escape(name)
   var description = validator.trim(req.body.description)
@@ -76,9 +75,8 @@ exports.addTag = function (req, res, next) {
   }
 
   // 查询是否存在这个tag，不存在则添加
-  Tag
-    .getTagByName(name)
-    .then(function (tag) {
+  Tag.getTagByName(name)
+    .then(tag => {
       if (tag) {
         if (description) {
           tag.description = description
@@ -95,14 +93,12 @@ exports.addTag = function (req, res, next) {
           })
         }
       } else {
-        return Tag
-          .newAndSave(name, description)
-          .then(function (tag) {
-            res.wrapSend({ success: 1, tag_id: tag._id })
-          })
+        return Tag.newAndSave(name, description).then(tag => {
+          res.wrapSend({ success: 1, tag_id: tag._id })
+        })
       }
     })
-    .catch(function (err) {
+    .catch(err => {
       next(err)
     })
 }
@@ -113,7 +109,7 @@ exports.addTag = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.follow = function (req, res, next) {
+exports.follow = (req, res, next) => {
   var user = req.session.user
   var tagId = validator.trim(req.params._id)
   if (!user) {
@@ -131,6 +127,4 @@ exports.follow = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.unFollow = function (req, res, next) {
-
-}
+exports.unFollow = (req, res, next) => {}

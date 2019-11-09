@@ -2,13 +2,13 @@ var Promise = require('bluebird')
 var mongoose = require('mongoose')
 var UserModel = mongoose.model('User')
 var config = require('../config')
-var UserProxy = require('../dao').User
-var Message = require('../dao').Message
+var UserProxy = require('../services').User
+var Message = require('../services').Message
 
 /**
  * 需要管理员权限
  */
-exports.adminRequired = function (req, res, next) {
+exports.adminRequired = (req, res, next) => {
   if (!req.session.user) {
     return res.render('notify/notify', { error: '你还没有登录' })
   }
@@ -21,43 +21,41 @@ exports.adminRequired = function (req, res, next) {
 /**
  * 需要登录
  */
-exports.userRequired = function (req, res, next) {
+exports.userRequired = (req, res, next) => {
   if (!req.session || !req.session.user) {
     return res.redirect('/signin')
   }
   next()
 }
 
-exports.blockUser = function () {
-  return function (req, res, next) {
+exports.blockUser = () => {
+  return (req, res, next) => {
     if (req.path === '/signout') {
       return next()
     }
     if (req.session.user && req.session.user.is_block && req.method !== 'GET') {
-      return res.status(403).send('您已被管理员锁定了.有疑问请联系 yjk99@qq.com')
+      return res
+        .status(403)
+        .send('您已被管理员锁定了.有疑问请联系 yjk99@qq.com')
     }
     next()
   }
 }
 
-function genSession (user, res) {
+const genSession = (user, res) => {
   var authToken = user._id + '$$$$' // 以后可能会存储更多信息，用 $$$$ 来分隔
-  res.cookie(
-    config.auth_cookie_name,
-    authToken,
-    {
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      signed: true,
-      httpOnly: true
-    }
-  ) // cookie 有效期30天
+  res.cookie(config.auth_cookie_name, authToken, {
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+    signed: true,
+    httpOnly: true
+  }) // cookie 有效期30天
 }
 
 exports.gen_session = genSession
 
 // 验证用户是否登录
-exports.authUser = function (req, res, next) {
+exports.authUser = (req, res, next) => {
   if (config.debug && req.cookies.mock_user) {
     var mockUser = JSON.parse(req.cookies.mock_user)
     req.session.user = new UserModel(mockUser)
@@ -81,22 +79,20 @@ exports.authUser = function (req, res, next) {
     userPromise = UserProxy.getUserById(userId)
   }
 
-  userPromise
-    .then(function (user) {
-      if (!user) {
-        return next()
-      }
+  userPromise.then(user => {
+    if (!user) {
+      return next()
+    }
 
-      user = res.locals.user = req.session.user = new UserModel(user)
+    user = res.locals.user = req.session.user = new UserModel(user)
 
-      if (config.admins[user.login_name]) {
-        user.is_admin = true
-      }
+    if (config.admins[user.login_name]) {
+      user.is_admin = true
+    }
 
-      Message.getMessagesCount(user._id)
-        .then(function (count) {
-          user.messages_count = count
-          next()
-        })
+    Message.getMessagesCount(user._id).then(count => {
+      user.messages_count = count
+      next()
     })
+  })
 }

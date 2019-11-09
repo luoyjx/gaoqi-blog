@@ -3,9 +3,9 @@
  */
 
 var validator = require('validator')
-var Post = require('../dao').Post
-var User = require('../dao').User
-var Tag = require('../dao').Tag
+var Post = require('../services').Post
+var User = require('../services').User
+var Tag = require('../services').Tag
 var html2md = require('html2markdown')
 
 /**
@@ -14,17 +14,18 @@ var html2md = require('html2markdown')
  * @param res
  * @param next
  */
-exports.create = function (req, res, next) {
+exports.create = (req, res, next) => {
   var category = validator.trim(req.body.category)
   category = validator.escape(category)
   var title = validator.trim(req.body.title)
-  title = validator.escape(title)// escape 将html 等特殊符号 标签转义
+  title = validator.escape(title) // escape 将html 等特殊符号 标签转义
   var description = validator.trim(req.body.description)
   description = validator.escape(description)
   var content = validator.trim(req.body.content)
   var tags = validator.trim(req.body.tags)
   var isHtml = isNaN(validator.trim(req.body.is_html))
-    ? 1 : parseInt(validator.trim(req.body.is_html))// 文章内容是否为html，是则转换为markdown
+    ? 1
+    : parseInt(validator.trim(req.body.is_html)) // 文章内容是否为html，是则转换为markdown
 
   // 验证
   var editError
@@ -49,33 +50,31 @@ exports.create = function (req, res, next) {
   }
 
   var tagArr = tags ? tags.split(',') : []
-  content = isHtml === 1 ? html2md(content) : content// 转换html成markdown格式
+  content = isHtml === 1 ? html2md(content) : content // 转换html成markdown格式
 
-  Post
-    .newAndSave(title, description, content, req.user._id, tagArr, category)
-    .then(function (post) {
-      return User
-        .getUserById(req.user.id)
-        .then(function (user) {
+  Post.newAndSave(title, description, content, req.user._id, tagArr, category)
+    .then(post => {
+      return User.getUserById(req.user.id)
+        .then(user => {
           user.score += 5
           user.post_count += 1
           user.save()
           req.user = user
         })
-        .then(function () {
+        .then(() => {
           res.wrapSend({
             success: 1,
             post_id: post._id
           })
         })
     })
-    .then(function () {
+    .then(() => {
       tagArr = tagArr.length > 0 ? tagArr : []
-      tagArr.forEach(function (tag) {
+      tagArr.forEach(tag => {
         Tag.newAndSave(tag, '')
       })
     })
-    .catch(function (err) {
+    .catch(err => {
       next(err)
     })
 }

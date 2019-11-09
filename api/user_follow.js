@@ -6,7 +6,7 @@
  */
 
 var validator = require('validator')
-var UserFollow = require('../dao').UserFollow
+var UserFollow = require('../services').UserFollow
 
 /**
  * 关注
@@ -15,30 +15,28 @@ var UserFollow = require('../dao').UserFollow
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.follow = function follow (req, res, next) {
+exports.follow = (req, res, next) => {
   var followingId = validator.trim(req.query.following_id)
-  UserFollow
-    .follow(followingId, req.user._id)
-    .then(function (userFollow) {
+  UserFollow.follow(followingId, req.user._id)
+    .then(() => {
       res.json({
         success: 1
       })
     })
-    .catch(function (err) {
+    .catch(err => {
       next(err)
     })
 }
 
-exports.unFollow = function unFollow (req, res, next) {
+exports.unFollow = (req, res, next) => {
   var followingId = validator.trim(req.query.following_id)
-  UserFollow
-    .unFollow(followingId, req.user._id)
-    .then(function (result) {
+  UserFollow.unFollow(followingId, req.user._id)
+    .then(result => {
       res.json({
         success: 1
       })
     })
-    .catch(function (err) {
+    .catch(err => {
       next(err)
     })
 }
