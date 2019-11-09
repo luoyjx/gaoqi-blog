@@ -5,7 +5,7 @@
 const config = require('../config')
 const convert = require('data2xml')()
 
-const { Post } = require('../dao/')
+const { Post } = require('../services/')
 const render = require('../common/render')
 const cache = require('../common/cache')
 

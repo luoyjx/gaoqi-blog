@@ -6,7 +6,7 @@
  */
 
 const config = require('../config')
-const { PostCollection, User } = require('../dao')
+const { PostCollection, User } = require('../services')
 
 /**
  * 查询收藏文章

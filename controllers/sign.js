@@ -6,7 +6,7 @@ const validator = require('validator')
 const uuid = require('node-uuid')
 
 const tools = require('../common/tools')
-const User = require('../dao').User
+const User = require('../services').User
 const mail = require('../common/mail')
 const utility = require('utility')
 const config = require('../config')

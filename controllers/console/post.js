@@ -4,9 +4,9 @@
  * @date    2016-11-07 20:35:51
  */
 
-var Promise = require('bluebird')
-var Post = require('../../dao').Post
-var config = require('../../config')
+const Bluebird = require('bluebird')
+const { Post } = require('../../services')
+const config = require('../../config')
 
 module.exports = {
   /**
@@ -16,33 +16,32 @@ module.exports = {
    * @param  {Function} next [description]
    * @return {[type]}        [description]
    */
-  index: function index (req, res, next) {
-    var page = req.query.page ? parseInt(req.query.page, 10) : 1
+  index: async (req, res, next) => {
+    let page = req.query.page ? parseInt(req.query.page, 10) : 1
     page = page > 0 ? page : 1
 
-    var query = {}
+    const query = {}
 
-    var limit = config.list_topic_count
-    var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at' }
+    const limit = config.list_topic_count
+    const options = { skip: (page - 1) * limit, limit: limit, sort: '-top -update_at' }
 
-    Promise
-      .all([
+    try {
+      const [posts, count] = await Bluebird.all([
         Post.getPostsByQuery(query, options),
         Post.getCountByQuery(query)
       ])
-      .spread(function (posts, count) {
-        // 总页数
-        var pages = Math.ceil(count / limit)
 
-        res.wrapRender('console/post/index', {
-          posts: posts,
-          base: '/',
-          current_page: page,
-          pages: pages
-        })
+      // 总页数
+      const pages = Math.ceil(count / limit)
+
+      res.wrapRender('console/post/index', {
+        posts: posts,
+        base: '/',
+        current_page: page,
+        pages: pages
       })
-      .catch(function (err) {
-        return next(err)
-      })
+    } catch (error) {
+      next(error)
+    }
   }
 }

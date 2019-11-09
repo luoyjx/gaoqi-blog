@@ -8,7 +8,7 @@ const xmlbuilder = require('xmlbuilder')
 const multiline = require('multiline')
 const validator = require('validator')
 
-const { Post, Tag, Reply, User } = require('../dao')
+const { Post, Tag, Reply, User } = require('../services')
 const config = require('../config')
 const cache = require('../common/cache')
 

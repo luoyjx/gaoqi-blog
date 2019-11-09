@@ -7,7 +7,7 @@ const validator = require('validator')
 
 const at = require('../common/at')
 const message = require('../common/message')
-const { User, Post, Reply } = require('../dao')
+const { User, Post, Reply } = require('../services')
 
 /**
  * 添加回复

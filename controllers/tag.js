@@ -5,7 +5,7 @@
 const Bluebird = require('bluebird')
 const validator = require('validator')
 
-const { Tag, Post } = require('../dao')
+const { Tag, Post } = require('../services')
 const cutter = require('../common/cutter')
 const config = require('../config')
 

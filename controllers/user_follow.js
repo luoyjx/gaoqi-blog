@@ -9,7 +9,7 @@ const Bluebird = require('bluebird')
 const _ = require('lodash')
 const validator = require('validator')
 
-const { User, UserFollow, Post } = require('../dao')
+const { User, UserFollow, Post } = require('../services')
 const config = require('../config')
 
 /**

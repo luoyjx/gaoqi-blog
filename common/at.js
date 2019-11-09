@@ -1,12 +1,14 @@
 /* ！
  * at common
  */
-var Promise = require('bluebird')
-var User = require('../dao').User
-var Message = require('./message')
-var _ = require('lodash')
-var online = require('../middleware/online')
-var mail = require('./mail')
+
+const _ = require('lodash')
+const Promise = require('bluebird')
+
+const { User } = require('../services')
+const Message = require('./message')
+const online = require('../middleware/online')
+const mail = require('./mail')
 
 /**
  * 从文本中提取出@username 标记的用户名数组

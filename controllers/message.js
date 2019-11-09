@@ -3,7 +3,7 @@
  */
 
 const Bluebird = require('bluebird')
-const { Message } = require('../dao')
+const { Message } = require('../services')
 
 exports.index = async (req, res, next) => {
   const userId = req.session.user._id
