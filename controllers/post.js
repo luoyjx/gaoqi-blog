@@ -397,3 +397,13 @@ exports.upload = function (req, res, next) {
 
   req.pipe(req.busboy)
 }
+
+/**
+ * 锁定文章
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.lock = function (req, res, next) {
+
+}
