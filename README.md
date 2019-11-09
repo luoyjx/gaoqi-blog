@@ -8,7 +8,7 @@ gaoqi-blog
 [![Greenkeeper badge](https://badges.greenkeeper.io/luoyjx/gaoqi-blog.svg)](https://greenkeeper.io/)
 
 [travis-image]: https://img.shields.io/travis/luoyjx/gaoqi-blog/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/luoyjx/gaoqi-blog
+[travis-url]: https://travis-ci.com/luoyjx/gaoqi-blog
 [coverage-image]: https://img.shields.io/coveralls/luoyjx/gaoqi-blog.svg?style=flat-square
 [coverage-url]: https://coveralls.io/r/luoyjx/gaoqi-blog?branch=master
 [david-image]: https://img.shields.io/david/luoyjx/gaoqi-blog.svg?style=flat-square
