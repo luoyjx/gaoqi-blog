@@ -23,9 +23,10 @@ gaoqi-blog
 
 ### Prerequire
 
-* Node.js v10.13.0
+* Node.js >= v10.13.0
 * mongodb v3
 * redis v2.6
+* Git >= 2.13.0 (for git precommit hook)
 
 ### Run
 
