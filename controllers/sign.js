@@ -300,7 +300,7 @@ exports.updatePass = async (req, res, next) => {
     await user.save()
 
     return res.render('notify/notify', { success: '你的密码已重置。' })
-  } catch (error) {
+  } catch (err) {
     next(err)
   }
 }
