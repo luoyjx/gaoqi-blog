@@ -203,7 +203,7 @@ exports.updateSetting = async (req, res, next) => {
  * @param res
  * @param next
  */
-exports.updatePassword = function updatePassword (req, res, next) {
+exports.updatePassword = async (req, res, next) => {
   const oldPass = validator.trim(req.body.old_pass)
   const newPass = validator.trim(req.body.new_pass)
   if (!oldPass || !newPass) {
@@ -214,7 +214,7 @@ exports.updatePassword = function updatePassword (req, res, next) {
 
   try {
     const _user = await User.getUserById(req.session.user._id)
-    const ok = await tools.bcompare(oldPass, user.pwd)
+    const ok = await tools.bcompare(oldPass, _user.pwd)
 
     if (!ok) {
       return res.wrapRender('user/setting', {
