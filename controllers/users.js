@@ -2,14 +2,12 @@
  * user controller
  */
 
-var Promise = require('bluebird')
-var Post = require('../dao').Post
-var User = require('../dao').User
-var Reply = require('../dao').Reply
-var UserFollow = require('../dao').UserFollow
-var validator = require('validator')
-var config = require('../config')
-var tools = require('../common/tools')
+const Bluebird = require('bluebird')
+const validator = require('validator')
+
+const { Post, User, Reply, UserFollow } = require('../dao')
+const config = require('../config')
+const tools = require('../common/tools')
 
 /**
  * 个人主页
@@ -17,49 +15,46 @@ var tools = require('../common/tools')
  * @param res
  * @param next
  */
-exports.index = function (req, res, next) {
-  var userNname = validator.trim(req.params.name)
+exports.index = async (req, res, next) => {
+  const userNname = validator.trim(req.params.name)
 
-  User
-    .getUserByLoginName(userNname)
-    .then(function (user) {
-      if (!user) {
-        return res.wrapRender('notify/notify', {
-          error: '并没有找到这样一个作者'
-        })
-      }
+  try {
+    const user = await User.getUserByLoginName(userNname)
 
-      var postQuery = { author_id: user._id }
-
-      var latestOptions = { limit: 10, sort: '-create_at' }
-      var topOptions = { limit: 10, sort: '-pv' }
-      var replyOptions = { limit: 10, sort: '-create_at' }
-      return Promise
-        .all([
-          Post.getPostsByQuery(postQuery, latestOptions),
-          Post.getPostsByQuery(postQuery, topOptions),
-          Reply.getRepliesByAuthorId(user._id, replyOptions),
-          Promise.resolve(user),
-          req.session.user
-            ? UserFollow.hasFollow(user._id, req.session.user._id)
-            : Promise.resolve(false)
-        ])
-    })
-    .spread(function (latest, top, replies, user, hasFollow) {
-      user.frendly_create_at = tools.format(user.create_at, 'YYYY-MM-DD HH:mm:ss Z')
-
-      res.wrapRender('user/home', {
-        author: user,
-        latest: latest,
-        top: top,
-        replies: replies,
-        hasFollow: hasFollow,
-        title: user.login_name
+    if (!user) {
+      return res.wrapRender('notify/notify', {
+        error: '并没有找到这样一个作者'
       })
+    }
+
+    var postQuery = { author_id: user._id }
+
+    var latestOptions = { limit: 10, sort: '-create_at' }
+    var topOptions = { limit: 10, sort: '-pv' }
+    var replyOptions = { limit: 10, sort: '-create_at' }
+
+    const [latest, top, replies, hasFollow] = await Bluebird.all([
+      Post.getPostsByQuery(postQuery, latestOptions),
+      Post.getPostsByQuery(postQuery, topOptions),
+      Reply.getRepliesByAuthorId(user._id, replyOptions),
+      req.session.user
+        ? UserFollow.hasFollow(user._id, req.session.user._id)
+        : Bluebird.resolve(false)
+    ])
+
+    user.frendly_create_at = tools.format(user.create_at, 'YYYY-MM-DD HH:mm:ss Z')
+
+    res.wrapRender('user/home', {
+      author: user,
+      latest: latest,
+      top: top,
+      replies: replies,
+      hasFollow: hasFollow,
+      title: user.login_name
     })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -68,46 +63,43 @@ exports.index = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.top = function (req, res, next) {
-  var userName = validator.trim(req.params.name)
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1
+exports.top = async (req, res, next) => {
+  const userName = validator.trim(req.params.name)
+  let page = req.query.page ? parseInt(req.query.page, 10) : 1
   page = page > 0 ? page : 1
 
-  User
-    .getUserByLoginName(userName)
-    .then(function (user) {
-      if (!user) {
-        return res.wrapRender('notify/notify', {
-          error: '并没有找到这样一个作者'
-        })
-      }
+  try {
+    const user = await User.getUserByLoginName(userName)
 
-      var postQuery = { author_id: user._id }
-      var limit = config.list_topic_count
-
-      var topOptions = { skip: (page - 1) * limit, limit: limit, sort: '-pv' }
-      return Promise
-        .all([
-          Post.getPostsByQuery(postQuery, topOptions),
-          Post.getCountByQuery(postQuery)
-            .then(function (allCount) {
-              return Promise.resolve(Math.ceil(allCount / limit))
-            }),
-          Promise.resolve(user)
-        ])
-    })
-    .spread(function (top, pages, user) {
-      res.wrapRender('user/top', {
-        author: user,
-        top: top,
-        pages: pages,
-        current_page: page,
-        title: user.login_name + '的热门文章 - 第' + page + '页'
+    if (!user) {
+      return res.wrapRender('notify/notify', {
+        error: '并没有找到这样一个作者'
       })
+    }
+
+    const postQuery = { author_id: user._id }
+    const limit = config.list_topic_count
+
+    const topOptions = { skip: (page - 1) * limit, limit: limit, sort: '-pv' }
+
+    const [top, pages] = await Bluebird.all([
+      Post.getPostsByQuery(postQuery, topOptions),
+      Post.getCountByQuery(postQuery)
+        .then((allCount) => {
+          return Bluebird.resolve(Math.ceil(allCount / limit))
+        })
+    ])
+
+    res.wrapRender('user/top', {
+      author: user,
+      top: top,
+      pages: pages,
+      current_page: page,
+      title: user.login_name + '的热门文章 - 第' + page + '页'
     })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -116,39 +108,32 @@ exports.top = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.replies = function (req, res, next) {
-  var userName = validator.trim(req.params.name)
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1
+exports.replies = async (req, res, next) => {
+  const userName = validator.trim(req.params.name)
+  let page = req.query.page ? parseInt(req.query.page, 10) : 1
   page = page > 0 ? page : 1
 
-  var _user
+  try {
+    const _user = await User.getUserByLoginName(userName)
 
-  User
-    .getUserByLoginName(userName)
-    .then(function (user) {
-      if (!user) {
-        return res.wrapRender('notify/notify', {
-          error: '并没有找到这样一个作者'
-        })
-      }
-
-      _user = user
-
-      var limit = config.list_topic_count
-
-      var replyOption = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
-      return Reply.getRepliesByAuthorId(user._id, replyOption)
-    })
-    .then(function (fromAuthor) {
-      res.wrapRender('user/replies', {
-        author: _user,
-        from_author: fromAuthor,
-        title: _user.login_name + '最近的评论'
+    if (!_user) {
+      return res.wrapRender('notify/notify', {
+        error: '并没有找到这样一个作者'
       })
+    }
+
+    const limit = config.list_topic_count
+    const replyOption = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
+    const fromAuthor = await Reply.getRepliesByAuthorId(_user._id, replyOption)
+
+    res.wrapRender('user/replies', {
+      author: _user,
+      from_author: fromAuthor,
+      title: _user.login_name + '最近的评论'
     })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -157,8 +142,8 @@ exports.replies = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.setting = function (req, res, next) {
-  var loginName = validator.trim(req.params.name)
+exports.setting = async (req, res, next) => {
+  const loginName = validator.trim(req.params.name)
 
   if (!req.session.user || loginName !== req.session.user.login_name) {
     return res.render('notify/notify', {
@@ -166,21 +151,20 @@ exports.setting = function (req, res, next) {
     })
   }
 
-  User
-    .getUserByLoginName(loginName)
-    .then(function (user) {
-      if (!user) {
-        return res.wrapRender('notify/notify', {
-          error: '找不到这个用户'
-        })
-      }
-      res.wrapRender('user/setting', {
-        user: user
+  try {
+    const user = await User.getUserByLoginName(loginName)
+
+    if (!user) {
+      return res.wrapRender('notify/notify', {
+        error: '找不到这个用户'
       })
+    }
+    res.wrapRender('user/setting', {
+      user: user
     })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -189,33 +173,28 @@ exports.setting = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.updateSetting = function updateSetting (req, res, next) {
-  var url = validator.trim(req.body.url)
-  var location = validator.trim(req.body.location)
+exports.updateSetting = async (req, res, next) => {
+  const url = validator.trim(req.body.url)
+  const weibo = validator.trim(req.body.weibo)
+  let location = validator.trim(req.body.location)
   location = validator.escape(location)
-  var weibo = validator.trim(req.body.weibo)
-  var signature = validator.trim(req.body.signature)
+  let signature = validator.trim(req.body.signature)
   signature = validator.escape(signature)
 
-  User
-    .getUserById(req.session.user._id)
-    .then(function (user) {
-      user.url = url
-      user.location = location
-      user.signature = signature
-      user.weibo = weibo
-      user.save()
-      return Promise.resolve(user)
+  try {
+    const user = await User.getUserById(req.session.user._id)
+    user.url = url
+    user.location = location
+    user.signature = signature
+    user.weibo = weibo
+    await user.save()
+    res.locals.user = req.session.user = user.toObject({ virtual: true })
+    res.wrapRender('user/setting', {
+      success: '修改信息成功'
     })
-    .then(function (user) {
-      res.locals.user = req.session.user = user.toObject({ virtual: true })
-      return res.wrapRender('user/setting', {
-        success: '修改信息成功'
-      })
-    })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -225,44 +204,34 @@ exports.updateSetting = function updateSetting (req, res, next) {
  * @param next
  */
 exports.updatePassword = function updatePassword (req, res, next) {
-  var oldPass = validator.trim(req.body.old_pass)
-  var newPass = validator.trim(req.body.new_pass)
+  const oldPass = validator.trim(req.body.old_pass)
+  const newPass = validator.trim(req.body.new_pass)
   if (!oldPass || !newPass) {
     return res.wrapRender('user/setting', {
       error: '旧密码或新密码不得为空'
     })
   }
 
-  var _user
+  try {
+    const _user = await User.getUserById(req.session.user._id)
+    const ok = await tools.bcompare(oldPass, user.pwd)
 
-  User
-    .getUserById(req.session.user._id)
-    .then(function (user) {
-      _user = user
-
-      return tools.bcompare(oldPass, user.pwd)
-    })
-    .then(function (bool) {
-      if (!bool) {
-        return res.wrapRender('user/setting', {
-          error: '当前密码不正确'
-        })
-      }
-
-      return tools.bhash(newPass)
-    })
-    .then(function (passhash) {
-      if (_user) {
-        _user.pwd = passhash
-        _user.save()
-      }
-    })
-    .then(function () {
-      return res.render('user/setting', {
-        success: '密码已被修改'
+    if (!ok) {
+      return res.wrapRender('user/setting', {
+        error: '当前密码不正确'
       })
+    }
+
+    const passhash = await tools.bhash(newPass)
+    if (_user) {
+      _user.pwd = passhash
+      _user.save()
+    }
+
+    res.render('user/setting', {
+      success: '密码已被修改'
     })
-    .catch(function (err) {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
