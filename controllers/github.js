@@ -1,4 +1,3 @@
-
 const uuid = require('node-uuid')
 const validator = require('validator')
 
@@ -35,7 +34,7 @@ exports.callback = async (req, res, next) => {
   }
 }
 
-exports.new = function (req, res, next) {
+exports.new = async (req, res, next) => {
   res.render('sign/new_oauth', { actionPath: '/login/github/create' })
 }
 
@@ -51,7 +50,8 @@ exports.create = async (req, res, next) => {
 
   delete req.session.profile
 
-  if (isnew) { // 注册新账号
+  if (isnew) {
+    // 注册新账号
     try {
       const user = new User({
         login_name: profile.username,
@@ -71,9 +71,7 @@ exports.create = async (req, res, next) => {
       // 根据 err.err 的错误信息决定如何回应用户，这个地方写得很难看
       if (err.message.indexOf('duplicate key error') !== -1) {
         if (err.message.indexOf('email') !== -1) {
-          return res
-            .status(500)
-            .wrapRender('sign/no_github_email')
+          return res.status(500).wrapRender('sign/no_github_email')
         }
         if (err.message.indexOf('login_name') !== -1) {
           return res
@@ -84,13 +82,22 @@ exports.create = async (req, res, next) => {
       return next(err)
       // END 根据 err.err 的错误信息决定如何回应用户，这个地方写得很难看
     }
-  } else { // 关联老账号
+  } else {
+    // 关联老账号
     try {
       const user = await User.findOne({ login_name: loginname })
-      if (!user) return res.status(403).wrapRender('sign/signin', { error: '账号名或密码错误。' })
+      if (!user) {
+        return res
+          .status(403)
+          .wrapRender('sign/signin', { error: '账号名或密码错误。' })
+      }
 
       const ok = await tools.bcompare(password, user.pwd)
-      if (!bool) return res.status(403).wrapRender('sign/signin', { error: '账号名或密码错误。' })
+      if (!ok) {
+        return res
+          .status(403)
+          .wrapRender('sign/signin', { error: '账号名或密码错误。' })
+      }
 
       user.github_username = profile.username
       user.github_id = profile.id
