@@ -2,11 +2,10 @@
  * controller post
  */
 
-const Promise = require('bluebird')
+const Bluebird = require('bluebird')
 const validator = require('validator')
 
-const { Post, User, Tag } = require('../dao')
-const PostCollection = require('../dao').PostCollection
+const { Post, User, Tag, PostCollection } = require('../dao')
 const tools = require('../common/tools')
 const at = require('../common/at')
 const config = require('../config')
@@ -22,9 +21,10 @@ const twitter = require('../common/twitter')
  * @param  res
  * @param  next
  */
-exports.index = function (req, res, next) {
-  var postId = req.params._id
-  var twitterMeta = ''
+exports.index = async (req, res, next) => {
+  const postId = req.params._id
+  const user = req.session.user
+  let twitterMeta = ''
 
   if (postId.length !== 24) {
     return res.wrapRender('notify/notify', {
@@ -32,55 +32,55 @@ exports.index = function (req, res, next) {
     })
   }
 
-  Post
-    .getCompletePost(postId)
-    .spread(function (post, author, replies) {
+  try {
+    const [post, author, replies] = await Post.getCompletePost(postId)
+
+    // 其他人或匿名用户访问时增加 PV
+    if (user && author && user._id !== author._id) {
       post.pv += 1
       post.save()
-      // 格式化时间
-      post.frendly_create_at = tools.formatDate(post.create_at, false)
-      // 作者
-      post.author = author
-      // 回复
-      post.replies = replies
+    }
 
-      twitterMeta = meta.getTwitterMeta(post.category, author, post)
+    // 格式化时间
+    post.frendly_create_at = tools.formatDate(post.create_at, false)
+    // 作者
+    post.author = author
+    // 回复
+    post.replies = replies
 
-      var hotOptions = {
-        limit: 6,
-        sort: '-pv'
-      }
-      var recentOptions = {
-        limit: 6,
-        sort: '-create_at'
-      }
+    twitterMeta = meta.getTwitterMeta(post.category, author, post)
 
-      return Promise
-        .all([
-          Promise.resolve(post),
-          Post.getSimplePosts(hotOptions),
-          Post.getSimplePosts(recentOptions),
-          req.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
-        ])
+    const hotOptions = {
+      limit: 6,
+      sort: '-pv'
+    }
+    const recentOptions = {
+      limit: 6,
+      sort: '-create_at'
+    }
+
+    const [hotPosts, recentPosts, hasCollect] = await Bluebird.all([
+      Post.getSimplePosts(hotOptions),
+      Post.getSimplePosts(recentOptions),
+      req.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
+    ])
+
+    res.wrapRender('post/index', {
+      title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
+      description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
+      tags: post.tags.join(','),
+      post: post,
+      recent: recentPosts,
+      hots: hotPosts,
+      replies: post.replies,
+      hasCollect: !!hasCollect, // 转义boolean
+      twitterMeta: twitterMeta
     })
-    .spread(function (post, hotPosts, recentPosts, hasCollect) {
-      res.wrapRender('post/index', {
-        title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
-        description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
-        tags: post.tags.join(','),
-        post: post,
-        recent: recentPosts,
-        hots: hotPosts,
-        replies: post.replies,
-        hasCollect: !!hasCollect, // 转义boolean
-        twitterMeta: twitterMeta
-      })
+  } catch (err) {
+    res.wrapRender('notify/notify', {
+      error: err
     })
-    .catch(function (err) {
-      res.wrapRender('notify/notify', {
-        error: err
-      })
-    })
+  }
 }
 
 /**
@@ -89,7 +89,7 @@ exports.index = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.showCreate = function (req, res, next) {
+exports.showCreate = (req, res, next) => {
   res.render('post/edit', {
     title: '发表文章'
   })
@@ -101,15 +101,15 @@ exports.showCreate = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.create = function (req, res, next) {
-  var category = validator.trim(req.body.category)
+exports.create = async (req, res, next) => {
+  let category = validator.trim(req.body.category)
   category = validator.escape(category)
-  var title = validator.trim(req.body.title)
+  let title = validator.trim(req.body.title)
   title = validator.escape(title) // escape 将html 等特殊符号 标签转义
-  var content = validator.trim(req.body.content)
-  var tags = validator.trim(req.body.tags)
+  const content = validator.trim(req.body.content)
+  const tags = validator.trim(req.body.tags)
 
-  var error
+  let error
   if (category === '') {
     error = '请选择一个分类'
   } else if (title === '') {
@@ -129,63 +129,50 @@ exports.create = function (req, res, next) {
       content: content
     })
   } else {
-    var tagsArr = tags ? tags.split(',') : []
-    var _post
-    Post
-      .newAndSave(title, '', content, req.session.user._id, tagsArr, category)
-      .then(function (postSaved) {
-        _post = postSaved
+    try {
+      let tagsArr = tags ? tags.split(',') : []
+      const _post = await Post.newAndSave(title, '', content, req.session.user._id, tagsArr, category)
+      const userFind = await User.getUserById(req.session.user._id)
 
-        return User.getUserById(req.session.user._id)
-      })
-      .then(function (userFind) {
-        userFind.score += 5
-        userFind.post_count += 1
-        userFind.save()
-        req.session.user = userFind
-        // 发送at消息
-        at.sendMessageToMentionUsers(content, _post._id, req.session.user._id, null, req.session.user.login_name, _post.title)
-      })
-      .then(function () {
-        res.redirect('/p/' + _post._id)
-      })
-      .then(function () {
-        if (tagsArr.length > 0) {
-          tagsArr = tagsArr.filter(function (tagName) {
-            return !!tagName
-          })
+      userFind.score += 5
+      userFind.post_count += 1
+      userFind.save()
+      req.session.user = userFind
+      // 发送at消息
+      at.sendMessageToMentionUsers(content, _post._id, req.session.user._id, null, req.session.user.login_name, _post.title)
 
-          Promise.map(tagsArr, function (tagName) {
-            return Tag
-              .getTagByName(tagName)
-              .then(function (tag) {
-                if (!tag) {
-                  Tag
-                    .newAndSave(tagName, '')
-                    .then(function (newTag) {
-                      newTag.post_count += 1
-                      newTag.save()
-                    })
-                } else {
-                  tag.post_count += 1
-                  tag.save()
-                }
-              })
-          })
-        }
+      res.redirect('/p/' + _post._id)
 
-        var status = []
-        status.push('[' + tools.getCategoryName(_post.category) + ']')
-        status.push(_post.title + ':\n')
-        status.push(render.cleanMarkdown(_post.content))
-        // 截取50个字
-        status = cutter.shorter(status.join(''), 70)
-        status += 'https://' + config.host + '/p/' + _post._id + '?from=post_twitter'
-        twitter.postStatus(status)
-      })
-      .catch(function (err) {
-        return next(err)
-      })
+      // send to twitter async
+      if (tagsArr.length > 0) {
+        tagsArr = tagsArr.filter((tagName) => {
+          return !!tagName
+        })
+
+        Bluebird.map(tagsArr, async (tagName) => {
+          const tag = await Tag.getTagByName(tagName)
+          if (!tag) {
+            const newTag = await Tag.newAndSave(tagName, '')
+            newTag.post_count += 1
+            newTag.save()
+          } else {
+            tag.post_count += 1
+            tag.save()
+          }
+        })
+      }
+
+      var status = []
+      status.push('[' + tools.getCategoryName(_post.category) + ']')
+      status.push(_post.title + ':\n')
+      status.push(render.cleanMarkdown(_post.content))
+      // 截取50个字
+      status = cutter.shorter(status.join(''), 70)
+      status += 'https://' + config.host + '/p/' + _post._id + '?from=post_twitter'
+      twitter.postStatus(status)
+    } catch (err) {
+      return next(err)
+    }
   }
 }
 
@@ -195,34 +182,31 @@ exports.create = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.edit = function (req, res, next) {
-  var postId = req.params._id
+exports.edit = async (req, res, next) => {
+  const postId = req.params._id
 
-  Post
-    .getPostById(postId)
-    .spread(function (post, author) {
-      if (!post) {
-        return res.wrapRender('notify/notify', {
-          error: '这篇文章从地球上消失了'
-        })
-      }
-
-      if (!((post.author_id + '') === (req.session.user._id + '') || (req.session.user.is_admin))) {
-        return res.wrapRender('notify/notify', {
-          error: '大胆！这篇文章岂是你能编辑的？'
-        })
-      }
-
-      res.wrapRender('post/edit', {
-        title: '编辑文章',
-        action: 'edit',
-        post_id: post._id,
-        post_title: post.title,
-        content: post.content,
-        category: post.category,
-        tags: post.tags
-      })
+  const [post] = await Post.getPostById(postId)
+  if (!post) {
+    return res.wrapRender('notify/notify', {
+      error: '这篇文章从地球上消失了'
     })
+  }
+
+  if (!((post.author_id + '') === (req.session.user._id + '') || (req.session.user.is_admin))) {
+    return res.wrapRender('notify/notify', {
+      error: '大胆！这篇文章岂是你能编辑的？'
+    })
+  }
+
+  res.wrapRender('post/edit', {
+    title: '编辑文章',
+    action: 'edit',
+    post_id: post._id,
+    post_title: post.title,
+    content: post.content,
+    category: post.category,
+    tags: post.tags
+  })
 }
 
 /**
@@ -231,15 +215,15 @@ exports.edit = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.update = function (req, res, next) {
-  var postId = req.params._id
-  // escape 将html 等特殊符号 标签转义
-  var category = validator.trim(req.body.category)
+exports.update = async (req, res, next) => {
+  const postId = req.params._id
+  // escape 将 html 等特殊符号 标签转义
+  let category = validator.trim(req.body.category)
   category = validator.escape(category)
-  var title = validator.trim(req.body.title)
+  let title = validator.trim(req.body.title)
   title = validator.escape(title)
-  var content = validator.trim(req.body.content)
-  var tags = validator.trim(req.body.tags)
+  const content = validator.trim(req.body.content)
+  const tags = validator.trim(req.body.tags)
     ? validator.trim(req.body.tags) : ''
 
   // 验证
@@ -263,42 +247,38 @@ exports.update = function (req, res, next) {
     })
   }
 
-  Post
-    .getPostById(postId)
-    .spread(function (post, author) {
-      if (!post) {
-        return res.wrapRender('notify/notify', {
-          error: '这篇文章从地球上消失了'
-        })
-      }
+  try {
+    const [post] = await Post.getPostById(postId)
 
-      // 只有管理员、非管理员但是是本帖发帖用户 二者可用修改本帖
-      if (req.session.user.is_admin || ((post.author_id + '') === (req.session.user._id + ''))) {
-        // 保存文章
-        post.title = title
-        post.content = content
-        post.category = category
-        post.tags = tags.split(',')
-        post.update_at = new Date()
-        post.save()
-      } else {
-        return res.wrapRender('notify/notify', {
-          error: '这篇文章可不是谁都能编辑的'
-        })
-      }
+    if (!post) {
+      return res.wrapRender('notify/notify', {
+        error: '这篇文章从地球上消失了'
+      })
+    }
 
-      return Promise.resolve(post)
-    })
-    .then(function (postSaved) {
-      if (!res.headersSent) {
-        // 发送at消息
-        at.sendMessageToMentionUsers(content, postSaved._id, req.session.user._id, null, req.session.user.login_name, postSaved.title)
-        res.redirect('/p/' + postSaved._id)
-      }
-    })
-    .catch(function (err) {
-      next(err)
-    })
+    // 只有管理员、非管理员但是是本帖发帖用户 二者可用修改本帖
+    if (req.session.user.is_admin || ((post.author_id + '') === (req.session.user._id + ''))) {
+      // 保存文章
+      post.title = title
+      post.content = content
+      post.category = category
+      post.tags = tags.split(',')
+      post.update_at = new Date()
+      post.save()
+    } else {
+      return res.wrapRender('notify/notify', {
+        error: '这篇文章可不是谁都能编辑的'
+      })
+    }
+
+    if (!res.headersSent) {
+      // 发送at消息
+      at.sendMessageToMentionUsers(content, post._id, req.session.user._id, null, req.session.user.login_name, post.title)
+      res.redirect('/p/' + post._id)
+    }
+  } catch (err) {
+    next(err)
+  }
 }
 
 /**
@@ -307,55 +287,44 @@ exports.update = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.delete = function (req, res, next) {
-  var postId = req.params._id
+exports.delete = async (req, res, next) => {
+  const postId = req.params._id
 
-  Post
-    .getPostById(postId)
-    .spread(function (postFind) {
-      console.log(postFind)
-      console.log(req.session.user._id)
-      if (!req.session.user.is_admin && (postFind.author_id + '') !== (req.session.user._id + '')) {
-        return res.status(403).wrapSend({
-          success: false,
-          message: '这篇文章可不是谁都能删除的'
-        })
-      }
-      if (!postFind) {
-        return res.status(422).wrapSend({
-          success: false,
-          message: '这篇文章从地球上消失了'
-        })
-      }
+  try {
+    const postFind = await Post.getPostById(postId)
 
-      //    //使用软删除方式
-      //    post.enable = false;
-      //    post.save(function(err){
-      //      if(err){
-      //        return res.send({ success: false, message: err.message });
-      //      }
-      //      res.send({ success: true, message: '文章已被删除' });
-      //    });
-      console.log('delete')
-      // 数据库删除
-      Post
-        .remove({
-          _id: postFind._id
-        })
-        .then(function () {
-          console.log('delete done')
-          res.wrapSend({
-            success: true,
-            message: '这篇文章已被送到火星上了'
-          })
-        })
-    })
-    .catch(function (err) {
-      res.wrapSend({
+    console.log(req.session.user._id)
+
+    if (!req.session.user.is_admin && (postFind.author_id + '') !== (req.session.user._id + '')) {
+      return res.status(403).wrapSend({
         success: false,
-        message: err.message
+        message: '这篇文章可不是谁都能删除的'
       })
+    }
+
+    if (!postFind) {
+      return res.status(422).wrapSend({
+        success: false,
+        message: '这篇文章从地球上消失了'
+      })
+    }
+
+    // 数据库删除
+    await Post.remove({
+      _id: postFind._id
     })
+
+    console.log('delete done')
+    res.wrapSend({
+      success: true,
+      message: '这篇文章已被送到火星上了'
+    })
+  } catch (err) {
+    res.wrapSend({
+      success: false,
+      message: err.message
+    })
+  }
 }
 
 /**
@@ -364,22 +333,20 @@ exports.delete = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.top = function (req, res, next) {
-  var id = req.params._id
-  Post
-    .setTop(id)
-    .then(function (updated) {
-      res.wrapSend({
-        success: true
-      })
+exports.top = async (req, res, next) => {
+  const id = req.params._id
+
+  try {
+    await Post.setTop(id)
+    res.wrapSend({
+      success: true
     })
-    .catch(function (err) {
-      console.log(err)
-      res.wrapSend({
-        success: false,
-        message: err.message
-      })
+  } catch (err) {
+    res.wrapSend({
+      success: false,
+      message: err.message
     })
+  }
 }
 
 /**
@@ -389,22 +356,20 @@ exports.top = function (req, res, next) {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.unTop = function unTop (req, res, next) {
-  var id = req.params._id
-  Post
-    .cancelTop(id)
-    .then(function (updated) {
-      res.wrapSend({
-        success: true
-      })
+exports.unTop = async (req, res, next) => {
+  const id = req.params._id
+
+  try {
+    await Post.cancelTop(id)
+    res.wrapSend({
+      success: true
     })
-    .catch(function (err) {
-      console.log(err)
-      res.wrapSend({
-        success: false,
-        message: err.message
-      })
+  } catch (err) {
+    res.wrapSend({
+      success: false,
+      message: err.message
     })
+  }
 }
 
 /**
@@ -454,18 +419,18 @@ exports.lock = function (req, res, next) {
  * @param next
  */
 exports.upload = function (req, res, next) {
-  req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+  req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
     uploader
       .upload(file, {
         filename: filename
       })
-      .then(function (result) {
+      .then((result) => {
         res.json({
           success: true,
           url: result.url
         })
       })
-      .catch(function (err) {
+      .catch((err) => {
         return next(err)
       })
   })
