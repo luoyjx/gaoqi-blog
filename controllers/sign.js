@@ -249,7 +249,7 @@ exports.updateSearchPass = async (req, res, next) => {
  * @param  {http.res}   res
  * @param  {Function} next
  */
-exports.resetPass = async (req, res, next) {
+exports.resetPass = async (req, res, next) => {
   const key = validator.trim(req.query.key)
   const name = validator.trim(req.query.name)
 
