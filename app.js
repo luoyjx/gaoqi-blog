@@ -5,6 +5,9 @@
 'use strict'
 
 const config = require('./config')
+const _ = require('lodash')
+const csurf = require('csurf')
+const cors = require('cors')
 const path = require('path')
 const Loader = require('loader')
 const LoaderConnect = require('loader-connect')
@@ -14,20 +17,17 @@ const errorhandler = require('errorhandler')
 const RedisStore = require('connect-redis')(session)
 const redisClient = require('./common/redis.js')
 const passport = require('passport')
-require('./models')
-const auth = require('./middleware/auth')
-const online = require('./middleware/online')
 const GitHubStrategy = require('passport-github').Strategy
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const compress = require('compression')
 const busboy = require('connect-busboy')
-const _ = require('lodash')
-const csurf = require('csurf')
-const cors = require('cors')
+
+require('./models')
+const auth = require('./middleware/auth')
+const online = require('./middleware/online')
 const render = require('./common/render')
 const cutter = require('./common/cutter')
-const responseTimeMiddleware = require('./middleware/statsd').responseTime
 
 const webRouter = require('./web_router')
 const webApi = require('./web_api')
@@ -124,11 +124,6 @@ app.use(busboy({
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB
   }
-}))
-
-app.use(responseTimeMiddleware({
-  host: '121.40.129.45',
-  requestKey: 'gaoqi_blog'
 }))
 
 app.use('/', webRouter)

@@ -6,7 +6,7 @@ const { User } = require('../models')
 const authMiddleWare = require('../middleware/auth')
 const tools = require('../common/tools')
 
-exports.callback = async (req, res, next) {
+exports.callback = async (req, res, next) => {
   const profile = req.user
 
   try {
