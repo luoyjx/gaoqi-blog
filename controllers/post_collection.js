@@ -5,9 +5,8 @@
  * @version $Id$
  */
 
-var config = require('../config')
-var PostCollection = require('../dao').PostCollection
-var User = require('../dao').User
+const config = require('../config')
+const { PostCollection, User } = require('../dao')
 
 /**
  * 查询收藏文章
@@ -16,31 +15,29 @@ var User = require('../dao').User
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.getPostCollection = function getPostCollection (req, res, next) {
-  var page = req.query.page ? parseInt(req.query.page) : 1
+exports.getPostCollection = async (req, res, next) => {
+  let page = req.query.page ? parseInt(req.query.page) : 1
   page = page > 0 ? page : 1
-  var user = req.session.user
+  const user = req.session.user
 
-  var limit = config.list_topic_count
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
+  const limit = config.list_topic_count
+  const options = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
 
-  PostCollection
-    .getCollectionPostByUser(user._id, options)
-    .spread(function (posts, count) {
-      var pages = Math.ceil(count / config.list_topic_count)
+  try {
+    const [posts, count] = await PostCollection.getCollectionPostByUser(user._id, options)
+    const pages = Math.ceil(count / config.list_topic_count)
 
-      res.render('user/post_collection', {
-        current_page: page,
-        posts: posts,
-        pages: pages,
-        base: '/my/post_collection',
-        title: '文章收藏'
-      })
+    res.render('user/post_collection', {
+      current_page: page,
+      posts: posts,
+      pages: pages,
+      base: '/my/post_collection',
+      title: '文章收藏'
     })
-    .catch(function (err) {
-      console.log(err)
-      next(err)
-    })
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
 }
 
 /**
@@ -50,27 +47,21 @@ exports.getPostCollection = function getPostCollection (req, res, next) {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.create = function create (req, res, next) {
-  var postId = req.params._id
-  var user = req.session.user
+exports.create = async (req, res, next) => {
+  const postId = req.params._id
+  const user = req.session.user
 
-  PostCollection
-    .create(postId, user._id)
-    .then(function () {
-      return User.incCollectCount(user._id)
-        .then(function () {
-          user.collect_post_count++
-          req.session.user = res.locals.user = user
-          return Promise.resolve()
-        })
-    })
-    .then(function () {
-      res.wrapSend({ success: 1 })
-    })
-    .catch(function (err) {
-      console.log(err)
-      next(err)
-    })
+  try {
+    await PostCollection.create(postId, user._id)
+    await User.incCollectCount(user._id)
+
+    user.collect_post_count++
+    req.session.user = res.locals.user = user
+    res.wrapSend({ success: 1 })
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
 }
 
 /**
@@ -80,25 +71,18 @@ exports.create = function create (req, res, next) {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.removeById = function removeById (req, res, next) {
-  var postId = req.params._id
-  var user = req.session.user
+exports.removeById = async (req, res, next) => {
+  const postId = req.params._id
+  const user = req.session.user
 
-  PostCollection
-    .remove(postId, user._id)
-    .then(function () {
-      return User.decCollectCount(user._id)
-        .then(function () {
-          user.collect_post_count--
-          req.session.user = res.locals.user = user
-          return Promise.resolve()
-        })
-    })
-    .then(function () {
-      res.wrapSend({ success: 1 })
-    })
-    .catch(function (err) {
-      console.log(err)
-      next(err)
-    })
+  try {
+    await PostCollection.remove(postId, user._id)
+    await User.decCollectCount(user._id)
+    user.collect_post_count--
+    req.session.user = res.locals.user = user
+    res.wrapSend({ success: 1 })
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
 }
