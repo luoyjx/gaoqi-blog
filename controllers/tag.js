@@ -2,12 +2,12 @@
  * tag controller
  */
 
-var Bluebird = require('bluebird')
-var Tag = require('../dao').Tag
-var Post = require('../dao').Post
-var validator = require('validator')
-var cutter = require('../common/cutter')
-var config = require('../config')
+const Bluebird = require('bluebird')
+const validator = require('validator')
+
+const { Tag, Post } = require('../dao')
+const cutter = require('../common/cutter')
+const config = require('../config')
 
 /**
  * 查询所有标签信息

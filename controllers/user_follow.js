@@ -5,13 +5,12 @@
  * @version $Id$
  */
 
-var Promise = require('bluebird')
-var _ = require('lodash')
-var validator = require('validator')
-var User = require('../dao').User
-var UserFollow = require('../dao').UserFollow
-var Post = require('../dao').Post
-var config = require('../config')
+const Bluebird = require('bluebird')
+const _ = require('lodash')
+const validator = require('validator')
+
+const { User, UserFollow, Post } = require('../dao')
+const config = require('../config')
 
 /**
  * 关注用户的文章
@@ -20,43 +19,40 @@ var config = require('../config')
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.getFollowUserPost = function getFollowUserPost (req, res, next) {
-  var page = req.query.page ? parseInt(req.query.page, 10) : 1
+exports.getFollowUserPost = async (req, res, next) => {
+  let page = req.query.page ? parseInt(req.query.page, 10) : 1
   page = page > 0 ? page : 1
-  var user = req.session.user
-  var followIds = []
-  var limit = config.list_topic_count
+  const user = req.session.user
+  let followIds = []
+  const limit = config.list_topic_count
 
-  UserFollow
-    .getByFollower(user._id)
-    .then(function (follows) {
-      followIds = _.map(follows, 'following_id')
+  try {
+    const follows = await UserFollow.getByFollower(user._id)
 
-      var postQuery = { author_id: { $in: followIds } }
-      var postOptions = { skip: (page - 1) * limit, limit: limit, sort: '-update_at' }
+    followIds = _.map(follows, 'following_id')
 
-      return Promise
-        .all([
-          Post.getPostsByQuery(postQuery, postOptions),
-          Post.getCountByQuery(postQuery)
-        ])
+    const postQuery = { author_id: { $in: followIds } }
+    const postOptions = { skip: (page - 1) * limit, limit: limit, sort: '-update_at' }
+
+    const [posts, count] = await Bluebird.all([
+      Post.getPostsByQuery(postQuery, postOptions),
+      Post.getCountByQuery(postQuery)
+    ])
+
+    // 总页数
+    const pages = Math.ceil(count / limit)
+
+    res.render('user/user_follow', {
+      pages: pages,
+      current_page: page,
+      posts: posts,
+      base: '/my/following',
+      title: '我的关注'
     })
-    .spread(function (posts, count) {
-      // 总页数
-      var pages = Math.ceil(count / limit)
-
-      res.render('user/user_follow', {
-        pages: pages,
-        current_page: page,
-        posts: posts,
-        base: '/my/following',
-        title: '我的关注'
-      })
-    })
-    .catch(function (err) {
-      console.error('getFollowUserPost error: ', err)
-      next(err)
-    })
+  } catch (err) {
+    console.error('getFollowUserPost error: ', err)
+    next(err)
+  }
 }
 
 /**
@@ -66,27 +62,22 @@ exports.getFollowUserPost = function getFollowUserPost (req, res, next) {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.follow = function follow (req, res, next) {
-  var followingId = validator.trim(req.params.id)
-  var referer = req.headers.referer
-  UserFollow
-    .follow(followingId, req.session.user._id)
-    .then(function () {
-      return User
-        .incFollowingCount(req.session.user._id)
-        .then(function () {
-          var user = req.session.user
-          user.following_count++
-          req.session.user = res.locals.user = user
-          return Promise.resolve()
-        })
-    })
-    .then(function () {
-      res.redirect(referer)
-    })
-    .catch(function (err) {
-      next(err)
-    })
+exports.follow = async (req, res, next) => {
+  const followingId = validator.trim(req.params.id)
+  const referer = req.headers.referer
+
+  try {
+    await UserFollow.follow(followingId, req.session.user._id)
+    await User.incFollowingCount(req.session.user._id)
+
+    const user = req.session.user
+    user.following_count++
+    req.session.user = res.locals.user = user
+
+    res.redirect(referer)
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -96,25 +87,19 @@ exports.follow = function follow (req, res, next) {
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.unFollow = function unFollow (req, res, next) {
-  var followingId = validator.trim(req.params.id)
-  var referer = req.headers.referer
-  UserFollow
-    .unFollow(followingId, req.session.user._id)
-    .then(function () {
-      return User
-        .decFollowingCount(req.session.user._id)
-        .then(function () {
-          var user = req.session.user
-          user.following_count--
-          req.session.user = res.locals.user = user
-          return Promise.resolve()
-        })
-    })
-    .then(function () {
-      res.redirect(referer)
-    })
-    .catch(function (err) {
-      next(err)
-    })
+exports.unFollow = async (req, res, next) => {
+  const followingId = validator.trim(req.params.id)
+  const referer = req.headers.referer
+
+  try {
+    await UserFollow.unFollow(followingId, req.session.user._id)
+    await User.decFollowingCount(req.session.user._id)
+
+    var user = req.session.user
+    user.following_count--
+    req.session.user = res.locals.user = user
+    res.redirect(referer)
+  } catch (error) {
+    next(error)
+  }
 }
