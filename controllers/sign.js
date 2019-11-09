@@ -77,8 +77,8 @@ exports.signIn = async (req, res, next) => {
     // 验证成功，存储session cookie，跳转到首页
     authFilter.gen_session(_user, res)
     // 检查需要跳转到首页的页面
-    var refer = req.session._loginReferer || '/'
-    for (var i = 0, len = notJump.length; i !== len; ++i) {
+    let refer = req.session._loginReferer || '/'
+    for (let i = 0, len = notJump.length; i !== len; ++i) {
       if (refer.indexOf(notJump[i]) >= 0) {
         refer = '/'
         break
@@ -181,7 +181,7 @@ exports.activeUser = async (req, res, next) => {
 
   if (!user) return next(new Error('[ACTIVE_USER] 未能找到用户：' + name))
 
-  var passhash = user.pwd
+  const passhash = user.pwd
   if (!user || utility.md5(user.email + passhash + config.session_secret) !== key) {
     return res.wrapRender('notify/notify', {
       error: '信息有误，账号无法激活',
@@ -214,14 +214,14 @@ exports.showSearchPass = function (req, res) {
 }
 
 exports.updateSearchPass = async (req, res, next) => {
-  var email = validator.trim(req.body.email).toLowerCase()
+  const email = validator.trim(req.body.email).toLowerCase()
   if (!validator.isEmail(email)) {
     return res.wrapRender('sign/search_pass', { error: '邮箱不合法', email: email })
   }
 
   // 动态生成retrive_key和timestamp到users collection,之后重置密码进行验证
-  var retrieveKey = uuid.v4()
-  var retrieveTime = new Date().getTime()
+  const retrieveKey = uuid.v4()
+  const retrieveTime = new Date().getTime()
 
   try {
     const user = await User.getUserByEmail(email)
@@ -274,10 +274,10 @@ exports.resetPass = async (req, res, next) => {
 }
 
 exports.updatePass = async (req, res, next) => {
-  var psw = validator.trim(req.body.psw) || ''
-  var repsw = validator.trim(req.body.repsw) || ''
-  var key = validator.trim(req.body.key) || ''
-  var name = validator.trim(req.body.name) || ''
+  const psw = validator.trim(req.body.psw) || ''
+  const repsw = validator.trim(req.body.repsw) || ''
+  const key = validator.trim(req.body.key) || ''
+  const name = validator.trim(req.body.name) || ''
 
   if (psw !== repsw) {
     return res.wrapRender('sign/reset', { name: name, key: key, error: '两次密码输入不一致。' })
