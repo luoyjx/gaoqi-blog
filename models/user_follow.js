@@ -5,11 +5,11 @@
  * @version $Id$
  */
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ObjectId = Schema.ObjectId
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
-var UserFollowSchema = new Schema({
+const UserFollowSchema = new Schema({
   follower_id: { type: ObjectId, ref: 'User' },
   following_id: { type: ObjectId, ref: 'User' },
   create_at: { type: Date, default: Date.now }

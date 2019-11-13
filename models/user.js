@@ -1,10 +1,10 @@
 /*!
  * user model
  */
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-var UserSchema = new Schema({
+const UserSchema = new Schema({
   name: { type: String },
   login_name: { type: String },
   pwd: { type: String },

@@ -1,8 +1,8 @@
-var mongoose = require('mongoose')
-var config = require('../config')
+const mongoose = require('mongoose')
+const config = require('../config')
 
 mongoose.Promise = require('bluebird')
-mongoose.connect(config.db, function (err) {
+mongoose.connect(config.db, err => {
   if (err) {
     console.error('connect to %s error: ', config.db, err.message)
     process.exit(1)

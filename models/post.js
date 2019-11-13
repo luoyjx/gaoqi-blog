@@ -1,13 +1,13 @@
 /*!
  * post model
  */
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ObjectId = Schema.ObjectId
-var config = require('../config')
-var _ = require('lodash')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
+const config = require('../config')
+const _ = require('lodash')
 
-var PostSchema = new Schema({
+const PostSchema = new Schema({
   title: { type: String },
   description: { type: String }, // 文章描述
   content: { type: String },
@@ -24,7 +24,7 @@ var PostSchema = new Schema({
   last_reply_at: { type: Date, default: Date.now },
   pv: { type: Number, default: 0 }, // 浏览数
   lock: { type: Boolean, default: false }, // 违规文章锁定
-  enable: { type: Boolean, default: true }// 文章软删除时用到
+  enable: { type: Boolean, default: true } // 文章软删除时用到
 })
 
 PostSchema.index({ author: 1, create_at: -1 })
@@ -34,9 +34,9 @@ PostSchema.index({ recommend_count: -1 })
 PostSchema.index({ reply_count: -1 })
 PostSchema.index({ category: 1 })
 
-PostSchema.virtual('categoryName').get(function () {
-  var tab = this.category
-  var pair = _.find(config.tabs, function (_pair) {
+PostSchema.virtual('categoryName').get(() => {
+  const tab = this.category
+  const pair = _.find(config.tabs, _pair => {
     return _pair[0] === tab
   })
 

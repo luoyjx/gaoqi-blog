@@ -4,11 +4,11 @@
  * @date    2016-11-08 09:42:47
  */
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ObjectId = Schema.ObjectId
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
-var CategorySchema = new Schema({
+const CategorySchema = new Schema({
   name: { type: String },
   show_name: { type: String },
   parent_id: { type: ObjectId }, // 父级id
