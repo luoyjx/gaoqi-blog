@@ -4,10 +4,10 @@
  * @date    2016-07-17 00:17:30
  */
 
-var MessageModel = require('../../models').Message
+const MessageModel = require('../../models').Message
 
-describe('test/models/message.test.js', function () {
-  it('message model test', function (done) {
+describe('test/models/message.test.js', function() {
+  it('message model test', function(done) {
     done()
   })
 })
