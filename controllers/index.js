@@ -86,15 +86,15 @@ exports.index = async (req, res, next) => {
     cache.set('hot_tags', hotsTag, 60 * 5) // 5分钟
 
     res.wrapRender('index', {
-      posts: posts,
+      posts: posts || [],
       tab: tab,
       base: '/',
       current_page: page,
-      pages: pages,
-      hots: hots,
-      tags: hotsTag,
-      recent_reg: recentReg,
-      replies: replies,
+      pages: pages || [],
+      hots: hots || [],
+      tags: hotsTag || [],
+      recent_reg: recentReg || [],
+      replies: replies || [],
       title: tabName
     })
   } catch (error) {
