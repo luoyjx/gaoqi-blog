@@ -1,9 +1,9 @@
-var Promise = require('bluebird')
-var mongoose = require('mongoose')
-var UserModel = mongoose.model('User')
-var config = require('../config')
-var UserProxy = require('../services').User
-var Message = require('../services').Message
+const Promise = require('bluebird')
+const mongoose = require('mongoose')
+const UserModel = mongoose.model('User')
+const config = require('../config')
+const UserService = require('../services').User
+const Message = require('../services').Message
 
 /**
  * 需要管理员权限
@@ -43,7 +43,7 @@ exports.blockUser = () => {
 }
 
 const genSession = (user, res) => {
-  var authToken = user._id + '$$$$' // 以后可能会存储更多信息，用 $$$$ 来分隔
+  const authToken = user._id + '$$$$' // 以后可能会存储更多信息，用 $$$$ 来分隔
   res.cookie(config.auth_cookie_name, authToken, {
     path: '/',
     maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -57,7 +57,7 @@ exports.gen_session = genSession
 // 验证用户是否登录
 exports.authUser = (req, res, next) => {
   if (config.debug && req.cookies.mock_user) {
-    var mockUser = JSON.parse(req.cookies.mock_user)
+    const mockUser = JSON.parse(req.cookies.mock_user)
     req.session.user = new UserModel(mockUser)
     if (mockUser.is_admin) {
       req.session.user.is_admin = true
@@ -65,18 +65,18 @@ exports.authUser = (req, res, next) => {
     return next()
   }
 
-  var userPromise
+  let userPromise
   if (req.session.user) {
     userPromise = Promise.resolve(req.session.user)
   } else {
-    var authToken = req.signedCookies[config.auth_cookie_name]
+    const authToken = req.signedCookies[config.auth_cookie_name]
     if (!authToken) {
       return next()
     }
 
-    var auth = authToken.split('$$$$')
-    var userId = auth[0]
-    userPromise = UserProxy.getUserById(userId)
+    const auth = authToken.split('$$$$')
+    const userId = auth[0]
+    userPromise = UserService.getUserById(userId)
   }
 
   userPromise.then(user => {
