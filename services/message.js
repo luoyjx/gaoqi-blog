@@ -2,14 +2,14 @@
  * 消息dao
  */
 
-var Promise = require('bluebird')
-var _ = require('lodash')
+const Promise = require('bluebird')
+const _ = require('lodash')
 
-var Message = require('../models').Message
+const Message = require('../models').Message
 
-var User = require('./user')
-var Post = require('./post')
-var Reply = require('./reply')
+const User = require('./user')
+const Post = require('./post')
+const Reply = require('./reply')
 
 /**
  * 根据用户id获取未读消息的数量
@@ -18,7 +18,7 @@ var Reply = require('./reply')
  * - count, 未读消息数量
  * @param {String} id 用户id
  */
-exports.getMessagesCount = function getMessagesCount (id) {
+exports.getMessagesCount = async id => {
   return Message.count({ master_id: id, has_read: false }).exec()
 }
 
@@ -30,39 +30,38 @@ exports.getMessagesCount = function getMessagesCount (id) {
  * @param {String} id 消息ID
  * @param {Function} callback 回调函数
  */
-exports.getMessageById = function getMessageById (id, callback) {
-  return Message
-    .findOne({ _id: id })
-    .exec()
-    .then(function (message) {
-      return getMessageRelations(message)
+exports.getMessageById = async (id, callback) => {
+  const message = await Message.findOne({ _id: id }).exec()
+  return getMessageRelations(message)
+}
+
+const getMessageRelations = (exports.getMessageRelations = async message => {
+  if (
+    message.type === 'reply' ||
+    message.type === 'reply2' ||
+    message.type === 'at'
+  ) {
+    const [author, post, reply] = await Promise.all([
+      User.getUserById(message.author_id),
+      Post.getPostById(message.post_id),
+      Reply.getReplyById(message.reply_id)
+    ])
+
+    message = _.extend(message.toObject(), {
+      author: author,
+      post: post[0],
+      reply: reply
     })
-}
 
-var getMessageRelations = exports.getMessageRelations = function (message) {
-  if (message.type === 'reply' || message.type === 'reply2' || message.type === 'at') {
-    return Promise
-      .all([
-        User.getUserById(message.author_id),
-        Post.getPostById(message.post_id),
-        Reply.getReplyById(message.reply_id)
-      ])
-      .spread(function (author, post, reply) {
-        message = _.extend(message.toObject(), {
-          author: author,
-          post: post[0],
-          reply: reply
-        })
-        if (!author || !post[0]) {
-          message.is_invalid = true
-        }
+    if (!author || !post[0]) {
+      message.is_invalid = true
+    }
 
-        return Promise.resolve(message)
-      })
+    return message
   } else {
-    return Promise.resolve({ is_invalid: true })
+    return { is_invalid: true }
   }
-}
+})
 
 /**
  * 根据用户ID，获取已读消息列表
@@ -71,14 +70,11 @@ var getMessageRelations = exports.getMessageRelations = function (message) {
  * - messages, 消息列表
  * @param {String} userId 用户ID
  */
-exports.getReadMessagesByUserId = function (userId) {
-  return Message
-    .find(
-      { master_id: userId, has_read: true },
-      null,
-      { sort: '-create_at', limit: 20 }
-    )
-    .exec()
+exports.getReadMessagesByUserId = async userId => {
+  return Message.find({ master_id: userId, has_read: true }, null, {
+    sort: '-create_at',
+    limit: 20
+  }).exec()
 }
 
 /**
@@ -88,21 +84,24 @@ exports.getReadMessagesByUserId = function (userId) {
  * - messages, 未读消息列表
  * @param {String} userId 用户ID
  */
-exports.getUnreadMessageByUserId = function (userId) {
-  return Message
-    .find({ master_id: userId, has_read: false }, null, { sort: '-create_at' })
-    .exec()
+exports.getUnreadMessageByUserId = userId => {
+  return Message.find({ master_id: userId, has_read: false }, null, {
+    sort: '-create_at'
+  }).exec()
 }
 
 /**
  * 将消息设置成已读
  */
-exports.updateMessagesToRead = function (userId, messages) {
-  var ids = messages.map(function (m) {
+exports.updateMessagesToRead = (userId, messages) => {
+  const ids = messages.map(m => {
     return m.id
   })
-  var query = { master_id: userId, _id: { $in: ids } }
-  return Message
-    .update(query, { $set: { has_read: true } }, { multi: true })
-    .exec()
+
+  const query = { master_id: userId, _id: { $in: ids } }
+  return Message.update(
+    query,
+    { $set: { has_read: true } },
+    { multi: true }
+  ).exec()
 }

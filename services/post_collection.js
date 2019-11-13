@@ -5,10 +5,10 @@
  * @version $Id$
  */
 
-var _ = require('lodash')
-var Promise = require('bluebird')
-var Post = require('./post')
-var PostCollection = require('../models').PostCollection
+const _ = require('lodash')
+const Promise = require('bluebird')
+const Post = require('./post')
+const PostCollection = require('../models').PostCollection
 
 /**
  * 查询user收藏的文章
@@ -16,22 +16,21 @@ var PostCollection = require('../models').PostCollection
  * @param  {[type]} options [description]
  * @return {[type]}         [description]
  */
-exports.getCollectionPostByUser = function getCollectionPostByUser (userId, options) {
-  return PostCollection
-    .find({ user_id: userId }, {}, options)
-    .exec()
-    .then(function (postCollections) {
-      var postIds = _.map(postCollections, 'post_id')
+exports.getCollectionPostByUser = async (userId, options) => {
+  const postCollections = await PostCollection.find(
+    { user_id: userId },
+    {},
+    options
+  ).exec()
 
-      var query = { _id: { $in: postIds } }
-      var opts = _.assign(options, { sort: '-update_at' })
+  const postIds = _.map(postCollections, 'post_id')
+  const query = { _id: { $in: postIds } }
+  const opts = _.assign(options, { sort: '-update_at' })
 
-      return Promise
-        .all([
-          Post.getPostsByQuery(query, opts),
-          Post.getCountByQuery(query)
-        ])
-    })
+  return Promise.all([
+    Post.getPostsByQuery(query, opts),
+    Post.getCountByQuery(query)
+  ])
 }
 
 /**
@@ -40,8 +39,8 @@ exports.getCollectionPostByUser = function getCollectionPostByUser (userId, opti
  * @param  {[type]} userId 用户id
  * @return {[type]}
  */
-exports.create = function create (postId, userId) {
-  var postCollection = new PostCollection()
+exports.create = (postId, userId) => {
+  const postCollection = new PostCollection()
   postCollection.user_id = userId
   postCollection.post_id = postId
   postCollection.save()
@@ -54,7 +53,7 @@ exports.create = function create (postId, userId) {
  * @param  {[type]} userId 用户id
  * @return {[type]}
  */
-exports.remove = function remove (postId, userId) {
+exports.remove = (postId, userId) => {
   return PostCollection.remove({ user_id: userId, post_id: postId })
 }
 
@@ -64,6 +63,6 @@ exports.remove = function remove (postId, userId) {
  * @param  {[type]}  userId 用户id
  * @return {Boolean}
  */
-exports.hasCollect = function hasCollect (postId, userId) {
+exports.hasCollect = (postId, userId) => {
   return PostCollection.findOne({ post_id: postId, user_id: userId }).exec()
 }

@@ -1,13 +1,13 @@
 /*!
  * post dao
  */
-var Promise = require('bluebird')
-var models = require('../models')
-var Post = models.Post
-var User = require('./user')
-var Reply = require('./reply')
-var tools = require('../common/tools')
-var at = require('../common/at')
+const Promise = require('bluebird')
+const models = require('../models')
+const Post = models.Post
+const User = require('./user')
+const Reply = require('./reply')
+const tools = require('../common/tools')
+const at = require('../common/at')
 
 /**
  * 根据id查询一篇文章
@@ -17,28 +17,17 @@ var at = require('../common/at')
  * - author, 作者信息
  * @param {String} id 用户id
  */
-exports.getPostById = function (id) {
-  var _post
-
-  return Post
-    .findOne({ _id: id })
-    .exec()
-    .then(function (postFind) {
-      _post = postFind
-      return _post
-        ? User.getUserById(_post.author_id)
-        : Promise.resolve()
-    })
-    .then(function (userFind) {
-      return Promise.resolve([_post, userFind])
-    })
+exports.getPostById = async id => {
+  const post = await Post.findOne({ _id: id }).exec()
+  const userFind = post ? User.getUserById(post.author_id) : undefined
+  return [post, userFind]
 }
 
 /**
  * 获取一篇文章
  * @param {String} id 文章id
  */
-exports.getPost = function (id) {
+exports.getPost = id => {
   return Post.findOne({ _id: id }).exec()
 }
 
@@ -46,17 +35,15 @@ exports.getPost = function (id) {
  * 查询关键词能搜索到的文章数量
  * @param {String} query 搜索关键词
  */
-exports.getCountByQuery = function (query) {
+exports.getCountByQuery = query => {
   return Post.count(query).exec()
 }
 
 /**
  * 取最新的5万条记录，sitemap使用
  */
-exports.getLimit5w = function () {
-  return Post
-    .find({}, '_id', { limit: 50000, sort: '-create_at' })
-    .exec()
+exports.getLimit5w = () => {
+  return Post.find({}, '_id', { limit: 50000, sort: '-create_at' }).exec()
 }
 
 /**
@@ -67,23 +54,16 @@ exports.getLimit5w = function () {
  * @param {string|object} query 关键词
  * @param {Object} opt 搜索选项
  */
-exports.getPostsByQuery = function (query, opt) {
-  return Post
-    .find(query, {}, opt)
-    .exec()
-    .then(function (postsFind) {
-      return Promise.map(postsFind, function (post) {
-        return User
-          .getUserById(post.author_id)
-          .then(function (author) {
-            post.author = author
-            post.friendly_create_at = tools.formatDate(post.create_at, true)
-            post.friendly_update_at = tools.formatDate(post.update_at, true)
-            post.friendly_pv = tools.formatPV(post.pv)
-            return post
-          })
-      })
-    })
+exports.getPostsByQuery = async (query, opt) => {
+  const postsFind = await Post.find(query, {}, opt).exec()
+  return Promise.map(postsFind, async post => {
+    const author = await User.getUserById(post.author_id)
+    post.author = author
+    post.friendly_create_at = tools.formatDate(post.create_at, true)
+    post.friendly_update_at = tools.formatDate(post.update_at, true)
+    post.friendly_pv = tools.formatPV(post.pv)
+    return post
+  })
 }
 
 /**
@@ -91,7 +71,7 @@ exports.getPostsByQuery = function (query, opt) {
  * 并不做连接查询
  * @param {Object} options 查询选项
  */
-exports.getSimplePosts = function (options) {
+exports.getSimplePosts = options => {
   return Post.find({}, { _id: 1, title: 1 }, options).exec()
 }
 
@@ -99,9 +79,8 @@ exports.getSimplePosts = function (options) {
  * 查询最近热门的文章
  * @param query 过滤条件
  */
-exports.getNewHot = function (query) {
-  return Post
-    .find(query)
+exports.getNewHot = query => {
+  return Post.find(query)
     .limit(50)
     .sort({ create_at: -1 })
     .select({ _id: 1, title: 1, pv: 1 })
@@ -118,35 +97,24 @@ exports.getNewHot = function (query) {
  * - replies, 文章回复
  * @param postId
  */
-exports.getCompletePost = function (postId) {
-  return Post
-    .findOne({ _id: postId })
-    .exec()
-    .then(function (postFind) {
-      postFind.linkedContent = at.linkUsers(postFind.content)
-      return Promise
-        .all([
-          User.getUserById(postFind.author_id),
-          Reply.getRepliesByPostId(postFind._id)
-        ])
-        .spread(function (userFind, repliesFind) {
-          return Promise.resolve([postFind, userFind, repliesFind])
-        })
-    })
+exports.getCompletePost = async postId => {
+  const postFind = await Post.findOne({ _id: postId }).exec()
+  postFind.linkedContent = at.linkUsers(postFind.content)
+  const [userFind, repliesFind] = await Promise.all([
+    User.getUserById(postFind.author_id),
+    Reply.getRepliesByPostId(postFind._id)
+  ])
+  return [postFind, userFind, repliesFind]
 }
 
 /**
  * 将当前文章的回复计数减1，并且更新最后回复的用户，删除回复时用到
  * @param {String} id 文章ID
  */
-exports.reduceCount = function (id) {
-  return Post
-    .findOne({ _id: id })
-    .exec()
-    .then(function (postFind) {
-      postFind.reply_count -= 1
-      return postFind.save()
-    })
+exports.reduceCount = async id => {
+  const postFind = await Post.findOne({ _id: id }).exec()
+  postFind.reply_count -= 1
+  return postFind.save()
 }
 
 /**
@@ -158,8 +126,15 @@ exports.reduceCount = function (id) {
  * @param {Array} tags 标签
  * @param {String} category 文章分类
  */
-exports.newAndSave = function (title, description, content, authorId, tags, category) {
-  var post = new Post()
+exports.newAndSave = (
+  title,
+  description,
+  content,
+  authorId,
+  tags,
+  category
+) => {
+  const post = new Post()
   post.title = title
   post.description = description
   post.content = content
@@ -182,7 +157,17 @@ exports.newAndSave = function (title, description, content, authorId, tags, cate
  * @param {Date} create_at 创建时间
  * @param {Number} pv 浏览数
  */
-exports.importNew = function (title, description, content, authorId, tags, category, id, createAt, pv) {
+exports.importNew = (
+  title,
+  description,
+  content,
+  authorId,
+  tags,
+  category,
+  id,
+  createAt,
+  pv
+) => {
   var post = new Post()
   post._id = id
   post.title = title
@@ -203,7 +188,7 @@ exports.importNew = function (title, description, content, authorId, tags, categ
  * @param {Object} query 过滤条件
  * @returns {*}
  */
-exports.remove = function (query) {
+exports.remove = query => {
   return Post.remove(query)
 }
 
@@ -211,7 +196,7 @@ exports.remove = function (query) {
  * 设置置顶
  * @param {[type]} id [description]
  */
-exports.setTop = function setTop (id) {
+exports.setTop = id => {
   return Post.update({ _id: id }, { $set: { top: true } })
 }
 /**
@@ -219,6 +204,6 @@ exports.setTop = function setTop (id) {
  * @param  {[type]} id [description]
  * @return {[type]}    [description]
  */
-exports.cancelTop = function cancelTop (id) {
+exports.cancelTop = id => {
   return Post.update({ _id: id }, { $set: { top: false } })
 }

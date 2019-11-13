@@ -5,8 +5,7 @@
  * @version $Id$
  */
 
-var Promise = require('bluebird')
-var UserFollow = require('../models').UserFollow
+const UserFollow = require('../models').UserFollow
 
 module.exports = {
   /**
@@ -14,7 +13,7 @@ module.exports = {
    * @param  {[type]} followerId [description]
    * @return {[type]}            [description]
    */
-  getByFollower: function getByFollower (followerId) {
+  getByFollower: followerId => {
     return UserFollow.find({ follower_id: followerId })
   },
 
@@ -24,7 +23,7 @@ module.exports = {
    * @param  {[type]} opt   [description]
    * @return {[type]}       [description]
    */
-  findByQuery: function findByQuery (query, opt) {
+  findByQuery: (query, opt) => {
     return UserFollow.find(query, '', opt).exec()
   },
 
@@ -34,7 +33,7 @@ module.exports = {
    * @param  {[type]} follower  [description]
    * @return {[type]}           [description]
    */
-  follow: function follow (following, follower) {
+  follow: (following, follower) => {
     var userFollow = new UserFollow()
     userFollow.following_id = following
     userFollow.follower_id = follower
@@ -47,7 +46,7 @@ module.exports = {
    * @param  {[type]} follower  [description]
    * @return {[type]}           [description]
    */
-  unFollow: function unFollow (following, follower) {
+  unFollow: (following, follower) => {
     return UserFollow.remove({
       following_id: following,
       follower_id: follower
@@ -60,12 +59,11 @@ module.exports = {
    * @param  {[type]}  follower  关注者
    * @return {Boolean}           [description]
    */
-  hasFollow: function hasFollow (following, follower) {
-    return UserFollow
-      .findOne({ following_id: following, follower_id: follower })
-      .then(function (userFollowFind) {
-        return Promise.resolve(!!userFollowFind)
-      })
+  hasFollow: async (following, follower) => {
+    const userFollowFind = await UserFollow.findOne({
+      following_id: following,
+      follower_id: follower
+    })
+    return !!userFollowFind
   }
-
 }
