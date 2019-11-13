@@ -2,11 +2,11 @@
  * post web api
  */
 
-var validator = require('validator')
-var Post = require('../services').Post
-var User = require('../services').User
-var Tag = require('../services').Tag
-var html2md = require('html2markdown')
+const validator = require('validator')
+const Post = require('../services').Post
+const User = require('../services').User
+const Tag = require('../services').Tag
+const html2md = require('html2markdown')
 
 /**
  * 通过api接口添加文章
@@ -14,21 +14,21 @@ var html2md = require('html2markdown')
  * @param res
  * @param next
  */
-exports.create = (req, res, next) => {
-  var category = validator.trim(req.body.category)
+exports.create = async (req, res, next) => {
+  let category = validator.trim(req.body.category)
   category = validator.escape(category)
-  var title = validator.trim(req.body.title)
+  let title = validator.trim(req.body.title)
   title = validator.escape(title) // escape 将html 等特殊符号 标签转义
-  var description = validator.trim(req.body.description)
+  let description = validator.trim(req.body.description)
   description = validator.escape(description)
-  var content = validator.trim(req.body.content)
-  var tags = validator.trim(req.body.tags)
-  var isHtml = isNaN(validator.trim(req.body.is_html))
+  let content = validator.trim(req.body.content)
+  const tags = validator.trim(req.body.tags)
+  const isHtml = isNaN(validator.trim(req.body.is_html))
     ? 1
     : parseInt(validator.trim(req.body.is_html)) // 文章内容是否为html，是则转换为markdown
 
   // 验证
-  var editError
+  let editError
   if (title === '') {
     editError = '标题不能是空的。'
   } else if (title.length < 5 || title.length > 100) {
@@ -49,32 +49,34 @@ exports.create = (req, res, next) => {
     })
   }
 
-  var tagArr = tags ? tags.split(',') : []
+  let tagArr = tags ? tags.split(',') : []
   content = isHtml === 1 ? html2md(content) : content // 转换html成markdown格式
 
-  Post.newAndSave(title, description, content, req.user._id, tagArr, category)
-    .then(post => {
-      return User.getUserById(req.user.id)
-        .then(user => {
-          user.score += 5
-          user.post_count += 1
-          user.save()
-          req.user = user
-        })
-        .then(() => {
-          res.wrapSend({
-            success: 1,
-            post_id: post._id
-          })
-        })
+  try {
+    const post = await Post.newAndSave(
+      title,
+      description,
+      content,
+      req.user._id,
+      tagArr,
+      category
+    )
+    const user = await User.getUserById(req.user.id)
+    user.score += 5
+    user.post_count += 1
+    user.save()
+    req.user = user
+
+    res.wrapSend({
+      success: 1,
+      post_id: post._id
     })
-    .then(() => {
-      tagArr = tagArr.length > 0 ? tagArr : []
-      tagArr.forEach(tag => {
-        Tag.newAndSave(tag, '')
-      })
+
+    tagArr = tagArr.length > 0 ? tagArr : []
+    tagArr.forEach(tag => {
+      Tag.newAndSave(tag, '')
     })
-    .catch(err => {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }

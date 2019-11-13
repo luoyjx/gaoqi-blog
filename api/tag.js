@@ -1,8 +1,8 @@
 /*!
  * tag web api
  */
-var Tag = require('../services').Tag
-var validator = require('validator')
+const validator = require('validator')
+const Tag = require('../services').Tag
 
 /**
  * 根据名称关键字搜索标签
@@ -10,42 +10,45 @@ var validator = require('validator')
  * @param res
  * @param next
  */
-exports.searchTagsByName = (req, res, next) => {
-  var name = validator.trim(req.query.q)
-  var callback = req.query.callback
+exports.searchTagsByName = async (req, res, next) => {
+  const name = validator.trim(req.query.q)
+  const callback = req.query.callback
   if (!name) {
     return res.end(callback + '([])')
   }
 
-  var pattern = new RegExp('^.*' + name + '.*$', 'igm')
-  var options = { limit: 10, sort: '-post_count' }
+  const pattern = new RegExp('^.*' + name + '.*$', 'igm')
+  const options = { limit: 10, sort: '-post_count' }
 
-  Tag.getAllTagsByQuery({ name: pattern }, options)
-    .then(tags => {
-      // 数据库中不存在此tag则返回只当前tag名称
-      if (tags.length === 0) {
-        return res.end(callback + '([{name: "' + name + '"}])')
+  try {
+    const tags = await Tag.getAllTagsByQuery({ name: pattern }, options)
+
+    // 数据库中不存在此tag则返回只当前tag名称
+    if (tags.length === 0) {
+      return res.end(callback + '([{name: "' + name + '"}])')
+    }
+    // 如果tags中不存在当前名称tag则加到第一个元素
+    let exists = false
+    const container = []
+
+    tags.forEach(tag => {
+      if (tag.name.toLowerCase() === name) {
+        exists = true
       }
-      // 如果tags中不存在当前名称tag则加到第一个元素
-      var exists = false
-      var container = []
-      tags.forEach(tag => {
-        if (tag.name.toLowerCase() === name) {
-          exists = true
-        }
-        container.push({ name: tag.name })
-      })
-      if (!exists) {
-        if (container.length === 10) {
-          container.pop()
-        }
-        container.unshift({ name: name })
+      container.push({ name: tag.name })
+    })
+
+    if (!exists) {
+      if (container.length === 10) {
+        container.pop()
       }
-      return res.end(callback + '(' + JSON.stringify(container) + ')')
-    })
-    .catch(err => {
-      next(err)
-    })
+      container.unshift({ name: name })
+    }
+
+    res.end(callback + '(' + JSON.stringify(container) + ')')
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -54,14 +57,14 @@ exports.searchTagsByName = (req, res, next) => {
  * @param res
  * @param next
  */
-exports.addTag = (req, res, next) => {
-  var name = validator.trim(req.body.name)
+exports.addTag = async (req, res, next) => {
+  let name = validator.trim(req.body.name)
   name = validator.escape(name)
-  var description = validator.trim(req.body.description)
+  let description = validator.trim(req.body.description)
   description = validator.escape(description)
 
   // 验证
-  var editError
+  let editError
   if (name === '') {
     editError = '标题不能是空的'
   }
@@ -74,33 +77,32 @@ exports.addTag = (req, res, next) => {
     })
   }
 
-  // 查询是否存在这个tag，不存在则添加
-  Tag.getTagByName(name)
-    .then(tag => {
-      if (tag) {
-        if (description) {
-          tag.description = description
-          tag.update_at = new Date()
-          tag.save()
-          return res.wrapSend({
-            success: 1,
-            tag_id: tag._id,
-            msg: '更新成功'
-          })
-        } else {
-          return res.wrapSend({
-            error_msg: 'tag已存在'
-          })
-        }
+  try {
+    // 查询是否存在这个tag，不存在则添加
+    const tag = await Tag.getTagByName(name)
+
+    if (tag) {
+      if (description) {
+        tag.description = description
+        tag.update_at = new Date()
+        tag.save()
+        return res.wrapSend({
+          success: 1,
+          tag_id: tag._id,
+          msg: '更新成功'
+        })
       } else {
-        return Tag.newAndSave(name, description).then(tag => {
-          res.wrapSend({ success: 1, tag_id: tag._id })
+        return res.wrapSend({
+          error_msg: 'tag已存在'
         })
       }
-    })
-    .catch(err => {
-      next(err)
-    })
+    } else {
+      const tag = await Tag.newAndSave(name, description)
+      res.wrapSend({ success: 1, tag_id: tag._id })
+    }
+  } catch (error) {
+    next(error)
+  }
 }
 
 /**
@@ -110,8 +112,8 @@ exports.addTag = (req, res, next) => {
  * @param next
  */
 exports.follow = (req, res, next) => {
-  var user = req.session.user
-  var tagId = validator.trim(req.params._id)
+  const user = req.session.user
+  const tagId = validator.trim(req.params._id)
   if (!user) {
     return res.json({ success: 0, msg: '未登录' })
   } else if (!tagId) {

@@ -5,8 +5,8 @@
  * @version $Id$
  */
 
-var validator = require('validator')
-var UserFollow = require('../services').UserFollow
+const validator = require('validator')
+const UserFollow = require('../services').UserFollow
 
 /**
  * 关注
@@ -15,28 +15,28 @@ var UserFollow = require('../services').UserFollow
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.follow = (req, res, next) => {
-  var followingId = validator.trim(req.query.following_id)
-  UserFollow.follow(followingId, req.user._id)
-    .then(() => {
-      res.json({
-        success: 1
-      })
+exports.follow = async (req, res, next) => {
+  const followingId = validator.trim(req.query.following_id)
+
+  try {
+    await UserFollow.follow(followingId, req.user._id)
+    res.json({
+      success: 1
     })
-    .catch(err => {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
 
-exports.unFollow = (req, res, next) => {
-  var followingId = validator.trim(req.query.following_id)
-  UserFollow.unFollow(followingId, req.user._id)
-    .then(result => {
-      res.json({
-        success: 1
-      })
+exports.unFollow = async (req, res, next) => {
+  const followingId = validator.trim(req.query.following_id)
+
+  try {
+    await UserFollow.unFollow(followingId, req.user._id)
+    res.json({
+      success: 1
     })
-    .catch(err => {
-      next(err)
-    })
+  } catch (error) {
+    next(error)
+  }
 }
