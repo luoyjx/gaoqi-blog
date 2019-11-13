@@ -7,7 +7,7 @@
 const should = require('should')
 const tools = require('../../common/tools')
 
-const strHashed = ''
+let strHashed = ''
 
 describe('test/common/tools.test.js', function() {
   describe('formatDate()', function() {
