@@ -45,7 +45,7 @@
     "express-session": "^1.14.0",
     "gravatar": "^1.8.0",
     "html2markdown": "*",
-    "ioredis": "^3.0.0",
+    "ioredis": "^4.14.1",
     "loader": "^2.1.1",
     "loader-builder": "^2.3.0",
     "lodash": "^4.17.15",
