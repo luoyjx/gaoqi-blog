@@ -50,7 +50,7 @@
     "loader-builder": "^2.3.0",
     "lodash": "^4.17.15",
     "lynx": "^0.2.0",
-    "markdown-it": "^8.0.0",
+    "markdown-it": "^9.1.0",
     "method-override": "^3.0.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.14.1",
