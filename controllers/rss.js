@@ -44,7 +44,7 @@ exports.index = async (req, res, next) => {
       }
     }
 
-    posts.forEach(function (post) {
+    posts.forEach(post => {
       rssObj.channel.item.push({
         title: post.title,
         link: config.rss.link + '/p/' + post._id,
@@ -54,7 +54,7 @@ exports.index = async (req, res, next) => {
         pubDate: post.create_at.toUTCString()
       })
     })
-    var rssContent = convert('rss', rssObj)
+    const rssContent = convert('rss', rssObj)
     cache.set('rss', rssContent, 60 * 5) // 五分钟
     res.wrapSend(rssContent)
   } catch (error) {

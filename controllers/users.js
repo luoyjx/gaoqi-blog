@@ -27,11 +27,11 @@ exports.index = async (req, res, next) => {
       })
     }
 
-    var postQuery = { author_id: user._id }
+    const postQuery = { author_id: user._id }
 
-    var latestOptions = { limit: 10, sort: '-create_at' }
-    var topOptions = { limit: 10, sort: '-pv' }
-    var replyOptions = { limit: 10, sort: '-create_at' }
+    const latestOptions = { limit: 10, sort: '-create_at' }
+    const topOptions = { limit: 10, sort: '-pv' }
+    const replyOptions = { limit: 10, sort: '-create_at' }
 
     const [latest, top, replies, hasFollow] = await Bluebird.all([
       Post.getPostsByQuery(postQuery, latestOptions),
@@ -42,7 +42,10 @@ exports.index = async (req, res, next) => {
         : Bluebird.resolve(false)
     ])
 
-    user.frendly_create_at = tools.format(user.create_at, 'YYYY-MM-DD HH:mm:ss Z')
+    user.frendly_create_at = tools.format(
+      user.create_at,
+      'YYYY-MM-DD HH:mm:ss Z'
+    )
 
     res.wrapRender('user/home', {
       author: user,
@@ -84,10 +87,9 @@ exports.top = async (req, res, next) => {
 
     const [top, pages] = await Bluebird.all([
       Post.getPostsByQuery(postQuery, topOptions),
-      Post.getCountByQuery(postQuery)
-        .then((allCount) => {
-          return Bluebird.resolve(Math.ceil(allCount / limit))
-        })
+      Post.getCountByQuery(postQuery).then(allCount => {
+        return Bluebird.resolve(Math.ceil(allCount / limit))
+      })
     ])
 
     res.wrapRender('user/top', {
@@ -123,7 +125,11 @@ exports.replies = async (req, res, next) => {
     }
 
     const limit = config.list_topic_count
-    const replyOption = { skip: (page - 1) * limit, limit: limit, sort: '-create_at' }
+    const replyOption = {
+      skip: (page - 1) * limit,
+      limit: limit,
+      sort: '-create_at'
+    }
     const fromAuthor = await Reply.getRepliesByAuthorId(_user._id, replyOption)
 
     res.wrapRender('user/replies', {

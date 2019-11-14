@@ -1,13 +1,13 @@
 'use strict'
 
-var Promise = require('bluebird')
-var bcrypt = require('bcryptjs')
-var moment = require('moment')
-var config = require('../config')
+const Promise = require('bluebird')
+const bcrypt = require('bcryptjs')
+const moment = require('moment')
+const config = require('../config')
 moment.locale('zh-cn') // 使用中文
 
 // 格式化时间
-exports.formatDate = function (date, friendly) {
+exports.formatDate = (date, friendly) => {
   date = moment(date)
 
   if (friendly) {
@@ -23,14 +23,14 @@ exports.formatDate = function (date, friendly) {
  * @param  {[type]} formatStr [description]
  * @return {[type]}           [description]
  */
-exports.format = function format (date, formatStr) {
+exports.format = (date, formatStr) => {
   date = moment(date)
 
   return date.format(formatStr)
 }
 
 // 超过1000转为k单位
-exports.formatPV = function (pv) {
+exports.formatPV = pv => {
   if (!isNaN(pv)) {
     if (pv > 10000) {
       // 丢弃小数部分
@@ -45,22 +45,22 @@ exports.formatPV = function (pv) {
   return 0
 }
 
-exports.validateId = function (str) {
-  return (/^[a-zA-Z0-9\-_]+$/i).test(str)
+exports.validateId = str => {
+  return /^[a-zA-Z0-9\-_]+$/i.test(str)
 }
 
-exports.bhash = function (str) {
-  return new Promise(function (resolve, reject) {
-    bcrypt.hash(str, 10, function (err, hashed) {
+exports.bhash = str => {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(str, 10, (err, hashed) => {
       if (err) return reject(err)
       return resolve(hashed)
     })
   })
 }
 
-exports.bcompare = function (str, hash) {
-  return new Promise(function (resolve, reject) {
-    bcrypt.compare(str, hash, function (err, result) {
+exports.bcompare = (str, hash) => {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(str, hash, (err, result) => {
       if (err) return reject(err)
       return resolve(result)
     })
@@ -72,9 +72,9 @@ exports.bcompare = function (str, hash) {
  * @param  {[type]} category [description]
  * @return {[type]}          [description]
  */
-exports.getCategoryName = function getCategoryName (category) {
-  var categoryName = ''
-  config.tabs.forEach(function (tab) {
+exports.getCategoryName = category => {
+  let categoryName = ''
+  config.tabs.forEach(tab => {
     if (tab[0] === category) {
       categoryName = tab[1]
     }

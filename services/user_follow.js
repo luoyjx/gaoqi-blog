@@ -34,7 +34,7 @@ module.exports = {
    * @return {[type]}           [description]
    */
   follow: (following, follower) => {
-    var userFollow = new UserFollow()
+    const userFollow = new UserFollow()
     userFollow.following_id = following
     userFollow.follower_id = follower
     return userFollow.save()

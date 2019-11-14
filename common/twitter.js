@@ -6,10 +6,10 @@
 
 'use strict'
 
-var Promise = require('bluebird')
-var Twit = require('twit')
-var config = require('../config')
-var twitterClient = null
+const Promise = require('bluebird')
+const Twit = require('twit')
+const config = require('../config')
+let twitterClient = null
 if (config.twitter && config.twitter.consumer_key !== 'your consumer key') {
   twitterClient = new Twit(config.twitter)
 }
@@ -18,15 +18,19 @@ if (config.twitter && config.twitter.consumer_key !== 'your consumer key') {
  * @param  {[type]} content [description]
  * @return {[type]}         [description]
  */
-exports.postStatus = function postStatus (content) {
+exports.postStatus = content => {
   if (!twitterClient) return Promise.resolve()
-  return new Promise(function (resolve, reject) {
-    twitterClient.post('statuses/update', { status: content }, function (err, data, response) {
-      if (err) {
-        console.log(err)
-        return resolve()
+  return new Promise((resolve, reject) => {
+    twitterClient.post(
+      'statuses/update',
+      { status: content },
+      (err, data, response) => {
+        if (err) {
+          console.log(err)
+          return resolve()
+        }
+        resolve(data)
       }
-      resolve(data)
-    })
+    )
   })
 }

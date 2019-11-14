@@ -131,7 +131,7 @@ exports.sitemap = async (req, res, next) => {
           .ele('url')
           .ele('loc', 'https://' + config.host + '/tags/' + tag.name)
       })
-      var finalData = urlset.end()
+      const finalData = urlset.end()
       // 缓存
       cache.set('sitemap', finalData, 3600 * 2)
       res.type('xml').send(finalData)

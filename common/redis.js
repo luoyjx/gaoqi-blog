@@ -3,16 +3,16 @@
  */
 'use strict'
 
-var config = require('../config')
-var Redis = require('ioredis')
+const config = require('../config')
+const Redis = require('ioredis')
 
-var client = new Redis({
+const client = new Redis({
   port: config.redis_port,
   host: config.redis_host,
   db: config.redis_db
 })
 
-client.on('error', function (err) {
+client.on('error', err => {
   if (err) {
     console.error('connect to redis error, check your redis config', err)
     process.exit(1)

@@ -15,8 +15,8 @@ const mail = require('./mail')
  * @param {String} text 文本内容
  * @return {Array} 用户名数组
  */
-var fetchUsers = function (text) {
-  var ignoreRegexs = [
+const fetchUsers = text => {
+  const ignoreRegexs = [
     /```.+?```/g, // 去除单行的 ```
     /^```[\s\S]+?^```/gm, // ``` 里面的是 pre 标签内容
     /`[\s\S]+?`/g, // 同一行中，`some code` 中内容也不该被解析
@@ -25,15 +25,15 @@ var fetchUsers = function (text) {
     /\[@.+?\]\(\/.+?\)/g // 已经被 link 的 username
   ]
 
-  ignoreRegexs.forEach(function (ignoreRegex) {
+  ignoreRegexs.forEach(ignoreRegex => {
     text = text.replace(ignoreRegex, '')
   })
 
-  var results = text.match(/@[a-z0-9\-_]+\b/igm)
-  var names = []
+  const results = text.match(/@[a-z0-9\-_]+\b/gim)
+  let names = []
   if (results) {
-    for (var i = 0, l = results.length; i < l; i++) {
-      var s = results[i]
+    for (let i = 0, l = results.length; i < l; i++) {
+      let s = results[i]
       // remove leading char @
       s = s.slice(1)
       names.push(s)
@@ -55,25 +55,34 @@ exports.fetchUsers = fetchUsers
  * @param {String} author 作者用户
  * @param {String} post_title 文章标题
  */
-exports.sendMessageToMentionUsers = function (text, postId, authorId, replyId, author, postTitle) {
-  return User
-    .getUsersByNames(fetchUsers(text))
-    .then(function (users) {
-      users = users.filter(function (user) {
-        return !user._id.equals(authorId)
-      })
-      return Promise
-        .map(users, function (user) {
-          Message.sendAtMessage(user._id, authorId, postId, replyId)
-          online
-            .isOnline(user._id)
-            .then(function (flag) {
-              if (!flag) {
-                mail.sendNotificationMail(user.email, user.login_name, author, postTitle, postId, replyId)
-              }
-            })
-        })
+exports.sendMessageToMentionUsers = (
+  text,
+  postId,
+  authorId,
+  replyId,
+  author,
+  postTitle
+) => {
+  return User.getUsersByNames(fetchUsers(text)).then(users => {
+    users = users.filter(user => {
+      return !user._id.equals(authorId)
     })
+    return Promise.map(users, user => {
+      Message.sendAtMessage(user._id, authorId, postId, replyId)
+      online.isOnline(user._id).then(flag => {
+        if (!flag) {
+          mail.sendNotificationMail(
+            user.email,
+            user.login_name,
+            author,
+            postTitle,
+            postId,
+            replyId
+          )
+        }
+      })
+    })
+  })
 }
 
 /**
@@ -83,11 +92,14 @@ exports.sendMessageToMentionUsers = function (text, postId, authorId, replyId, a
  * - text, 替换后的文本内容
  * @param {String} text 文本内容
  */
-exports.linkUsers = function (text) {
-  var users = fetchUsers(text)
-  for (var i = 0, l = users.length; i < l; i++) {
-    var name = users[i]
-    text = text.replace(new RegExp('@' + name + '\\b(?!\\])', 'g'), '[@' + name + '](/u/' + name + ')')
+exports.linkUsers = text => {
+  const users = fetchUsers(text)
+  for (let i = 0, l = users.length; i < l; i++) {
+    const name = users[i]
+    text = text.replace(
+      new RegExp('@' + name + '\\b(?!\\])', 'g'),
+      '[@' + name + '](/u/' + name + ')'
+    )
   }
   return text
 }

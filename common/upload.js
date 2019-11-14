@@ -4,25 +4,25 @@
 
 'use strict'
 
-var Promise = require('bluebird')
-var config = require('../config')
-var utility = require('utility')
-var path = require('path')
-var fs = require('fs')
-var qn = require('qn')
+const Promise = require('bluebird')
+const config = require('../config')
+const utility = require('utility')
+const path = require('path')
+const fs = require('fs')
+const qn = require('qn')
 
 /**
  * 上传文件到七牛的客户端对象
  *
  */
-var qnClient = null
+let qnClient = null
 if (config.qn_access && config.qn_access.secretKey !== 'your secret key') {
   qnClient = qn.create(config.qn_access)
 }
 
-exports.upload_qiniu = function (file, options) {
-  return new Promise(function (resolve, reject) {
-    qnClient.upload(file, options, function (err, result) {
+exports.upload_qiniu = (file, options) => {
+  return new Promise((resolve, reject) => {
+    qnClient.upload(file, options, (err, result) => {
       if (err) return reject(err)
       return resolve(result)
     })
@@ -34,19 +34,20 @@ exports.upload_qiniu = function (file, options) {
  * @param file
  * @param options
  */
-exports.upload_local = function (file, options) {
-  return new Promise(function (resolve, reject) {
-    var filename = options.filename
+exports.upload_local = (file, options) => {
+  return new Promise((resolve, reject) => {
+    const filename = options.filename
 
-    var newFilename = utility.md5(filename + String((new Date()).getTime())) +
+    const newFilename =
+      utility.md5(filename + String(new Date().getTime())) +
       path.extname(filename)
 
-    var uploadPath = config.upload.path
-    var baseUrl = config.upload.url
-    var filePath = path.join(uploadPath, newFilename)
-    var fileUrl = baseUrl + newFilename
+    const uploadPath = config.upload.path
+    const baseUrl = config.upload.url
+    const filePath = path.join(uploadPath, newFilename)
+    const fileUrl = baseUrl + newFilename
 
-    file.on('end', function () {
+    file.on('end', () => {
       return resolve({
         url: fileUrl
       })

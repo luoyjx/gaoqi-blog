@@ -32,7 +32,11 @@ exports.getFollowUserPost = async (req, res, next) => {
     followIds = _.map(follows, 'following_id')
 
     const postQuery = { author_id: { $in: followIds } }
-    const postOptions = { skip: (page - 1) * limit, limit: limit, sort: '-update_at' }
+    const postOptions = {
+      skip: (page - 1) * limit,
+      limit: limit,
+      sort: '-update_at'
+    }
 
     const [posts, count] = await Bluebird.all([
       Post.getPostsByQuery(postQuery, postOptions),
@@ -95,7 +99,7 @@ exports.unFollow = async (req, res, next) => {
     await UserFollow.unFollow(followingId, req.session.user._id)
     await User.decFollowingCount(req.session.user._id)
 
-    var user = req.session.user
+    const user = req.session.user
     user.following_count--
     req.session.user = res.locals.user = user
     res.redirect(referer)

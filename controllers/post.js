@@ -62,12 +62,17 @@ exports.index = async (req, res, next) => {
     const [hotPosts, recentPosts, hasCollect] = await Bluebird.all([
       Post.getSimplePosts(hotOptions),
       Post.getSimplePosts(recentOptions),
-      req.session.user ? PostCollection.hasCollect(post._id, req.session.user._id) : Promise.resolve(false)
+      req.session.user
+        ? PostCollection.hasCollect(post._id, req.session.user._id)
+        : Promise.resolve(false)
     ])
 
     res.wrapRender('post/index', {
       title: post.title + ' - ' + post.author.login_name, // 文章名 - 作者名
-      description: cutter.shorter(cutter.clearHtml(render.markdown(post.linkedContent)), 100),
+      description: cutter.shorter(
+        cutter.clearHtml(render.markdown(post.linkedContent)),
+        100
+      ),
       tags: post.tags.join(','),
       post: post,
       recent: recentPosts,
@@ -131,7 +136,14 @@ exports.create = async (req, res, next) => {
   } else {
     try {
       let tagsArr = tags ? tags.split(',') : []
-      const _post = await Post.newAndSave(title, '', content, req.session.user._id, tagsArr, category)
+      const _post = await Post.newAndSave(
+        title,
+        '',
+        content,
+        req.session.user._id,
+        tagsArr,
+        category
+      )
       const userFind = await User.getUserById(req.session.user._id)
 
       userFind.score += 5
@@ -139,17 +151,24 @@ exports.create = async (req, res, next) => {
       userFind.save()
       req.session.user = userFind
       // 发送at消息
-      at.sendMessageToMentionUsers(content, _post._id, req.session.user._id, null, req.session.user.login_name, _post.title)
+      at.sendMessageToMentionUsers(
+        content,
+        _post._id,
+        req.session.user._id,
+        null,
+        req.session.user.login_name,
+        _post.title
+      )
 
       res.redirect('/p/' + _post._id)
 
       // send to twitter async
       if (tagsArr.length > 0) {
-        tagsArr = tagsArr.filter((tagName) => {
+        tagsArr = tagsArr.filter(tagName => {
           return !!tagName
         })
 
-        Bluebird.map(tagsArr, async (tagName) => {
+        Bluebird.map(tagsArr, async tagName => {
           const tag = await Tag.getTagByName(tagName)
           if (!tag) {
             const newTag = await Tag.newAndSave(tagName, '')
@@ -162,13 +181,14 @@ exports.create = async (req, res, next) => {
         })
       }
 
-      var status = []
+      let status = []
       status.push('[' + tools.getCategoryName(_post.category) + ']')
       status.push(_post.title + ':\n')
       status.push(render.cleanMarkdown(_post.content))
       // 截取50个字
       status = cutter.shorter(status.join(''), 70)
-      status += 'https://' + config.host + '/p/' + _post._id + '?from=post_twitter'
+      status +=
+        'https://' + config.host + '/p/' + _post._id + '?from=post_twitter'
       twitter.postStatus(status)
     } catch (err) {
       return next(err)
@@ -192,7 +212,12 @@ exports.edit = async (req, res, next) => {
     })
   }
 
-  if (!((post.author_id + '') === (req.session.user._id + '') || (req.session.user.is_admin))) {
+  if (
+    !(
+      post.author_id + '' === req.session.user._id + '' ||
+      req.session.user.is_admin
+    )
+  ) {
     return res.wrapRender('notify/notify', {
       error: '大胆！这篇文章岂是你能编辑的？'
     })
@@ -224,10 +249,11 @@ exports.update = async (req, res, next) => {
   title = validator.escape(title)
   const content = validator.trim(req.body.content)
   const tags = validator.trim(req.body.tags)
-    ? validator.trim(req.body.tags) : ''
+    ? validator.trim(req.body.tags)
+    : ''
 
   // 验证
-  var editError
+  let editError
   if (title === '') {
     editError = '标题不能是空的。'
   } else if (title.length < 5 || title.length > 100) {
@@ -257,7 +283,10 @@ exports.update = async (req, res, next) => {
     }
 
     // 只有管理员、非管理员但是是本帖发帖用户 二者可用修改本帖
-    if (req.session.user.is_admin || ((post.author_id + '') === (req.session.user._id + ''))) {
+    if (
+      req.session.user.is_admin ||
+      post.author_id + '' === req.session.user._id + ''
+    ) {
       // 保存文章
       post.title = title
       post.content = content
@@ -273,7 +302,14 @@ exports.update = async (req, res, next) => {
 
     if (!res.headersSent) {
       // 发送at消息
-      at.sendMessageToMentionUsers(content, post._id, req.session.user._id, null, req.session.user.login_name, post.title)
+      at.sendMessageToMentionUsers(
+        content,
+        post._id,
+        req.session.user._id,
+        null,
+        req.session.user.login_name,
+        post.title
+      )
       res.redirect('/p/' + post._id)
     }
   } catch (err) {
@@ -295,7 +331,10 @@ exports.delete = async (req, res, next) => {
 
     console.log(req.session.user._id)
 
-    if (!req.session.user.is_admin && (postFind.author_id + '') !== (req.session.user._id + '')) {
+    if (
+      !req.session.user.is_admin &&
+      postFind.author_id + '' !== req.session.user._id + ''
+    ) {
       return res.status(403).wrapSend({
         success: false,
         message: '这篇文章可不是谁都能删除的'
@@ -378,19 +417,19 @@ exports.unTop = async (req, res, next) => {
  * @param res
  * @param next
  */
-exports.upload = function (req, res, next) {
+exports.upload = (req, res, next) => {
   req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
     uploader
       .upload(file, {
         filename: filename
       })
-      .then((result) => {
+      .then(result => {
         res.json({
           success: true,
           url: result.url
         })
       })
-      .catch((err) => {
+      .catch(err => {
         return next(err)
       })
   })
@@ -404,6 +443,4 @@ exports.upload = function (req, res, next) {
  * @param res
  * @param next
  */
-exports.lock = function (req, res, next) {
-
-}
+exports.lock = (req, res, next) => {}

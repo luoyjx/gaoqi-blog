@@ -18,7 +18,7 @@ const authFilter = require('../middleware/auth')
  * @param res
  * @param next
  */
-exports.showLogin = function (req, res, next) {
+exports.showLogin = (req, res, next) => {
   req.session._loginReferer = req.headers.referer
   res.render('sign/signin', {
     title: '登录'
@@ -62,16 +62,22 @@ exports.signIn = async (req, res, next) => {
     const _user = await getUserFunc(loginname)
     if (!_user) return res.wrapRender('sign/signin', { error: '用户名不存在' })
 
-    var passhash = _user.pwd
+    const passhash = _user.pwd
     // 验证密码
     const flag = await tools.bcompare(pass, passhash)
     if (!flag) return res.wrapRender('sign/signin', { error: '用户名不存在' })
 
     // 验证是否激活，未激活再次发送激活邮件
     if (!_user.is_active) {
-      mail.sendActiveMail(_user.email, utility.md5(_user.email + _user.pwd + config.session_secret), _user.login_name)
+      mail.sendActiveMail(
+        _user.email,
+        utility.md5(_user.email + _user.pwd + config.session_secret),
+        _user.login_name
+      )
       res.status(403)
-      return res.wrapRender('sign/signin', { error: '账号未激活，已重新发送激活邮件到' + _user.email })
+      return res.wrapRender('sign/signin', {
+        error: '账号未激活，已重新发送激活邮件到' + _user.email
+      })
     }
 
     // 验证成功，存储session cookie，跳转到首页
@@ -96,7 +102,7 @@ exports.signIn = async (req, res, next) => {
  * @param res
  * @param next
  */
-exports.showSignup = function (req, res, next) {
+exports.showSignup = (req, res, next) => {
   res.render('sign/signup', {
     title: '注册'
   })
@@ -116,7 +122,7 @@ exports.signup = async (req, res, next) => {
 
   let errInfo = ''
 
-  const hasEmpty = [loginname, pass, rePass, email].some(function (item) {
+  const hasEmpty = [loginname, pass, rePass, email].some(item => {
     return item === ''
   })
 
@@ -127,26 +133,50 @@ exports.signup = async (req, res, next) => {
   errInfo = pass !== rePass ? '两次密码填写不一致' : ''
 
   if (errInfo) {
-    return res.status(422).wrapRender('sign/signup', { error: errInfo, loginname: loginname, email: email })
+    return res.status(422).wrapRender('sign/signup', {
+      error: errInfo,
+      loginname: loginname,
+      email: email
+    })
   }
 
   try {
-    const users = await User.getUsersByQuery({
-      $or: [
-        { login_name: loginname },
-        { email: email }
-      ]
-    }, {})
+    const users = await User.getUsersByQuery(
+      {
+        $or: [{ login_name: loginname }, { email: email }]
+      },
+      {}
+    )
 
-    if (users.length > 0) { return res.status(422).render('sign/signup', { error: '用户名或邮箱已被使用', loginname: loginname, email: email }) }
+    if (users.length > 0) {
+      return res.status(422).render('sign/signup', {
+        error: '用户名或邮箱已被使用',
+        loginname: loginname,
+        email: email
+      })
+    }
 
     const passhash = await tools.bhash(pass)
     const avatarUrl = User.makeGravatar(email)
-    await User.newAndSave(loginname, loginname, passhash, email, avatarUrl, false)
+    await User.newAndSave(
+      loginname,
+      loginname,
+      passhash,
+      email,
+      avatarUrl,
+      false
+    )
 
-    mail.sendActiveMail(email, utility.md5(email + passhash + config.session_secret), loginname)
+    mail.sendActiveMail(
+      email,
+      utility.md5(email + passhash + config.session_secret),
+      loginname
+    )
     res.wrapRender('sign/signup', {
-      success: '欢迎加入' + config.name + '！我们已经向您的邮箱发送了一封邮件，点击邮件中的链接激活账号',
+      success:
+        '欢迎加入' +
+        config.name +
+        '！我们已经向您的邮箱发送了一封邮件，点击邮件中的链接激活账号',
       title: '注册'
     })
   } catch (err) {
@@ -160,7 +190,7 @@ exports.signup = async (req, res, next) => {
  * @param res
  * @param next
  */
-exports.signout = function (req, res, next) {
+exports.signout = (req, res, next) => {
   req.session.destroy()
   res.clearCookie(config.auth_cookie_name, { path: '/' })
   res.redirect('back')
@@ -182,7 +212,10 @@ exports.activeUser = async (req, res, next) => {
   if (!user) return next(new Error('[ACTIVE_USER] 未能找到用户：' + name))
 
   const passhash = user.pwd
-  if (!user || utility.md5(user.email + passhash + config.session_secret) !== key) {
+  if (
+    !user ||
+    utility.md5(user.email + passhash + config.session_secret) !== key
+  ) {
     return res.wrapRender('notify/notify', {
       error: '信息有误，账号无法激活',
       title: '通知'
@@ -209,14 +242,17 @@ exports.activeUser = async (req, res, next) => {
   }
 }
 
-exports.showSearchPass = function (req, res) {
+exports.showSearchPass = (req, res) => {
   res.render('sign/search_pass')
 }
 
 exports.updateSearchPass = async (req, res, next) => {
   const email = validator.trim(req.body.email).toLowerCase()
   if (!validator.isEmail(email)) {
-    return res.wrapRender('sign/search_pass', { error: '邮箱不合法', email: email })
+    return res.wrapRender('sign/search_pass', {
+      error: '邮箱不合法',
+      email: email
+    })
   }
 
   // 动态生成retrive_key和timestamp到users collection,之后重置密码进行验证
@@ -226,7 +262,10 @@ exports.updateSearchPass = async (req, res, next) => {
   try {
     const user = await User.getUserByEmail(email)
     if (!user) {
-      return res.wrapRender('sign/search_pass', { error: '没有这个电子邮箱。', email: email })
+      return res.wrapRender('sign/search_pass', {
+        error: '没有这个电子邮箱。',
+        email: email
+      })
     }
 
     user.retrieve_key = retrieveKey
@@ -235,7 +274,10 @@ exports.updateSearchPass = async (req, res, next) => {
 
     // 发送重置密码邮件
     mail.sendResetPassMail(email, retrieveKey, user.login_name)
-    res.wrapRender('notify/notify', { success: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。' })
+    res.wrapRender('notify/notify', {
+      success:
+        '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'
+    })
   } catch (err) {
     next(err)
   }
@@ -247,7 +289,7 @@ exports.updateSearchPass = async (req, res, next) => {
  * after reset password, retrieve_key&time will be destroy
  * @param  {http.req}   req
  * @param  {http.res}   res
- * @param  {Function} next
+ * @param  {} nex=> t
  */
 exports.resetPass = async (req, res, next) => {
   const key = validator.trim(req.query.key)
@@ -257,14 +299,18 @@ exports.resetPass = async (req, res, next) => {
     const user = await User.getUserByNameAndKey(name, key)
 
     if (!user) {
-      return res.status(403).wrapRender('notify/notify', { error: '信息有误，密码无法重置。' })
+      return res
+        .status(403)
+        .wrapRender('notify/notify', { error: '信息有误，密码无法重置。' })
     }
 
     const now = new Date().getTime()
     const oneDay = 1000 * 60 * 60 * 24
 
     if (!user.retrieve_time || now - user.retrieve_time > oneDay) {
-      return res.status(403).wrapRender('notify/notify', { error: '该链接已过期，请重新申请。' })
+      return res
+        .status(403)
+        .wrapRender('notify/notify', { error: '该链接已过期，请重新申请。' })
     }
 
     return res.wrapRender('sign/reset', { name: name, key: key })
@@ -280,7 +326,11 @@ exports.updatePass = async (req, res, next) => {
   const name = validator.trim(req.body.name) || ''
 
   if (psw !== repsw) {
-    return res.wrapRender('sign/reset', { name: name, key: key, error: '两次密码输入不一致。' })
+    return res.wrapRender('sign/reset', {
+      name: name,
+      key: key,
+      error: '两次密码输入不一致。'
+    })
   }
 
   try {

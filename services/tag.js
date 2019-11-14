@@ -57,7 +57,7 @@ exports.getCountByQuery = query => {
  * @param {String} description tag描述信息
  */
 exports.newAndSave = (name, description) => {
-  var tag = new Tag()
+  const tag = new Tag()
   tag.name = name
   tag.description = description
   tag.save()

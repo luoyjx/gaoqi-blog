@@ -168,7 +168,7 @@ exports.importNew = (
   createAt,
   pv
 ) => {
-  var post = new Post()
+  const post = new Post()
   post._id = id
   post.title = title
   post.description = description
