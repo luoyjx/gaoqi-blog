@@ -104,7 +104,7 @@ exports.index = async (req, res, next) => {
 
 // 站点地图
 exports.sitemap = async (req, res, next) => {
-  var urlset = xmlbuilder.create('urlset', {
+  const urlset = xmlbuilder.create('urlset', {
     version: '1.0',
     encoding: 'UTF-8'
   })
