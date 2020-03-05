@@ -37,7 +37,7 @@
     "connect-redis": "^4.0.3",
     "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.2",
     "csurf": "^1.9.0",
     "data2xml": "^1.2.5",
     "ejs-mate": "^2.3.0",
