@@ -54,7 +54,7 @@
     "method-override": "^3.0.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.14.1",
-    "mongoose": "^5.7.10",
+    "mongoose": "^5.9.6",
     "multiline": "^2.0.0",
     "node-uuid": "^1.4.7",
     "nodejieba": "^2.2.4",
