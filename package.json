@@ -83,7 +83,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.0.2",
-    "lint-staged": "^9.4.3",
+    "lint-staged": "^10.1.2",
     "loader-connect": "*",
     "mm": "*",
     "mocha": "^6.2.2",
