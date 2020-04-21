@@ -90,7 +90,7 @@
     "nock": "*",
     "nyc": "^14.1.1",
     "pedding": "*",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "should": "*",
     "supertest": "*"
   },
