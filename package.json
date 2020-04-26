@@ -86,7 +86,7 @@
     "lint-staged": "^9.4.3",
     "loader-connect": "*",
     "mm": "*",
-    "mocha": "^6.2.2",
+    "mocha": "^7.1.2",
     "nock": "*",
     "nyc": "^14.1.1",
     "pedding": "*",
